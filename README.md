@@ -10,7 +10,7 @@ BCDS-DIP Comparison Dashboard
 
 ### Overview
 
-This code supports a dashboard that is meant to....
+This code supports a dashboard that researchers can use to determine the coverage of the BC Demographic Survey overall as well as specific demographic variables compared to DIP datasets.
 
 ### Project Status
 
