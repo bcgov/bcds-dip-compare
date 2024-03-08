@@ -17,6 +17,7 @@
 library(shiny)
 library(DT)
 library(dplyr)
+library(scales)
 
 # Define UI
 ui <- fluidPage(
@@ -58,17 +59,16 @@ server <- function(input, output) {
   })
 
 
+combined_run$unique_n <- format(combined_run$unique_n, big.mark = ",")
+
+combined_run$unique_percent <- as.numeric(combined_run$unique_percent)
+combined_run$unique_percent <- sprintf("%.2f%%", combined_run$unique_percent)
+
+combined_run$unique_percent_survey <- as.numeric(combined_run$unique_percent_survey)
+combined_run$unique_percent_survey <- sprintf("%.2f%%", combined_run$unique_percent_survey)
 
 
-
-
-
-
-  combined_run$unique_percent <- sprintf("%.2f%%", combined_run$unique_percent)
-  combined_run$unique_percent_survey <- sprintf("%.2f%%", combined_run$unique_percent_survey)
-  combined_run$unique_n <- format(combined_run$unique_n, big.mark = ",")
-
-  # Render table
+# Render table
   output$datatable <- renderDT({
     datatable(filtered_data(), options = list(pageLength = 10))
 
