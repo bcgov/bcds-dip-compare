@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# Run this file at the beginning of your session - it prepares the data for app.R
+
+
 library(readxl)
 library(gt)
 library(tidyverse)
@@ -24,6 +28,7 @@ library(bcdata)
 library(rmapshaper)
 library(sf)
 options(scipen = 999)
+
 
 # FOR /RUN FILES
 

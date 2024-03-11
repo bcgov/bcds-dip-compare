@@ -19,7 +19,7 @@ library(DT)
 library(dplyr)
 library(scales)
 
-# Define UI
+# Define UI ----
 ui <- fluidPage(
 
   # Application title
@@ -37,12 +37,11 @@ ui <- fluidPage(
                  selectInput("file2", "Choose File:", choices = unique(combined_summary$file_name))
                ),
                mainPanel(
-                 DTOutput("datatable2")
+                 DTOutput("datatable2") #linked overview: datatable2 ----
                )
              )),
 
     # Second tab for content
-
 
     tabPanel("Linked Individual Demos",
              sidebarLayout(
@@ -53,19 +52,15 @@ ui <- fluidPage(
                  selectInput("file", "Choose File:", choices = unique(combined_run$file_name))
                ),
                mainPanel(
-                 DTOutput("datatable")
+                 DTOutput("datatable") #linked individual demos: datatable ----
                )
              )),
-
-
-
-
-
         )
   )
 
 
-# Define server logic
+
+#server logic ----
 server <- function(input, output) {
 
   # Filter data based on user inputs
@@ -74,26 +69,18 @@ server <- function(input, output) {
       filter(var == input$var, file_name == input$file)
   })
 
+# unify datatypes to numeric and change to percent
 combined_run$unique_n <- format(combined_run$unique_n, big.mark = ",")
 combined_run$unique_percent <- as.numeric(combined_run$unique_percent)
 combined_run$unique_percent <- sprintf("%.2f%%", combined_run$unique_percent)
 combined_run$unique_percent_survey <- as.numeric(combined_run$unique_percent_survey)
 combined_run$unique_percent_survey <- sprintf("%.2f%%", combined_run$unique_percent_survey)
 
-# Render table
+# Render table datatable ----
   output$datatable <- renderDT({
     datatable(filtered_data(), options = list(pageLength = 10))
 
   })
-
-
-
-
-
-
-
-
-
 
 
 # Filter data based on user inputs
@@ -102,13 +89,14 @@ filtered_data2 <- reactive({
       filter(var == input$var2, file_name == input$file2)
   })
 
+# unify datatypes as numeric and change to percent
   combined_summary$unique_n <- format(combined_summary$unique_n, big.mark = ",")
   combined_summary$unique_percent <- as.numeric(combined_summary$unique_percent)
   combined_summary$unique_percent <- sprintf("%.2f%%", combined_summary$unique_percent)
   combined_summary$unique_percent_survey <- as.numeric(combined_summary$unique_percent_survey)
   combined_summary$unique_percent_survey <- sprintf("%.2f%%", combined_summary$unique_percent_survey)
 
-  # Render table
+  # Render table datatable2 ----
   output$datatable2 <- renderDT({
     datatable(filtered_data2(), options = list(pageLength = 10))
 
