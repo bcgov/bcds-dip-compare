@@ -27,12 +27,8 @@ options(scipen = 999)
 
 # FOR /RUN FILES
 
-# Set your working directory where the CSV files are located
-setwd("/bcds-dip-compare/bcds-dip-compare/app/data/run/")
-getwd()
-
 # first get the run .csvs
-directory <- "/bcds-dip-compare/bcds-dip-compare/app/data/run/"
+directory <- "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/run/"
 
 # Get a list of all CSV files in the directory
 file_list <- list.files(pattern = "\\.csv$")
@@ -55,19 +51,17 @@ combined_run$unique_n <- as.numeric(combined_run$unique_n)
 combined_run$unique_percent <- as.numeric(combined_run$unique_percent)
 combined_run$unique_percent_survey <- as.numeric(combined_run$unique_percent_survey)
 
+combined_run <- combined_run %>%
+  filter(var != "TOTAL")
 
 # Write the combined data to a new CSV file for review
-write_csv(combined_run, "C:///bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_run.csv")
+write_csv(combined_run, "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_run.csv")
 
 
 # FOR /SUMMARY FILES
 
-# Set your working directory where the CSV files are located
-setwd("/bcds-dip-compare/bcds-dip-compare/app/data/summary/")
-getwd()
-
-# first get the run .csvs
-directory <- "/bcds-dip-compare/bcds-dip-compare/app/data/summary/"
+# first get the summary .csvs
+directory <- "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/summary/"
 
 # Get a list of all CSV files in the directory
 file_list <- list.files(pattern = "\\.csv$")
@@ -95,4 +89,4 @@ combined_summary <- map_dfr(file_list, ~ {
 combined_summary
 
 # Write the combined data to a new CSV file for review
-write_csv(combined_summary, "C:///bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_summary.csv")
+write_csv(combined_summary, "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_summary.csv")

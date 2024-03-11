@@ -28,7 +28,23 @@ ui <- fluidPage(
   # Create tabs
   tabsetPanel(
     # First tab for the filters and table
-    tabPanel("Demo Deep Dive",
+    tabPanel("Linked Overview",
+             sidebarLayout(
+               sidebarPanel(
+                 # Filter for the 'var' variable
+                 selectInput("var2", "Choose Variable:", choices = unique(combined_summary$var)),
+                 # Filter for the 'file_name' variable
+                 selectInput("file2", "Choose File:", choices = unique(combined_summary$file_name))
+               ),
+               mainPanel(
+                 DTOutput("datatable2")
+               )
+             )),
+
+    # Second tab for content
+
+
+    tabPanel("Linked Individual Demos",
              sidebarLayout(
                sidebarPanel(
                  # Filter for the 'var' variable
@@ -41,20 +57,11 @@ ui <- fluidPage(
                )
              )),
 
-    # Second tab for content
-    tabPanel("Overview",
-             sidebarLayout(
-               sidebarPanel(
-                 # Filter for the 'var' variable
-                 selectInput("var2", "Choose Variable:", choices = unique(combined_summary$var)),
-                 # Filter for the 'file_name' variable
-                 selectInput("file2", "Choose File:", choices = unique(combined_summary$file_name))
-               ),
-               mainPanel(
-                 DTOutput("datatable2")
-               )
-             )),
-    )
+
+
+
+
+        )
   )
 
 
