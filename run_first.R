@@ -33,7 +33,7 @@ options(scipen = 999)
 # FOR /RUN FILES
 
 # first get the run .csvs
-directory <- "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/run/"
+directory <- safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/run/")
 
 # Get a list of all CSV files in the directory
 file_list <- list.files(pattern = "\\.csv$")
@@ -60,13 +60,13 @@ combined_run <- combined_run %>%
   filter(var != "TOTAL")
 
 # Write the combined data to a new CSV file for review
-write_csv(combined_run, "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_run.csv")
+write_csv(combined_run, safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_run.csv"))
 
 
 # FOR /SUMMARY FILES
 
 # first get the summary .csvs
-directory <- "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/summary/"
+directory <- safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/summary/")
 
 # Get a list of all CSV files in the directory
 file_list <- list.files(pattern = "\\.csv$")
@@ -94,4 +94,4 @@ combined_summary <- map_dfr(file_list, ~ {
 combined_summary
 
 # Write the combined data to a new CSV file for review
-write_csv(combined_summary, "U:/Operations/Data Science and Analytics/2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_summary.csv")
+write_csv(combined_summary, safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_summary.csv"))
