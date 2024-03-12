@@ -30,47 +30,68 @@ library(sf)
 options(scipen = 999)
 
 
-# FOR /RUN FILES
+# FOR Detailed Linkage FILES
 
-# first get the run .csvs
-directory <- safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/run/")
-
-# Get a list of all CSV files in the directory
-file_list <- list.files(pattern = "\\.csv$")
-file_list
+# first get the detailed .csvs
+directory <- safepaths::use_network_path(
+  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/linkage_by_var_detailed"
+  )
 
 # Get a list of all CSV files in the directory
 file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE)
+file_list
 
 # Read all CSV files, add a column for the filename, and combine them into one data frame
-combined_run <- map_dfr(file_list, ~ {
+combined_detailed <- map_dfr(file_list, ~ {
   file_name <- basename(.x)
-  data <- read_csv(.x)
-  data <- mutate(data, file_name = str_split(file_name, "_")[[1]][1])
+  data <- read_csv(.x, na=c("","NA", "MASK"))
+  data <- mutate(data, file_name = str_split(file_name, "_primary_variable")[[1]][1])
   return(data)
 })
 
-combined_run
+combined_detailed
 
-combined_run$unique_n <- as.numeric(combined_run$unique_n)
-combined_run$unique_percent <- as.numeric(combined_run$unique_percent)
-combined_run$unique_percent_survey <- as.numeric(combined_run$unique_percent_survey)
 
-combined_run <- combined_run %>%
-  filter(var != "TOTAL")
+# confirm numeric datatypes
+combined_detailed <- combined_detailed %>% 
+  mutate(
+    unique_n = as.numeric(unique_n),
+    unique_percent = as.numeric(unique_percent),
+    unique_percent_survey = as.numeric(unique_percent_survey)
+    ) %>% 
+  # get strings for %s and commas for Ns
+  mutate(
+    unique_n_str = format(unique_n, big.mark = ","),
+    unique_percent_str = sprintf("%.2f%%", unique_percent),
+    unique_percent_survey_str = sprintf("%.2f%%", unique_percent_survey)
+    ) %>% 
+  # clean up NAs
+  mutate(
+    unique_n_str = if_else(grepl('NA', unique_n_str), 'MASK', unique_n_str),
+    unique_percent_str = if_else(unique_percent_str == 'NA%', 'MASK', unique_percent_str),
+    unique_percent_survey_str = if_else(unique_percent_survey_str == 'NA%', 'MASK', unique_percent_survey_str)
+  ) %>% 
+  # remove total counts 
+  filter( var!= "TOTAL")
+
+combined_detailed
+combined_detailed %>% select(unique_n_str, unique_percent_str, unique_percent_survey_str)
 
 # Write the combined data to a new CSV file for review
-write_csv(combined_run, safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_run.csv"))
+write_csv(
+  combined_detailed, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_run.csv"
+    )
+)
 
 
-# FOR /SUMMARY FILES
+# FOR Linkage (by variable) Summary FILES
 
 # first get the summary .csvs
-directory <- safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/summary/")
-
-# Get a list of all CSV files in the directory
-file_list <- list.files(pattern = "\\.csv$")
-file_list
+directory <- safepaths::use_network_path(
+  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/linkage_by_var_summary/"
+  )
 
 # Get a list of all CSV files in the directory
 file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE)
@@ -80,18 +101,38 @@ file_list
 combined_summary <- map_dfr(file_list, ~ {
 
   file_name <- basename(.x)
-  data <- read_csv(.x)
-
-  # Convert necessary columns from character to double
-  convert_to_double <- c("unique_n", "unique_percent", "unique_percent_survey")  # Replace with your column names
-  data[, convert_to_double] <- lapply(data[, convert_to_double], as.numeric)
-
-  data <- mutate(data, file_name = str_split(file_name, "_")[[1]][1])
+  data <- read_csv(.x, na=c("","NA", "MASK"))
+  data <- mutate(data, file_name = str_split(file_name, "_primary_variable")[[1]][1])
 
   return(data)
 })
 
+# confirm numeric datatypes
+combined_summary <- combined_summary %>% 
+  mutate(
+    unique_n = as.numeric(unique_n),
+    unique_percent = as.numeric(unique_percent),
+    unique_percent_survey = as.numeric(unique_percent_survey)
+  ) %>% 
+  # get strings for %s and commas for Ns
+  mutate(
+    unique_n_str = format(unique_n, big.mark = ","),
+    unique_percent_str = sprintf("%.2f%%", unique_percent),
+    unique_percent_survey_str = sprintf("%.2f%%", unique_percent_survey)
+  ) %>% 
+  # clean up NAs
+  mutate(
+    unique_n_str = if_else(grepl('NA', unique_n_str), 'MASK', unique_n_str),
+    unique_percent_str = if_else(unique_percent_str == 'NA%', 'MASK', unique_percent_str),
+    unique_percent_survey_str = if_else(unique_percent_survey_str == 'NA%', 'MASK', unique_percent_survey_str)
+  )
+  
 combined_summary
 
 # Write the combined data to a new CSV file for review
-write_csv(combined_summary, safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/bcds-dip-compare/bcds-dip-compare/app/data/combined/combined_summary.csv"))
+write_csv(
+  combined_summary, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_summary.csv"
+    )
+  )

@@ -65,44 +65,27 @@ server <- function(input, output) {
 
   # Filter data based on user inputs
   filtered_data <- reactive({
-    combined_run %>%
+    combined_detailed %>%
       filter(var == input$var, file_name == input$file)
   })
 
-# unify datatypes to numeric and change to percent
-combined_run$unique_n <- format(combined_run$unique_n, big.mark = ",")
-combined_run$unique_percent <- as.numeric(combined_run$unique_percent)
-combined_run$unique_percent <- sprintf("%.2f%%", combined_run$unique_percent)
-combined_run$unique_percent_survey <- as.numeric(combined_run$unique_percent_survey)
-combined_run$unique_percent_survey <- sprintf("%.2f%%", combined_run$unique_percent_survey)
-
-# Render table datatable ----
+  # Render table datatable ----
   output$datatable <- renderDT({
     datatable(filtered_data(), options = list(pageLength = 10))
 
   })
-
-
-# Filter data based on user inputs
-filtered_data2 <- reactive({
-    combined_summary %>%
-      filter(var == input$var2, file_name == input$file2)
-  })
-
-# unify datatypes as numeric and change to percent
-  combined_summary$unique_n <- format(combined_summary$unique_n, big.mark = ",")
-  combined_summary$unique_percent <- as.numeric(combined_summary$unique_percent)
-  combined_summary$unique_percent <- sprintf("%.2f%%", combined_summary$unique_percent)
-  combined_summary$unique_percent_survey <- as.numeric(combined_summary$unique_percent_survey)
-  combined_summary$unique_percent_survey <- sprintf("%.2f%%", combined_summary$unique_percent_survey)
-
+  
+  # Filter data based on user inputs
+  filtered_data2 <- reactive({
+      combined_summary %>%
+        filter(var == input$var2, file_name == input$file2)
+    })
+  
   # Render table datatable2 ----
   output$datatable2 <- renderDT({
     datatable(filtered_data2(), options = list(pageLength = 10))
 
   })
-
-
 
 }
 
