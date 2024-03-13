@@ -29,8 +29,63 @@ library(rmapshaper)
 library(sf)
 options(scipen = 999)
 
+##############################
+# OVERVIEW OF LINKAGE RATES ----
+##############################
 
-# FOR Detailed Linkage FILES
+# first get the detailed .csvs
+directory <- safepaths::use_network_path(
+  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/linkage_by_table"
+)
+
+# Get a list of all CSV files in the directory
+file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE)
+file_list
+
+# Read all CSV files, add a column for the filename, and combine them into one data frame
+combined_overview <- map_dfr(file_list, ~ {
+  file_name <- basename(.x)
+  data <- read_csv(.x, na=c("","NA", "MASK"))
+  data <- mutate(data, file_name = folder)
+  return(data)
+})
+
+combined_overview
+
+
+# confirm numeric datatypes
+combined_overview <- combined_overview %>% 
+  mutate(
+    in_demographic = as.numeric(in_demographic),
+    in_dip_dataset = as.numeric(in_dip_dataset),
+    in_both = as.numeric(in_both),
+    pct_demo_in_dip = as.numeric(pct_demo_in_dip),
+    pct_dip_in_demo = as.numeric(pct_dip_in_demo)
+  ) %>% 
+  # get strings for %s and commas for Ns
+  mutate(
+    in_demographic_str = format(in_demographic, big.mark = ","),
+    in_dip_dataset_str = format(in_dip_dataset, big.mark = ","),
+    in_both_str = format(in_both, big.mark = ","),
+    pct_demo_in_dip_str = sprintf("%.2f%%", pct_demo_in_dip),
+    pct_dip_in_demo_str = sprintf("%.2f%%", pct_dip_in_demo)
+  )  
+  # clean up NAs
+
+
+combined_overview
+
+# Write the combined data to a new CSV file for review
+write_csv(
+  combined_overview, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_overview.csv"
+  )
+)
+
+##############################
+# DETAILED VAR LINKAGE RATES ----
+##############################
 
 # first get the detailed .csvs
 directory <- safepaths::use_network_path(
@@ -81,12 +136,14 @@ combined_detailed %>% select(unique_n_str, unique_percent_str, unique_percent_su
 write_csv(
   combined_detailed, 
   safepaths::use_network_path(
-    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_run.csv"
+    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_detailed.csv"
     )
 )
 
 
-# FOR Linkage (by variable) Summary FILES
+##############################
+# SUMMARY OF LINKAGE BY VAR ----
+##############################
 
 # first get the summary .csvs
 directory <- safepaths::use_network_path(
@@ -114,6 +171,11 @@ combined_summary <- combined_summary %>%
     unique_percent = as.numeric(unique_percent),
     unique_percent_survey = as.numeric(unique_percent_survey)
   ) %>% 
+  # fill in missing rows 
+  complete(
+    file_name, var, cross_status,
+    fill = list(unique_n = 0, unique_percent = 0, unique_percent_survey = 0)
+  ) %>% 
   # get strings for %s and commas for Ns
   mutate(
     unique_n_str = format(unique_n, big.mark = ","),
@@ -125,9 +187,18 @@ combined_summary <- combined_summary %>%
     unique_n_str = if_else(grepl('NA', unique_n_str), 'MASK', unique_n_str),
     unique_percent_str = if_else(unique_percent_str == 'NA%', 'MASK', unique_percent_str),
     unique_percent_survey_str = if_else(unique_percent_survey_str == 'NA%', 'MASK', unique_percent_survey_str)
+  ) %>% 
+  # tidy up the wording of cross status
+  mutate(
+    cross_status = case_when(
+      cross_status == 'added info' ~ 'Present in survey only',
+      cross_status == 'lost info' ~ 'Present in DIP dataset only',
+      cross_status == 'both NA or invalid' ~ 'Not present in survey OR DIP',
+      cross_status == 'both known' ~ 'Present in survey AND DIP'
+    )
   )
   
-combined_summary
+combined_summary 
 
 # Write the combined data to a new CSV file for review
 write_csv(

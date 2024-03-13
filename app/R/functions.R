@@ -1,4 +1,5 @@
-# Copyright 2024 Province of British Columbia
+
+# Copyright 2023 Province of British Columbia
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,14 +14,7 @@
 # limitations under the License.
 
 
-
-
-
-
-
-
 ## Use this file to save functions that your app will use
-
 
 # creates horiztontal line
 
@@ -53,19 +47,15 @@ vline <- function(x = 0, color = "black") {
 
 
 plotly_custom_layout <- function(plot) {
-
+  
   plot %>%
     layout(
       hoverlabel = list(namelength = -1),  ## shows full hover label regardless of length
       dragmode = FALSE,  # remove drag zoom
       modebar = list(remove = list("autoscale","hoverCompareCartesian", "lasso", "pan", "select", "zoom")
-
-
+                     
+                     
       )
     )
-
+  
 }
-
-
-
-
