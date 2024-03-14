@@ -106,7 +106,6 @@ combined_detailed <- map_dfr(file_list, ~ {
 
 combined_detailed
 
-
 # confirm numeric datatypes
 combined_detailed <- combined_detailed %>% 
   mutate(
@@ -114,6 +113,10 @@ combined_detailed <- combined_detailed %>%
     unique_percent = as.numeric(unique_percent),
     unique_percent_survey = as.numeric(unique_percent_survey)
     ) %>% 
+  # fill in missing rows 
+  group_by(file_name, var) %>% 
+  complete(dip_value, bcds_value) %>% 
+  ungroup() %>% 
   # get strings for %s and commas for Ns
   mutate(
     unique_n_str = format(unique_n, big.mark = ","),
@@ -124,10 +127,14 @@ combined_detailed <- combined_detailed %>%
   mutate(
     unique_n_str = if_else(grepl('NA', unique_n_str), 'MASK', unique_n_str),
     unique_percent_str = if_else(unique_percent_str == 'NA%', 'MASK', unique_percent_str),
-    unique_percent_survey_str = if_else(unique_percent_survey_str == 'NA%', 'MASK', unique_percent_survey_str)
+    unique_percent_survey_str = case_when(
+      is.na(unique_percent_survey) & is.na(unique_percent) ~ 'MASK', 
+      is.na(unique_percent_survey) & !is.na(unique_percent) ~ 'NA',
+      TRUE ~ unique_percent_survey_str)
   ) %>% 
   # remove total counts 
   filter( var!= "TOTAL")
+
 
 combined_detailed
 combined_detailed %>% select(unique_n_str, unique_percent_str, unique_percent_survey_str)

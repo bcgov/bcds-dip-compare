@@ -129,9 +129,13 @@ ui <- fluidPage(
                  "Heatmap",
                   radioButtons(
                     "detail_plot_option", "Plot heatmap based on:",
-                    c('Percent of BC Demographic Survey', 'Percent of DIP Dataset'),
+                    c(
+                      'Percent of BC Demographic Survey' = 'bcds', 
+                      'Percent of DIP Dataset' = 'dip'
+                      ),
                     inline=TRUE
-                    )
+                    ),
+                 plotlyOutput("heatmap_detailed", height="800px") ### heatmap_detailed ----
                 ),
                ## table ----
                tabPanel(
@@ -203,7 +207,82 @@ server <- function(input, output) {
   })
   
   ## render heatmap ----
-  output$heatmap_detailed <- renderPlotly
+  output$heatmap_detailed <- renderPlotly({
+    
+    # choose which column to use for the heat map
+    col_to_use <- if (input$detail_plot_option == 'bcds'){
+      col_to_use = 'unique_percent_survey'
+    } else {
+      col_to_use = 'unique_percent'
+    }
+    temp <- combined_detailed %>% 
+      filter(file_name == input$file_detailed) %>% 
+      filter(var == input$var_detailed) %>% 
+      mutate(text = paste0(
+        "BC Demographic Survey Value: ", bcds_value, "\n",
+        "DIP Dataset Value: ", dip_value, "\n",
+        "Number of Records: ", unique_n_str, "\n",
+        "Percent of BC Demographic Survey: ", unique_percent_survey_str, "\n",
+        "Percent of DIP Dataset: ", unique_percent_str
+      )) %>% 
+      mutate(percent = unique_percent) %>% 
+      select(dip_value, bcds_value, percent, text) %>% 
+      arrange(desc(percent)) %>% 
+      mutate(
+        dip_value = factor(dip_value, levels=unique(.$dip_value), exclude=NULL),
+        bcds_value = factor(bcds_value, levels=unique(.$bcds_value), exclude=NULL)
+      ) 
+    
+    t1 <- temp %>% 
+      select(-text) %>% 
+      pivot_wider(names_from = bcds_value, values_from = percent)
+    
+    t2 <- temp %>% 
+      select(-percent) %>% 
+      pivot_wider(names_from = bcds_value, values_from = text) %>% 
+      select(-dip_value) %>% 
+      as.matrix()
+    
+    row_names = t1$dip_value
+    t1 <- as.matrix(t1 %>% select(-dip_value))
+    rownames(t1) = row_names
+    
+    fig <- plot_ly(
+      x = colnames(t1),
+      y = rownames(t1),
+      z = t1, 
+      text = t2,
+      type = 'heatmap',
+      hoverinfo = 'text'
+    ) %>% 
+      layout(
+        title = list(
+          text = "Distribution of Demographic Values Across DIP and BC Demographic Survey",
+          automargin = TRUE,
+          yanchor = 'top',
+          y = 0.98
+        ),
+        xaxis = list(
+          title = "BC Demographic Survey",
+          side="top",
+          automargin = TRUE,
+          pad = list(t = 10)
+        ),
+        yaxis = list(
+          title = "DIP Dataset", autorange = "reversed"
+        ),
+        margin = list(
+          l = 50,
+          r = 50,
+          b = 10,
+          t = 150,
+          pad = 0
+        )
+      )
+    
+    fig
+    
+  })
 
 
 }
