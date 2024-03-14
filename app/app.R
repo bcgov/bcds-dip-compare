@@ -225,7 +225,7 @@ server <- function(input, output) {
         "Percent of BC Demographic Survey: ", unique_percent_survey_str, "\n",
         "Percent of DIP Dataset: ", unique_percent_str
       )) %>% 
-      mutate(percent = unique_percent) %>% 
+      mutate(percent = get(col_to_use)) %>% 
       select(dip_value, bcds_value, percent, text) %>% 
       arrange(desc(percent)) %>% 
       mutate(
