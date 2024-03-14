@@ -124,6 +124,12 @@ ui <- fluidPage(
              
              tabsetPanel(
                
+               ## table ----
+               tabPanel(
+                 "Table",
+                 DTOutput("data_detailed") ### data_detailed ----
+               ),
+               
                ## heatmap ----
                tabPanel(
                  "Heatmap",
@@ -136,12 +142,7 @@ ui <- fluidPage(
                     inline=TRUE
                     ),
                  plotlyOutput("heatmap_detailed", height="800px") ### heatmap_detailed ----
-                ),
-               ## table ----
-               tabPanel(
-                 "Table",
-                  DTOutput("data_detailed") ### data_detailed ----
-               )
+                )
              )
            )
          )
@@ -169,12 +170,12 @@ server <- function(input, output) {
     datatable(
       combined_overview %>% 
         select(
-          dataset, 
-          file_name, 
-          in_dip_dataset_str, 
-          in_both_str, 
-          pct_demo_in_dip_str, 
-          pct_dip_in_demo_str
+          "Dataset" = dataset, 
+          "File Name" = file_name, 
+          "DIP Dataset Records" = in_dip_dataset_str, 
+          "DIP Dataset Records Linked" = in_both_str, 
+          "Percent of Survey Covered" = pct_demo_in_dip_str, 
+          "Percent of DIP Dataset Covered" = pct_dip_in_demo_str
           ), 
       options = list(pageLength = 10))
   })
@@ -184,7 +185,12 @@ server <- function(input, output) {
   filtered_data_summary <- reactive({
     combined_summary %>%
       filter(var %in% input$var_summary, file_name == input$file_summary) %>% 
-      select(var, cross_status, unique_n_str, unique_percent_str)
+      select(
+        "Demographic Variable" = var, 
+        "Cross-Status" = cross_status, 
+        "Unique IDs in DIP Dataset" = unique_n_str, 
+        "Percent of Unique IDs" = unique_percent_str
+        )
   })
   
   ## render table ----
@@ -197,7 +203,14 @@ server <- function(input, output) {
   # Filter data based on user inputs
   filtered_data_detailed <- reactive({
     combined_detailed %>%
-      filter(var %in% input$var_detailed, file_name == input$file_detailed)
+      filter(var %in% input$var_detailed, file_name == input$file_detailed) %>% 
+      select(
+        "Value in DIP" = dip_value,
+        "Value in Survey" = bcds_value,
+        "Unique IDs in DIP Dataset" = unique_n_str,
+        "Percent of Unique IDs" = unique_percent_str,
+        "Percent of Survey Unique IDs" = unique_percent_survey_str
+      )
   })
 
   ## render table ----
