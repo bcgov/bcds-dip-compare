@@ -18,6 +18,7 @@ library(DT)
 library(dplyr)
 library(scales)
 library(bcsapps)
+library(plotly)
 
 # Define UI ----
 ui <- fluidPage(
@@ -25,7 +26,6 @@ ui <- fluidPage(
   theme = "styles.css",
   HTML("<html lang='en'>"),
   fluidRow(
-    
     
     ## Replace appname with the title that will appear in the header
     bcsapps::bcsHeaderUI(
@@ -36,89 +36,113 @@ ui <- fluidPage(
     
     tags$head(tags$link(rel = "shortcut icon", href = "favicon.png")), ## to add BCGov favicon
     
-    column(width = 12,
-           style = "margin-top:100px",
+    column(
+      width = 12,
+      style = "margin-top:100px",
            
-           # Create tabs
-           tabsetPanel(
-             
-             # overall linkage rates ----
-             tabPanel(
-               "Overall Linkage Rates",
-               mainPanel(
-                 DTOutput("data_overview") ## data_overview ----
-               )
+      # Create tabs
+      tabsetPanel(
+         
+        # overall linkage rates ----
+        tabPanel(
+         "Overall Linkage Rates",
+         mainPanel(
+           DTOutput("data_overview") ## data_overview ----
+         )
+        )
+      ,
+         
+       # linked summary ----
+       tabPanel(
+         "Linked Variables - Summary",
+          sidebarLayout(
+            sidebarPanel(
+              # Filter for the 'var' variable
+              selectInput(
+                "var_summary", 
+                "Choose Variable:", 
+                choices = unique(combined_summary$var), 
+                selected = unique(combined_summary$var),
+                multiple=TRUE
+              ),
+              # Filter for the 'file_name' variable
+              selectInput(
+                "file_summary", 
+                "Choose File:", 
+                choices = unique(combined_summary$file_name)
+              ),
+              fluidRow(
+                box(
+                  width = NULL,
+                  solidHeader = TRUE,
+                  collapsible = TRUE, # not sure why not working 
+                  collapsed = TRUE, 
+                  title = HTML("<small><p><b>Cross-Status Definitions:</b></small>"),
+                  HTML(
+                    "<small>
+                    <p><b>Present in survey only:</b> 
+                    <p>These records contain no demographic information for the given variable within the DIP Dataset, but are supplemented by the BC Demographic Survey.
+                    <p><b>Present in DIP dataset only:</b>
+                    <p>These records contain demographic information for the given variable within the DIP Dataset, and have no supplemental information from the BC Demographic Survey.
+                    <p><b>Present in survey AND DIP:</b>
+                    <p>These records contain demographic information for the given variable within the DIP Dataset, and have supplemental information from the BC Demographic Survey. This information may or may not align.
+                    <p><b>Not present in survey OR DIP:</b>
+                    <p>These records contain no demographic information for the given variable within the DIP Dataset, and have no supplemental information from the BC Demographic Survey.
+                    <p>
+                    </small>"
+                       )
+                  )
+              )
+            ),
+            mainPanel(
+              DTOutput("data_summary") ## data_summary ----
+            )
+          )
+         ),
+      
+       # linked individual demos ----
+       tabPanel(
+         "Linked Individual Demos",
+         sidebarLayout(
+           
+           sidebarPanel(
+             # Filter for the 'var' variable
+             selectInput(
+               "var_detailed", 
+               "Choose Variable:", 
+               choices = unique(combined_detailed$var)
              ),
+             # Filter for the 'file_name' variable
+             selectInput(
+               "file_detailed", 
+               "Choose File:", 
+               choices = unique(combined_detailed$file_name)
+             )
+           ),
+           
+           mainPanel(
              
-             # linked summary ----
-             tabPanel("Linked Variables - Summary",
-                      sidebarLayout(
-                        sidebarPanel(
-                          # Filter for the 'var' variable
-                          selectInput(
-                            "var_summary", 
-                            "Choose Variable:", 
-                            choices = unique(combined_summary$var), 
-                            selected = unique(combined_summary$var),
-                            multiple=TRUE
-                          ),
-                          # Filter for the 'file_name' variable
-                          selectInput(
-                            "file_summary", 
-                            "Choose File:", 
-                            choices = unique(combined_summary$file_name)
-                          ),
-                          fluidRow(
-                            box(
-                              width = NULL,
-                              solidHeader = TRUE,
-                              collapsible = TRUE, # not sure why not working 
-                              collapsed = TRUE, 
-                              title = HTML("<small><p><b>Cross-Status Definitions:</b></small>"),
-                              HTML(
-                                "<small>
-                                <p><b>Present in survey only:</b> 
-                                <p>These records contain no demographic information for the given variable within the DIP Dataset, but are supplemented by the BC Demographic Survey.
-                                <p><b>Present in DIP dataset only:</b>
-                                <p>These records contain demographic information for the given variable within the DIP Dataset, and have no supplemental information from the BC Demographic Survey.
-                                <p><b>Present in survey AND DIP:</b>
-                                <p>These records contain demographic information for the given variable within the DIP Dataset, and have supplemental information from the BC Demographic Survey. This information may or may not align.
-                                <p><b>Not present in survey OR DIP:</b>
-                                <p>These records contain no demographic information for the given variable within the DIP Dataset, and have no supplemental information from the BC Demographic Survey.
-                                <p>
-                                </small>"
-                                   )
-                              )
-                          )
-                        ),
-                        mainPanel(
-                          DTOutput("data_summary") ## data_summary ----
-                        )
-                      )),
-             
-            
-             # linked individual demos ----
-             tabPanel("Linked Individual Demos",
-                      sidebarLayout(
-                        sidebarPanel(
-                          # Filter for the 'var' variable
-                          selectInput(
-                            "var_detailed", 
-                            "Choose Variable:", 
-                            choices = unique(combined_detailed$var)
-                          ),
-                          # Filter for the 'file_name' variable
-                          selectInput(
-                            "file_detailed", 
-                            "Choose File:", 
-                            choices = unique(combined_detailed$file_name)
-                          )
-                        ),
-                        mainPanel(
-                          DTOutput("data_detailed") ## data_detailed ----
-                        )
-                      )),
+             tabsetPanel(
+               
+               ## heatmap ----
+               tabPanel(
+                 "Heatmap",
+                  radioButtons(
+                    "detail_plot_option", "Plot heatmap based on:",
+                    c('Percent of BC Demographic Survey', 'Percent of DIP Dataset'),
+                    inline=TRUE
+                    )
+                ),
+               ## table ----
+               tabPanel(
+                 "Table",
+                  DTOutput("data_detailed") ### data_detailed ----
+               )
+             )
            )
+         )
+       )
+      )
     ),
     
     bcsapps::bcsFooterUI(id = 'footer')
@@ -177,6 +201,9 @@ server <- function(input, output) {
     datatable(filtered_data_detailed(), options = list(pageLength = 10))
 
   })
+  
+  ## render heatmap ----
+  output$heatmap_detailed <- renderPlotly
 
 
 }
