@@ -81,7 +81,7 @@ ui <- fluidPage(
                   width = NULL,
                   solidHeader = TRUE,
                   collapsible = TRUE, # not sure why not working 
-                  collapsed = TRUE, 
+                  collapsed = FALSE, 
                   title = HTML("<small><p><b>Cross-Status Definitions:</b></small>"),
                   HTML(
                     "<small>
