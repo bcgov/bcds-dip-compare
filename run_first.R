@@ -111,7 +111,9 @@ combined_detailed <- combined_detailed %>%
   mutate(
     unique_n = as.numeric(unique_n),
     unique_percent = as.numeric(unique_percent),
-    unique_percent_survey = as.numeric(unique_percent_survey)
+    unique_percent_survey = as.numeric(unique_percent_survey),
+    # clean up a couple of issues with large percentages 
+    unique_percent_survey = if_else(unique_percent_survey > 100, NA_real_, unique_percent_survey)
     ) %>% 
   # fill in missing rows 
   group_by(file_name, var) %>% 
@@ -130,14 +132,32 @@ combined_detailed <- combined_detailed %>%
     unique_percent_survey_str = case_when(
       is.na(unique_percent_survey) & is.na(unique_percent) ~ 'MASK', 
       is.na(unique_percent_survey) & !is.na(unique_percent) ~ 'NA',
-      TRUE ~ unique_percent_survey_str)
+      TRUE ~ unique_percent_survey_str),
+    bcds_value = if_else(is.na(bcds_value), 'Not in Survey', bcds_value)
   ) %>% 
   # remove total counts 
-  filter( var!= "TOTAL")
+  filter( var!= "TOTAL") 
 
+# get a list of what does/doesn't exist in each dataset 
+combined_list_vars <- combined_detailed %>% 
+  mutate(exists_flag = case_when(
+    dip_value == 'no such variable' ~ FALSE,
+    dip_value == 'dip_dob_exists' ~ TRUE,
+    dip_value == 'dip_dob_NA' ~ FALSE,
+    dip_value == 'dip_gdr_exists' ~ TRUE,
+    dip_value == 'dip_gdr_NA' ~ FALSE,
+    TRUE ~ TRUE
+  )) %>% 
+  group_by(file_name, var) %>% 
+  summarize(exists_in_dip = any(exists_flag)) %>% 
+  ungroup() %>% 
+  filter(var != 'gender status')
 
-combined_detailed
-combined_detailed %>% select(unique_n_str, unique_percent_str, unique_percent_survey_str)
+# filter out status variables now from the full detailed set, not useful 
+combined_detailed <- combined_detailed %>% 
+  filter(!var %in% c('gender status', 'dob status')) 
+  
+combined_detailed 
 
 # Write the combined data to a new CSV file for review
 write_csv(
@@ -145,6 +165,13 @@ write_csv(
   safepaths::use_network_path(
     "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_detailed.csv"
     )
+)
+
+write_csv(
+  combined_list_vars, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_list.csv"
+  )
 )
 
 
@@ -167,6 +194,7 @@ combined_summary <- map_dfr(file_list, ~ {
   file_name <- basename(.x)
   data <- read_csv(.x, na=c("","NA", "MASK"))
   data <- mutate(data, file_name = str_split(file_name, "_primary_variable")[[1]][1])
+  data <- mutate(data, mask_flag = is.na(unique_n))
 
   return(data)
 })
@@ -180,8 +208,8 @@ combined_summary <- combined_summary %>%
   ) %>% 
   # fill in missing rows 
   complete(
-    file_name, var, cross_status,
-    fill = list(unique_n = 0, unique_percent = 0, unique_percent_survey = 0)
+    file_name, var, cross_status, 
+    fill = list(unique_n = 0, unique_percent = 0, unique_percent_survey = 0, mask_flag = FALSE)
   ) %>% 
   # get strings for %s and commas for Ns
   mutate(
@@ -191,9 +219,13 @@ combined_summary <- combined_summary %>%
   ) %>% 
   # clean up NAs
   mutate(
-    unique_n_str = if_else(grepl('NA', unique_n_str), 'MASK', unique_n_str),
-    unique_percent_str = if_else(unique_percent_str == 'NA%', 'MASK', unique_percent_str),
-    unique_percent_survey_str = if_else(unique_percent_survey_str == 'NA%', 'MASK', unique_percent_survey_str)
+    unique_n_str = if_else(mask_flag, 'MASK', unique_n_str),
+    unique_percent_str = if_else(mask_flag, 'MASK', unique_percent_str),
+    unique_percent_survey_str = case_when(
+      mask_flag ~ 'MASK', 
+      unique_percent_survey_str == 'NA%' ~ 'NA', 
+      TRUE ~ unique_percent_survey_str
+      )
   ) %>% 
   # tidy up the wording of cross status
   mutate(
@@ -203,7 +235,10 @@ combined_summary <- combined_summary %>%
       cross_status == 'both NA or invalid' ~ 'Not present in survey OR DIP',
       cross_status == 'both known' ~ 'Present in survey AND DIP'
     )
-  )
+  ) %>% 
+  # filter out status variables now from the summary set, not useful 
+  filter(!var %in% c('gender status')) 
+
   
 combined_summary 
 

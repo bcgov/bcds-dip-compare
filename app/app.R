@@ -19,12 +19,17 @@ library(dplyr)
 library(scales)
 library(bcsapps)
 library(plotly)
+library(shinyWidgets)
+library(shinydashboard)
 
 # Define UI ----
 ui <- fluidPage(
 
   theme = "styles.css",
   HTML("<html lang='en'>"),
+  
+  ## note that doing the infoboxes this way is deprecated but I don't know a better way
+  useShinydashboard(),
   fluidRow(
     
     ## Replace appname with the title that will appear in the header
@@ -95,7 +100,18 @@ ui <- fluidPage(
               )
             ),
             mainPanel(
-              DTOutput("data_summary") ## data_summary ----
+              
+              tabsetPanel(
+                tabPanel(
+                  'Table',
+                  DTOutput("data_summary") ## data_summary ----
+                ),
+                
+                tabPanel(
+                  'Highlights',
+                  uiOutput('summary_info'), ## summary highlights ----                
+                )
+              )
             )
           )
          ),
@@ -195,8 +211,85 @@ server <- function(input, output) {
   
   ## render table ----
   output$data_summary <- renderDT({
-    datatable(filtered_data_summary(), options = list(pageLength = 10))
+    datatable(filtered_data_summary(), options = list(pageLength = 25))
     
+  })
+  
+  ## summary info boxes ----
+  summary_info <- reactive({
+    
+    var_list <- input$var_summary
+    
+    temp <- combined_summary %>% 
+      filter(file_name == input$file_summary)
+    
+    info <- lapply(
+      var_list, function(var_name){
+        
+        # check if it exists in DIP
+        in_dip <- combined_list_vars %>% 
+          filter(file_name == input$file_summary, var==var_name) %>% 
+          pull(exists_in_dip)
+        
+        # get info about the variable 
+        t1 <- temp %>% 
+          filter(var==var_name)
+        
+        extra_coverage <- t1 %>% 
+          filter(cross_status == 'Present in survey only') %>% 
+          pull(unique_percent_str)
+        
+        already_covered <- t1 %>% 
+          filter(cross_status == 'Present in DIP dataset only') %>% 
+          pull(unique_percent_str)
+        
+        survey_coverage <- t1 %>% 
+          filter(cross_status == 'Present in survey only') %>% 
+          pull(unique_percent_survey_str)
+        
+        # create info box material 
+        if (in_dip) {
+          icon <-  'check'
+          color <- 'green'
+          info <- paste0(
+            already_covered, 
+            ' Already Covered in DIP', 
+            '<br>',
+            extra_coverage,
+            ' Extra Coverage from Survey',
+            '<br>',
+            survey_coverage,
+            ' Coverage of Survey'
+          )
+        } else {
+          icon <-  'x'
+          color <- 'red'
+          info <- paste0(
+            extra_coverage,
+            ' Coverage from Survey',
+            '<br>',
+            survey_coverage,
+            ' Coverage of Survey'
+          )
+        }
+        
+        # return the info box
+        infoBox(
+          title = var_name, #HTML(paste0(var_name,'<br>')),
+          value = HTML(paste0("<p style='font-size:22px'>", info, "</p>")),
+          icon = icon(icon),
+          color = color,
+          width = 6
+        )
+        
+      })
+    
+    info
+  })
+  
+  ### render info boxes ----
+  output$summary_info <- renderUI({
+    summary_info()
   })
   
   # data_detailed ----
@@ -215,7 +308,7 @@ server <- function(input, output) {
 
   ## render table ----
   output$data_detailed <- renderDT({
-    datatable(filtered_data_detailed(), options = list(pageLength = 10))
+    datatable(filtered_data_detailed(), options = list(pageLength = 25))
 
   })
   
