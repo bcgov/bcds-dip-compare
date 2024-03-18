@@ -103,13 +103,13 @@ ui <- fluidPage(
               
               tabsetPanel(
                 tabPanel(
-                  'Table',
-                  DTOutput("data_summary") ## data_summary ----
+                  'Highlights',
+                  uiOutput('summary_info'), ## summary highlights ----                
                 ),
                 
                 tabPanel(
-                  'Highlights',
-                  uiOutput('summary_info'), ## summary highlights ----                
+                  'Table',
+                  DTOutput("data_summary") ## data_summary ----
                 )
               )
             )
