@@ -28,14 +28,14 @@ ui <- fluidPage(
   theme = "styles.css",
   HTML("<html lang='en'>"),
   
-  ## note that doing the infoboxes this way is deprecated but I don't know a better way
+  ## deprecated so copied appropriate code into functions.R
   useShinydashboard(),
   fluidRow(
     
     ## Replace appname with the title that will appear in the header
     bcsapps::bcsHeaderUI(
-      id = 'header', 
-      appname = "BC Demographic Survey: DIP Linkage Rates", 
+      id = 'header',
+      appname = "BC Demographic Survey: DIP Linkage Rates",
       github = NULL # replace with github URL or NULL
       ),
     

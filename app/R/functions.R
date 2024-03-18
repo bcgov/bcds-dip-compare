@@ -16,6 +16,21 @@
 
 ## Use this file to save functions that your app will use
 
+# Use 'shinydashboard' in 'shiny'
+#
+# Allow to use functions from 'shinydashboard' into a classic 'shiny' app,
+# specifically \code{valueBox}, \code{infoBox} and \code{box}.
+useShinydashboard <- function() {
+  if (!requireNamespace(package = "shinydashboard"))
+    message("Package 'shinydashboard' is required to run this function")
+  deps <- htmltools::findDependencies(shinydashboard::dashboardPage(
+    header = shinydashboard::dashboardHeader(),
+    sidebar = shinydashboard::dashboardSidebar(),
+    body = shinydashboard::dashboardBody()
+  ))
+  htmltools::attachDependencies(tags$div(class = "main-sidebar", style = "display: none;"), value = deps)
+}
+
 # creates horiztontal line
 
 hline <- function(y = 0, color = "black") {
