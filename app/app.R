@@ -62,20 +62,33 @@ ui <- fluidPage(
          "Linked Variables - Summary",
           sidebarLayout(
             sidebarPanel(
-              # Filter for the 'var' variable
+              
+              # filter for the data group variable
               selectInput(
-                "var_summary", 
-                "Choose Variable:", 
-                choices = unique(combined_summary$var), 
-                selected = unique(combined_summary$var),
-                multiple=TRUE
+                "data_group_summary",
+                "Choose Data Provider:",
+                choices = unique(combined_summary$data_group),
+                selected = unique(combined_summary$data_group),
+                multiple = TRUE
               ),
+              
               # Filter for the 'file_name' variable
               selectInput(
                 "file_summary", 
                 "Choose File:", 
-                choices = unique(combined_summary$file_name)
+                choices = NULL #unique(combined_summary$file_name)
               ),
+              
+              # Filter for the 'var' variable
+              # depends on choice of file_name
+              selectInput(
+                "var_summary", 
+                "Choose Variable(s):", 
+                choices = NULL, # unique(combined_summary$var), 
+                # selected = unique(combined_summary$var),
+                multiple = TRUE
+              ),
+              
               fluidRow(
                 box(
                   width = NULL,
@@ -122,17 +135,29 @@ ui <- fluidPage(
          sidebarLayout(
            
            sidebarPanel(
-             # Filter for the 'var' variable
+             
+             # filter for the data group variable
              selectInput(
-               "var_detailed", 
-               "Choose Variable:", 
-               choices = unique(combined_detailed$var)
+               "data_group_detailed",
+               "Choose Data Provider:",
+               choices = unique(combined_detailed$data_group),
+               selected = unique(combined_detailed$data_group),
+               multiple = TRUE
              ),
+             
              # Filter for the 'file_name' variable
              selectInput(
                "file_detailed", 
                "Choose File:", 
-               choices = unique(combined_detailed$file_name)
+               choices = NULL #unique(combined_detailed$file_name)
+             ),
+             
+             # Filter for the 'var' variable
+             # depends on choice of file_name 
+             selectInput(
+               "var_detailed", 
+               "Choose Variable:", 
+               choices = NULL #unique(combined_detailed$var)
              )
            ),
            
@@ -193,20 +218,45 @@ server <- function(input, output) {
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
           "Percent of DIP Dataset Covered" = pct_dip_in_demo_str
           ), 
-      options = list(pageLength = 10))
+      options = list(pageLength = 100))
   })
   
   # data_summary ----
   # Filter data based on user inputs
+  
+  filtered_by_data_group_summary <- reactive({
+    combined_summary %>% 
+      filter(data_group %in% input$data_group_summary)
+  })
+  
+  # choose variables based on data group filters 
+  observeEvent(filtered_by_data_group_summary(), {
+    choices <- sort(unique(filtered_by_data_group_summary()$file_name))
+    updateSelectInput(inputId = 'file_summary', choices=choices)
+  })
+  
+  filtered_by_file_summary <- reactive({
+    req(input$file_summary)
+    filtered_by_data_group_summary() %>% 
+      filter(file_name == input$file_summary)
+  }) 
+  
+  # choose variables based on the file filters
+  observeEvent(filtered_by_file_summary(),{
+    choices <- unique(filtered_by_file_summary()$var)
+    updateSelectInput(inputId = 'var_summary', choices = choices, selected = choices)
+  })
+  
+  # create final filtered table
   filtered_data_summary <- reactive({
-    combined_summary %>%
-      filter(var %in% input$var_summary, file_name == input$file_summary) %>% 
+    req(input$var_summary)
+    filter(filtered_by_file_summary(), var %in% input$var_summary) %>% 
       select(
         "Demographic Variable" = var, 
         "Cross-Status" = cross_status, 
         "Unique IDs in DIP Dataset" = unique_n_str, 
         "Percent of Unique IDs" = unique_percent_str
-        )
+      )
   })
   
   ## render table ----
@@ -218,6 +268,7 @@ server <- function(input, output) {
   ## summary info boxes ----
   summary_info <- reactive({
     
+    req(input$var_summary)
     var_list <- input$var_summary
     
     temp <- combined_summary %>% 
@@ -228,7 +279,7 @@ server <- function(input, output) {
         
         # check if it exists in DIP
         in_dip <- combined_list_vars %>% 
-          filter(file_name == input$file_summary, var==var_name) %>% 
+          filter(file_name == input$file_summary, var_main==var_name) %>% 
           pull(exists_in_dip)
         
         # get info about the variable 
@@ -294,9 +345,34 @@ server <- function(input, output) {
   
   # data_detailed ----
   # Filter data based on user inputs
+  
+  filtered_by_data_group_detailed <- reactive({
+    combined_detailed %>% 
+      filter(data_group %in% input$data_group_detailed)
+  })
+  
+  # choose variables based on data group filters 
+  observeEvent(filtered_by_data_group_detailed(), {
+    choices <- sort(unique(filtered_by_data_group_detailed()$file_name))
+    updateSelectInput(inputId = 'file_detailed', choices=choices)
+  })
+  
+  filtered_by_file_detailed <- reactive({
+    req(input$file_detailed)
+    filtered_by_data_group_detailed() %>% 
+      filter(file_name == input$file_detailed)
+  }) 
+  
+  # choose variables based on the file filters
+  observeEvent(filtered_by_file_detailed(),{
+    choices <- unique(filtered_by_file_detailed()$var)
+    updateSelectInput(inputId = 'var_detailed', choices = choices)
+  })
+  
+  # create final filtered table
   filtered_data_detailed <- reactive({
-    combined_detailed %>%
-      filter(var %in% input$var_detailed, file_name == input$file_detailed) %>% 
+    filtered_by_file_detailed() %>%
+      filter(var %in% input$var_detailed) %>% 
       select(
         "Value in DIP" = dip_value,
         "Value in Survey" = bcds_value,

@@ -46,7 +46,10 @@ file_list
 combined_overview <- map_dfr(file_list, ~ {
   file_name <- basename(.x)
   data <- read_csv(.x, na=c("","NA", "MASK"))
-  data <- mutate(data, file_name = folder)
+  data <- mutate(
+    data, 
+    file_name = folder
+    )
   return(data)
 })
 
@@ -93,14 +96,19 @@ directory <- safepaths::use_network_path(
   )
 
 # Get a list of all CSV files in the directory
-file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE)
+file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE, recursive=TRUE)
 file_list
 
 # Read all CSV files, add a column for the filename, and combine them into one data frame
 combined_detailed <- map_dfr(file_list, ~ {
   file_name <- basename(.x)
+  data_group <- basename(dirname(.x))
   data <- read_csv(.x, na=c("","NA", "MASK"))
-  data <- mutate(data, file_name = str_split(file_name, "_primary_variable")[[1]][1])
+  data <- mutate(
+    data, 
+    file_name = str_split(file_name, "_primary_variable")[[1]][1],
+    data_group = data_group
+    )
   return(data)
 })
 
@@ -116,7 +124,7 @@ combined_detailed <- combined_detailed %>%
     unique_percent_survey = if_else(unique_percent_survey > 100, NA_real_, unique_percent_survey)
     ) %>% 
   # fill in missing rows 
-  group_by(file_name, var) %>% 
+  group_by(data_group, file_name, var) %>% 
   complete(dip_value, bcds_value) %>% 
   ungroup() %>% 
   # get strings for %s and commas for Ns
@@ -138,21 +146,6 @@ combined_detailed <- combined_detailed %>%
   # remove total counts 
   filter( var!= "TOTAL") 
 
-# get a list of what does/doesn't exist in each dataset 
-combined_list_vars <- combined_detailed %>% 
-  mutate(exists_flag = case_when(
-    dip_value == 'no such variable' ~ FALSE,
-    dip_value == 'dip_dob_exists' ~ TRUE,
-    dip_value == 'dip_dob_NA' ~ FALSE,
-    dip_value == 'dip_gdr_exists' ~ TRUE,
-    dip_value == 'dip_gdr_NA' ~ FALSE,
-    TRUE ~ TRUE
-  )) %>% 
-  group_by(file_name, var) %>% 
-  summarize(exists_in_dip = any(exists_flag)) %>% 
-  ungroup() %>% 
-  filter(var != 'gender status')
-
 # filter out status variables now from the full detailed set, not useful 
 combined_detailed <- combined_detailed %>% 
   filter(!var %in% c('gender status', 'dob status')) 
@@ -166,6 +159,36 @@ write_csv(
     "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_detailed.csv"
     )
 )
+
+
+##############################
+# DETAILS ON COLUMN NAMES ----
+##############################
+
+# get a list of what does/doesn't exist in each dataset, and what the column name is
+# this should be complete for every dataset? 
+# note: weird extra msp row - gender fmou - remove?
+col_names_path <- safepaths::use_network_path(
+  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/column_names/linkage_variable_names.csv"
+)
+
+tmp <- read_csv(col_names_path) %>% 
+  filter(var_main != 'gender_FMOU') %>% 
+  filter(set == 'primary') %>% # remove later 
+  mutate(exists_in_dip = var_dip!='no such variable') %>% 
+  mutate(file_name = name)
+
+combined_list_vars <- tmp %>% group_by(name, var_main) %>% 
+  mutate(row_num = row_number()) %>% 
+  # fix gender and dob to gender status and dob status
+  mutate(var_main = case_when(
+    var_main == 'gender' & row_num == 2 ~ 'gender status',
+    var_main == 'dob' ~ 'dob status',
+    TRUE ~ var_main
+  )) %>% 
+  filter(
+    var_main != 'gender status'
+  )
 
 write_csv(
   combined_list_vars, 
@@ -185,16 +208,18 @@ directory <- safepaths::use_network_path(
   )
 
 # Get a list of all CSV files in the directory
-file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE)
+file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE, recursive=TRUE)
 file_list
 
 # Read all CSV files, add a column for the filename, and combine them into one data frame
 combined_summary <- map_dfr(file_list, ~ {
 
   file_name <- basename(.x)
+  data_group <- basename(dirname(.x))
   data <- read_csv(.x, na=c("","NA", "MASK"))
   data <- mutate(data, file_name = str_split(file_name, "_primary_variable")[[1]][1])
   data <- mutate(data, mask_flag = is.na(unique_n))
+  data <- mutate(data, data_group = data_group)
 
   return(data)
 })
@@ -206,11 +231,15 @@ combined_summary <- combined_summary %>%
     unique_percent = as.numeric(unique_percent),
     unique_percent_survey = as.numeric(unique_percent_survey)
   ) %>% 
+  
   # fill in missing rows 
+  group_by(file_name, var, data_group) %>% 
   complete(
-    file_name, var, cross_status, 
+    cross_status = unique(combined_summary$cross_status), 
     fill = list(unique_n = 0, unique_percent = 0, unique_percent_survey = 0, mask_flag = FALSE)
   ) %>% 
+  ungroup() %>% 
+  
   # get strings for %s and commas for Ns
   mutate(
     unique_n_str = format(unique_n, big.mark = ","),
@@ -240,7 +269,7 @@ combined_summary <- combined_summary %>%
   filter(!var %in% c('gender status')) 
 
   
-combined_summary 
+combined_summary
 
 # Write the combined data to a new CSV file for review
 write_csv(
