@@ -64,11 +64,17 @@ ui <- fluidPage(
             sidebarPanel(
               
               # filter for the data group variable
-              selectInput(
-                "data_group_summary",
-                "Choose Data Provider:",
+              pickerInput(
+                inputId = "data_group_summary",
+                label = "Choose Data Provider:",
                 choices = unique(combined_summary$data_group),
                 selected = unique(combined_summary$data_group),
+                options = pickerOptions(
+                  actionsBox = TRUE, 
+                  liveSearch = TRUE,
+                  selectedTextFormat = "count > 3",
+                  size = 10
+                ),
                 multiple = TRUE
               ),
               
@@ -81,11 +87,17 @@ ui <- fluidPage(
               
               # Filter for the 'var' variable
               # depends on choice of file_name
-              selectInput(
-                "var_summary", 
-                "Choose Variable(s):", 
-                choices = NULL, # unique(combined_summary$var), 
-                # selected = unique(combined_summary$var),
+              pickerInput(
+                inputId = "var_summary", 
+                label = "Choose Variable(s):", 
+                choices = NULL,
+                selected = NULL,
+                options = pickerOptions(
+                  actionsBox = TRUE, 
+                  liveSearch = TRUE,
+                  selectedTextFormat = "count > 3",
+                  size = 10
+                ), 
                 multiple = TRUE
               ),
               
@@ -137,11 +149,17 @@ ui <- fluidPage(
            sidebarPanel(
              
              # filter for the data group variable
-             selectInput(
+             pickerInput(
                "data_group_detailed",
                "Choose Data Provider:",
                choices = unique(combined_detailed$data_group),
                selected = unique(combined_detailed$data_group),
+               options = pickerOptions(
+                 actionsBox = TRUE, 
+                 liveSearch = TRUE,
+                 selectedTextFormat = "count > 3",
+                 size = 10
+               ),
                multiple = TRUE
              ),
              
@@ -244,7 +262,7 @@ server <- function(input, output) {
   # choose variables based on the file filters
   observeEvent(filtered_by_file_summary(),{
     choices <- unique(filtered_by_file_summary()$var)
-    updateSelectInput(inputId = 'var_summary', choices = choices, selected = choices)
+    updatePickerInput(inputId = 'var_summary', choices = choices, selected = choices)
   })
   
   # create final filtered table
