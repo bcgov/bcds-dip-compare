@@ -268,6 +268,14 @@ combined_summary <- combined_summary %>%
   # filter out status variables now from the summary set, not useful 
   filter(!var %in% c('gender status')) 
 
+# add dip var names to the file
+combined_summary <- combined_summary %>% 
+  left_join(select(combined_list_vars,name,var_main,var_dip),by=c("file_name"="name","var"="var_main"))
+
+# update "no such variables" to desired names, e.g., N/A
+combined_summary <- combined_summary %>% 
+  mutate(var_dip=case_when(var_dip=="no such variable" ~ "N/A",TRUE ~ var_dip))
+
   
 combined_summary
 
