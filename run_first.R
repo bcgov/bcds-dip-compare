@@ -86,6 +86,10 @@ write_csv(
   )
 )
 
+# write combined data to rds for use by app
+if(!dir.exists("app/data")) {dir.create("app/data") } # create data folder if doesn't exist
+saveRDS(combined_overview, "app/data/combined_overview.rds")
+
 ##############################
 # DETAILED VAR LINKAGE RATES ----
 ##############################
@@ -160,6 +164,8 @@ write_csv(
     )
 )
 
+# write combined data to rds for use by app
+saveRDS(combined_detailed, "app/data/combined_detailed.rds")
 
 ##############################
 # DETAILS ON COLUMN NAMES ----
@@ -197,6 +203,8 @@ write_csv(
   )
 )
 
+# write combined data to rds for use by app
+saveRDS(combined_list_vars, "app/data/combined_list.rds")
 
 ##############################
 # SUMMARY OF LINKAGE BY VAR ----
@@ -287,3 +295,5 @@ write_csv(
     )
   )
 
+# write combined data to rds for use by app
+saveRDS(combined_summary, "app/data/combined_summary.rds")
