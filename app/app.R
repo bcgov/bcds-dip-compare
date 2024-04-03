@@ -239,7 +239,8 @@ server <- function(input, output) {
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
           "Percent of DIP Dataset Covered" = pct_dip_in_demo_str
           ), 
-      options = list(pageLength = 100))
+      options = list(pageLength = 100),
+      rownames=FALSE)
   })
   
   # data_summary ----
@@ -282,7 +283,7 @@ server <- function(input, output) {
   
   ## render table ----
   output$data_summary <- renderDT({
-    datatable(filtered_data_summary(), options = list(pageLength = 25))
+    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 25))
     
   })
   
@@ -405,7 +406,7 @@ server <- function(input, output) {
 
   ## render table ----
   output$data_detailed <- renderDT({
-    datatable(filtered_data_detailed(), options = list(pageLength = 25))
+    datatable(filtered_data_detailed(), rownames=FALSE, options = list(pageLength = 25))
 
   })
   
