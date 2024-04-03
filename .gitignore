@@ -3,3 +3,11 @@
 .RData
 .Ruserdata
 scratch/
+
+# data files
+*.xlsx
+*.rds
+*.csv
+
+# data folder
+data/
