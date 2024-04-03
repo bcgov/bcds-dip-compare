@@ -30,6 +30,9 @@ ui <- fluidPage(
   
   ## deprecated so copied appropriate code into functions.R
   useShinydashboard(),
+  ## allow scrolling on x-axis in browser
+  tags$body(style = "overflow-x:scroll"),
+  
   fluidRow(
     
     ## Replace appname with the title that will appear in the header
