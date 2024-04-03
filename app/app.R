@@ -179,6 +179,15 @@ ui <- fluidPage(
                "var_detailed", 
                "Choose Variable:", 
                choices = NULL #unique(combined_detailed$var)
+             ),
+             
+             # Description of DIP variable name for selected input
+             fluidRow(
+               box(
+                 width = NULL,
+                 solidHeader = TRUE,
+                 title = HTML("<small><p><b>Actual DIP Variable Name:</b></small>"),
+                 span(textOutput("dipVarName"),style="font-size:12px"))
              )
            ),
            
@@ -391,6 +400,24 @@ server <- function(input, output) {
     choices <- unique(filtered_by_file_detailed()$var)
     updateSelectInput(inputId = 'var_detailed', choices = choices)
   })
+  
+  # get data for dip var name based on inputs/filters
+  filtered_by_data_detailed_var_names <- reactive({
+    combined_list_vars %>%
+      filter(name %in% input$file_detailed) %>% 
+      filter(var_main == input$var_detailed)
+  })
+  
+  # create the description of the dip var name, N/A if no such variable, otherwise actual dip var name
+  output$dipVarName <- renderText({
+    dip_var <- filtered_by_data_detailed_var_names()$var_dip
+    if(!dip_var=="no such variable") {
+      paste(dip_var)
+    } else {
+      paste("N/A")
+    }
+  })
+  
   
   # create final filtered table
   filtered_data_detailed <- reactive({
