@@ -240,7 +240,8 @@ server <- function(input, output) {
           "Percent of DIP Dataset Covered" = pct_dip_in_demo_str
           ), 
       options = list(pageLength = 100),
-      rownames=FALSE)
+      rownames=FALSE,
+      filter = list(position="top"))
   })
   
   # data_summary ----
