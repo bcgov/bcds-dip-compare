@@ -43,6 +43,7 @@ ui <- fluidPage(
       ),
     
     tags$head(tags$link(rel = "shortcut icon", href = "favicon.png")), ## to add BCGov favicon
+    tags$style(type='text/css', ".btn.dropdown-toggle.btn-default { background: white;}"), ## make filter drop-downs white
     
     column(
       width = 12,
