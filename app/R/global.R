@@ -15,6 +15,7 @@
 ## Some useful libraries
 library(shiny)
 library(shinydashboard)
+library(markdown)
 library(tidyverse)  ## for data manipulation
 library(janitor)    ## for cleaning data (includes rounding functions)
 library(lubridate)  ## for dates

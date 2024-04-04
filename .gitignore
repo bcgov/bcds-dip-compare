@@ -11,3 +11,6 @@ scratch/
 
 # data folder
 data/
+
+# RStudio Connect folder
+rsconnect/
