@@ -54,6 +54,7 @@ ui <- fluidPage(
         # overall linkage rates ----
         tabPanel(
          "Overall Linkage Rates",
+         value="overall",
          mainPanel(
            DTOutput("data_overview") ## data_overview ----
          )
@@ -63,6 +64,7 @@ ui <- fluidPage(
        # linked summary ----
        tabPanel(
          "Linked Variables - Summary",
+         value="summary",
           sidebarLayout(
             sidebarPanel(
               
@@ -151,6 +153,7 @@ ui <- fluidPage(
        # linked individual demos ----
        tabPanel(
          "Linked Individual Demos",
+         value="detailed",
          sidebarLayout(
            
            sidebarPanel(
@@ -247,12 +250,29 @@ ui <- fluidPage(
 
 
 #server logic ----
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   # formatting ----
   ## Change links to false to remove the link list from the header
   bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
   bcsapps::bcsFooterServer(id = 'footer')
+  
+  # tab links ----
+  observeEvent(input$link_about, {
+    updateTabItems(session, "nav_bar", "about")
+  })
+  
+  observeEvent(input$link_overall, {
+    updateTabItems(session, "nav_bar", "overall")
+  })
+  
+  observeEvent(input$link_summary, {
+    updateTabItems(session, "nav_bar", "summary")
+  })
+  
+  observeEvent(input$link_detailed, {
+    updateTabItems(session, "nav_bar", "detailed")
+  })
 
   # data_overview ----
   ## render table ----
