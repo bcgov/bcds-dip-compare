@@ -327,6 +327,9 @@ server <- function(input, output) {
         t1 <- temp %>% 
           filter(var==var_name)
         
+        # get dip var name
+        dip_var_name <- unique(t1 %>% pull(var_dip))
+        
         extra_coverage <- t1 %>% 
           filter(cross_status == 'Present in survey only') %>% 
           pull(unique_percent_str)
@@ -344,6 +347,8 @@ server <- function(input, output) {
           icon <-  'check'
           color <- 'green'
           info <- paste0(
+            ' DIP Variable Name: ','<strong>',dip_var_name, '</strong>',
+            '<br>',
             already_covered, 
             ' Already Covered in DIP', 
             '<br>',
@@ -357,6 +362,8 @@ server <- function(input, output) {
           icon <-  'x'
           color <- 'red'
           info <- paste0(
+            'No DIP Variable',
+            '<br>',
             extra_coverage,
             ' Coverage from Survey',
             '<br>',
@@ -367,8 +374,8 @@ server <- function(input, output) {
         
         # return the info box
         infoBox(
-          title = var_name, #HTML(paste0(var_name,'<br>')),
-          value = HTML(paste0("<p style='font-size:22px'>", info, "</p>")),
+          title = HTML(paste0("<strong>", var_name, "</strong>")),
+          value = HTML(paste0("<p style='font-size:14px; font-weight: normal;'>", info, "</p>")),
           icon = icon(icon),
           color = color,
           width = 6
