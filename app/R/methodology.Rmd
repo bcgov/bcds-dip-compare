@@ -1,0 +1,22 @@
+---
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+In 2023, BC Stats distributed the BC Demographic Survey... (insert BCDS information here).
+
+The Data Innovation Program (DIP) contains data from... (insert DIP data here).
+
+Information placeholder.
+
+#### Caveats placeholder
+- Some DIP datasets did not have a studyid for linking, while others were not included due to being considered subsets (without demographics) and were not included in further analyses;
+- The data from the DIP datasets was not manipulated in any way prior to analyzing linkage rates, therefore some 'known dip' percentages may appear higher than actuality, e.g., where one variable houses multiple variables, or where unknowns or otherwise are included in the variable
+- Some variables names within DIP were given different names for better comparison across datasets/demographic survey; see the actual names provided in respective tabs
+
+
+BC Stats would like to acknowledge with gratitude the traditional and
+unceded territory of the lək̓ʷəŋən speaking peoples, today known as the
+Esquimalt and Songhees Nations, where this dashboard was produced.

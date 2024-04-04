@@ -30,6 +30,9 @@ ui <- fluidPage(
   
   ## deprecated so copied appropriate code into functions.R
   useShinydashboard(),
+  ## allow scrolling on x-axis in browser
+  tags$body(style = "overflow-x:scroll"),
+  
   fluidRow(
     
     ## Replace appname with the title that will appear in the header
@@ -47,12 +50,39 @@ ui <- fluidPage(
            
       # Create tabs
       tabsetPanel(
-         
+        id="nav_bar",
+        # home ----
+        tabPanel(
+          "Home",
+          mainPanel(
+            fluidRow(
+              column(width = 10,
+                     br(),
+                     h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
+                     br(),
+                     "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
+                                    Data Innovation Program (DIP).",
+                     br(),br(),
+                     "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
+                     br(),br(),
+                     "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
+                     br(),br(),
+                     "See the ",actionLink("link_detailed", "Linked Individual Demos")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
+                     br(),br(),
+                     "For more details on the data included in the dashboard and associated caveats, see the ",
+                     actionLink("link_about", "About")," tab.",
+                     br(),br()
+              ))
+          )
+        )
+        ,
         # overall linkage rates ----
         tabPanel(
          "Overall Linkage Rates",
+         value="overall",
          mainPanel(
-           DTOutput("data_overview") ## data_overview ----
+           DTOutput("data_overview"), ## data_overview ----
+           width=12
          )
         )
       ,
@@ -60,6 +90,7 @@ ui <- fluidPage(
        # linked summary ----
        tabPanel(
          "Linked Variables - Summary",
+         value="summary",
           sidebarLayout(
             sidebarPanel(
               
@@ -122,7 +153,11 @@ ui <- fluidPage(
                     </small>"
                        )
                   )
-              )
+              ),
+              # Information added about the dob variable name only when selected/exists (dobflag created in server)
+              conditionalPanel(condition = 'output.dobflag == true',
+                               HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
+                                    See metadata for the relevant dataset to determine the variable name.</small>"))
             ),
             mainPanel(
               
@@ -144,6 +179,7 @@ ui <- fluidPage(
        # linked individual demos ----
        tabPanel(
          "Linked Individual Demos",
+         value="detailed",
          sidebarLayout(
            
            sidebarPanel(
@@ -176,6 +212,15 @@ ui <- fluidPage(
                "var_detailed", 
                "Choose Variable:", 
                choices = NULL #unique(combined_detailed$var)
+             ),
+             
+             # Description of DIP variable name for selected input
+             fluidRow(
+               box(
+                 width = NULL,
+                 solidHeader = TRUE,
+                 title = HTML("<small><p><b>Actual DIP Variable Name:</b></small>"),
+                 span(textOutput("dipVarName"),style="font-size:12px"))
              )
            ),
            
@@ -205,7 +250,22 @@ ui <- fluidPage(
              )
            )
          )
-       )
+       ),
+      # about ----
+      tabPanel(
+        "About",
+        value="about",
+        mainPanel(
+          fluidRow(class = "bg-row",
+                   h1(style="padding-left:15px;margin-bottom:25px",
+                      "About the Dashboard"),
+                   div(style = "margin-left:20px;margin-right:20px",
+                       includeMarkdown("R/methodology.Rmd"),
+                       br(),
+                       br()))
+        )
+      )
+      ,
       )
     ),
     
@@ -216,12 +276,29 @@ ui <- fluidPage(
 
 
 #server logic ----
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   # formatting ----
   ## Change links to false to remove the link list from the header
   bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
   bcsapps::bcsFooterServer(id = 'footer')
+  
+  # tab links ----
+  observeEvent(input$link_about, {
+    updateTabItems(session, "nav_bar", "about")
+  })
+  
+  observeEvent(input$link_overall, {
+    updateTabItems(session, "nav_bar", "overall")
+  })
+  
+  observeEvent(input$link_summary, {
+    updateTabItems(session, "nav_bar", "summary")
+  })
+  
+  observeEvent(input$link_detailed, {
+    updateTabItems(session, "nav_bar", "detailed")
+  })
 
   # data_overview ----
   ## render table ----
@@ -236,7 +313,9 @@ server <- function(input, output) {
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
           "Percent of DIP Dataset Covered" = pct_dip_in_demo_str
           ), 
-      options = list(pageLength = 100))
+      options = list(pageLength = 100),
+      rownames=FALSE,
+      filter = list(position="top"))
   })
   
   # data_summary ----
@@ -271,6 +350,7 @@ server <- function(input, output) {
     filter(filtered_by_file_summary(), var %in% input$var_summary) %>% 
       select(
         "Demographic Variable" = var, 
+        "DIP Variable Name" = var_dip,
         "Cross-Status" = cross_status, 
         "Unique IDs in DIP Dataset" = unique_n_str, 
         "Percent of Unique IDs" = unique_percent_str
@@ -279,9 +359,13 @@ server <- function(input, output) {
   
   ## render table ----
   output$data_summary <- renderDT({
-    datatable(filtered_data_summary(), options = list(pageLength = 25))
+    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 25))
     
   })
+  
+  # create dob status flag
+  output$dobflag <- reactive("dip_dob_status" %in% filtered_data_summary()$"DIP Variable Name")
+  outputOptions(output, "dobflag", suspendWhenHidden = FALSE)
   
   ## summary info boxes ----
   summary_info <- reactive({
@@ -304,6 +388,9 @@ server <- function(input, output) {
         t1 <- temp %>% 
           filter(var==var_name)
         
+        # get dip var name
+        dip_var_name <- unique(t1 %>% pull(var_dip))
+        
         extra_coverage <- t1 %>% 
           filter(cross_status == 'Present in survey only') %>% 
           pull(unique_percent_str)
@@ -321,6 +408,8 @@ server <- function(input, output) {
           icon <-  'check'
           color <- 'green'
           info <- paste0(
+            ' DIP Variable Name: ','<strong>',dip_var_name, '</strong>',
+            '<br>',
             already_covered, 
             ' Already Covered in DIP', 
             '<br>',
@@ -334,6 +423,8 @@ server <- function(input, output) {
           icon <-  'x'
           color <- 'red'
           info <- paste0(
+            'No DIP Variable',
+            '<br>',
             extra_coverage,
             ' Coverage from Survey',
             '<br>',
@@ -344,8 +435,8 @@ server <- function(input, output) {
         
         # return the info box
         infoBox(
-          title = var_name, #HTML(paste0(var_name,'<br>')),
-          value = HTML(paste0("<p style='font-size:22px'>", info, "</p>")),
+          title = HTML(paste0("<strong>", var_name, "</strong>")),
+          value = HTML(paste0("<p style='font-size:14px; font-weight: normal;'>", info, "</p>")),
           icon = icon(icon),
           color = color,
           width = 6
@@ -387,6 +478,24 @@ server <- function(input, output) {
     updateSelectInput(inputId = 'var_detailed', choices = choices)
   })
   
+  # get data for dip var name based on inputs/filters
+  filtered_by_data_detailed_var_names <- reactive({
+    combined_list_vars %>%
+      filter(name %in% input$file_detailed) %>% 
+      filter(var_main == input$var_detailed)
+  })
+  
+  # create the description of the dip var name, N/A if no such variable, otherwise actual dip var name
+  output$dipVarName <- renderText({
+    dip_var <- filtered_by_data_detailed_var_names()$var_dip
+    if(!dip_var=="no such variable") {
+      paste(dip_var)
+    } else {
+      paste("N/A")
+    }
+  })
+  
+  
   # create final filtered table
   filtered_data_detailed <- reactive({
     filtered_by_file_detailed() %>%
@@ -402,7 +511,7 @@ server <- function(input, output) {
 
   ## render table ----
   output$data_detailed <- renderDT({
-    datatable(filtered_data_detailed(), options = list(pageLength = 25))
+    datatable(filtered_data_detailed(), rownames=FALSE, options = list(pageLength = 25))
 
   })
   
