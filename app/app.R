@@ -125,7 +125,11 @@ ui <- fluidPage(
                     </small>"
                        )
                   )
-              )
+              ),
+              # Information added about the dob variable name only when selected/exists (dobflag created in server)
+              conditionalPanel(condition = 'output.dobflag == true',
+                               HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
+                                    See metadata for the relevant dataset to determine the variable name.</small>"))
             ),
             mainPanel(
               
@@ -285,6 +289,7 @@ server <- function(input, output) {
     filter(filtered_by_file_summary(), var %in% input$var_summary) %>% 
       select(
         "Demographic Variable" = var, 
+        "DIP Variable Name" = var_dip,
         "Cross-Status" = cross_status, 
         "Unique IDs in DIP Dataset" = unique_n_str, 
         "Percent of Unique IDs" = unique_percent_str
@@ -296,6 +301,10 @@ server <- function(input, output) {
     datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 25))
     
   })
+  
+  # create dob status flag
+  output$dobflag <- reactive("dip_dob_status" %in% filtered_data_summary()$"DIP Variable Name")
+  outputOptions(output, "dobflag", suspendWhenHidden = FALSE)
   
   ## summary info boxes ----
   summary_info <- reactive({
