@@ -221,7 +221,22 @@ ui <- fluidPage(
              )
            )
          )
-       )
+       ),
+      # about ----
+      tabPanel(
+        "About",
+        value="about",
+        mainPanel(
+          fluidRow(class = "bg-row",
+                   h1(style="padding-left:15px;margin-bottom:25px",
+                      "About the Dashboard"),
+                   div(style = "margin-left:20px;margin-right:20px",
+                       includeMarkdown("R/methodology.Rmd"),
+                       br(),
+                       br()))
+        )
+      )
+      ,
       )
     ),
     
