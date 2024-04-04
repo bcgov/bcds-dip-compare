@@ -17,6 +17,5 @@ Information placeholder.
 - Some variables names within DIP were given different names for better comparison across datasets/demographic survey; see the actual names provided in respective tabs
 
 
-BC Stats would like to acknowledge with gratitude the traditional and
-unceded territory of the lək̓ʷəŋən speaking peoples, today known as the
+BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the
 Esquimalt and Songhees Nations, where this dashboard was produced.
