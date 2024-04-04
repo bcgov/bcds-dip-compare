@@ -50,13 +50,39 @@ ui <- fluidPage(
            
       # Create tabs
       tabsetPanel(
-         
+        id="nav_bar",
+        # home ----
+        tabPanel(
+          "Home",
+          mainPanel(
+            fluidRow(
+              column(width = 10,
+                     br(),
+                     h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
+                     br(),
+                     "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
+                                    Data Innovation Program (DIP).",
+                     br(),br(),
+                     "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on...",
+                     br(),br(),
+                     "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on...",
+                     br(),br(),
+                     "See the ",actionLink("link_detailed", "Linked Individual Demos")," tab for information on...",
+                     br(),br(),
+                     "For more details on the data included in the dashboard and associated caveats, see the ",
+                     actionLink("link_about", "About")," tab.",
+                     br(),br()
+              ))
+          )
+        )
+        ,
         # overall linkage rates ----
         tabPanel(
          "Overall Linkage Rates",
          value="overall",
          mainPanel(
-           DTOutput("data_overview") ## data_overview ----
+           DTOutput("data_overview"), ## data_overview ----
+           width=12
          )
         )
       ,
