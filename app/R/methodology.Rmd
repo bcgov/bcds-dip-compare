@@ -12,9 +12,9 @@ The Data Innovation Program (DIP) contains data from... (insert DIP data here).
 Information placeholder.
 
 #### Caveats placeholder
-- Some DIP datasets did not have a studyid for linking, while others were not included due to being considered subsets (without demographics) and were not included in further analyses;
-- The data from the DIP datasets was not manipulated in any way prior to analyzing linkage rates, therefore some 'known dip' percentages may appear higher than actuality, e.g., where one variable houses multiple variables, or where unknowns or otherwise are included in the variable
-- Some variables names within DIP were given different names for better comparison across datasets/demographic survey; see the actual names provided in respective tabs
+- Some DIP datasets were excluded from this analysis because they did not have studyids required for linking (i.e., not row-level datasets), or were considered subsets of other datasets already included (i.e., not a main source of information).
+- Data from other DIP datasets was not manipulated in any way prior to analyzing linkage rates; therefore, some ‘known dip’ percentages may appear artificially high (e.g., if the variable includes Unknown values as valid responses).
+- Variable names used in menus in this dashboard align with those used in the BC Demographic Survey and may be worded differently than those used in other DIP datasets; actual variable names used in a dataset are listed in the comparison tables within respective tabs.
 
 
 BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the
