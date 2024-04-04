@@ -67,7 +67,7 @@ ui <- fluidPage(
                      br(),br(),
                      "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
                      br(),br(),
-                     "See the ",actionLink("link_detailed", "Linked Individual Demos")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
+                     "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
                      br(),br(),
                      "For more details on the data included in the dashboard and associated caveats, see the ",
                      actionLink("link_about", "About")," tab.",
@@ -194,9 +194,9 @@ ui <- fluidPage(
           )
          ),
       
-       # linked individual demos ----
+       # linked individual demogs ----
        tabPanel(
-         "Linked Individual Demos",
+         "Linked Individual Demogs",
          value="detailed",
          sidebarLayout(
            
