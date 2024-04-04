@@ -90,12 +90,12 @@ ui <- fluidPage(
                title = HTML("<small><p><b>File Name Information:</b></small>"),
                HTML(
                  "<small>
-                          <p>This tab contains all possible datasets accessed for checking linkage rates.
-                          Note that some datasets may not appear in the rest of the tabs due to several reasons described below.
-                          <p><b>NOT_DONE_subset:</b> These datasets were deemed subsets of other datasets, and were not assessed further.
-                          <p><b>NOT_DONE_no_studyid:</b>These datasets did not contain a studyid variable required for linking to BC Demographic Survey information.
-                          <p><b>NOT_DONE_see_:</b>These datasets were not done, as they were deemed a repeat of another (e.g., calendar year dataset versus fiscal year dataset).
-                          </small>"
+                 <p>This tab contains all possible datasets accessed for checking linkage rates.
+                 Note that some datasets may not appear in the rest of the tabs due to several reasons described below.
+                 <p><b>NOT_DONE_subset:</b> These datasets were deemed subsets of other datasets, and were not assessed further.
+                 <p><b>NOT_DONE_no_studyid:</b> These datasets did not contain a studyid variable required for linking to BC Demographic Survey information.
+                 <p><b>NOT_DONE_see_:</b> These datasets were not done, as they were deemed a repeat of another (e.g., calendar year dataset versus fiscal year dataset).
+                 </small>"
                )
              )
            ),
@@ -377,7 +377,7 @@ server <- function(input, output, session) {
   
   ## render table ----
   output$data_summary <- renderDT({
-    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 25))
+    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 50))
     
   })
   
@@ -529,7 +529,7 @@ server <- function(input, output, session) {
 
   ## render table ----
   output$data_detailed <- renderDT({
-    datatable(filtered_data_detailed(), rownames=FALSE, options = list(pageLength = 25))
+    datatable(filtered_data_detailed(), rownames=FALSE, options = list(pageLength = 50))
 
   })
   
