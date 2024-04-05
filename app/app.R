@@ -161,13 +161,13 @@ ui <- fluidPage(
                   title = HTML("<small><p><b>Cross-Status Definitions:</b></small>"),
                   HTML(
                     "<small>
-                    <p><b>Present in survey only:</b> 
+                    <p><b>Survey only:</b> 
                     <p>These records contain no demographic information for the given variable within the DIP Dataset, but are supplemented by the BC Demographic Survey.
-                    <p><b>Present in DIP dataset only:</b>
+                    <p><b>DIP only:</b>
                     <p>These records contain demographic information for the given variable within the DIP Dataset, and have no supplemental information from the BC Demographic Survey.
-                    <p><b>Present in survey AND DIP:</b>
+                    <p><b>DIP and survey:</b>
                     <p>These records contain demographic information for the given variable within the DIP Dataset, and have supplemental information from the BC Demographic Survey. This information may or may not align.
-                    <p><b>Not present in survey OR DIP:</b>
+                    <p><b>Neither source:</b>
                     <p>These records contain no demographic information for the given variable within the DIP Dataset, and have no supplemental information from the BC Demographic Survey.
                     <p>
                     </small>"
