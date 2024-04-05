@@ -70,6 +70,7 @@ ui <- fluidPage(
                      br(),br(),
                      "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
                      br(),br(),
+                     "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
                      "For more details on the data included in the dashboard and associated caveats, see the ",
                      actionLink("link_about", "About")," tab.",
                      br(),br()
@@ -238,7 +239,7 @@ ui <- fluidPage(
                box(
                  width = NULL,
                  solidHeader = TRUE,
-                 title = HTML("<small><p><b>Actual DIP Variable Name:</b></small>"),
+                 title = HTML("<small><p><b>DIP Variable Name:</b></small>"),
                  span(textOutput("dipVarName"),style="font-size:12px"))
              )
            ),
@@ -328,7 +329,7 @@ server <- function(input, output, session) {
           "Dataset" = dataset, 
           "File Name" = file_name, 
           "DIP Dataset Records" = in_dip_dataset_str, 
-          "DIP Dataset Records Linked" = in_both_str, 
+          "DIP Dataset Records Linked to Survey Records" = in_both_str, 
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
           "Percent of DIP Dataset Covered" = pct_dip_in_demo_str
           ), 
