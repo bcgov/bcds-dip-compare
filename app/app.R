@@ -412,32 +412,39 @@ server <- function(input, output, session) {
         dip_var_name <- unique(t1 %>% pull(var_dip))
         
         extra_coverage <- t1 %>% 
-          filter(cross_status == 'Present in survey only') %>% 
+          filter(cross_status == 'Survey only') %>% 
           pull(unique_percent_str)
         
         already_covered <- t1 %>% 
-          filter(cross_status == 'Present in DIP dataset only') %>% 
-          pull(unique_percent_str)
+          filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
+          pull(unique_percent) %>% sum()
         
-        survey_coverage <- t1 %>% 
-          filter(cross_status == 'Present in survey only') %>% 
-          pull(unique_percent_survey_str)
+        already_covered <- sprintf("%.2f%%", already_covered)
+        
+        # no longer showing survey coverage
+        # survey_coverage <- t1 %>% 
+        #   filter(cross_status == 'Present in survey only') %>% 
+        #   pull(unique_percent_survey_str)
+        
+        unknown_amount <- t1 %>% 
+          filter(cross_status == 'Neither source') %>% 
+          pull(unique_percent_str)
         
         # create info box material 
         if (in_dip) {
           icon <-  'check'
           color <- 'green'
           info <- paste0(
-            ' DIP Variable Name: ','<strong>',dip_var_name, '</strong>',
+            ' Variable Name in DIP: ','<strong>',dip_var_name, '</strong>',
             '<br>',
             already_covered, 
-            ' Already Covered in DIP', 
+            ' Known from DIP', 
             '<br>',
             extra_coverage,
-            ' Extra Coverage from Survey',
+            ' Additional Coverage from Survey',
             '<br>',
-            survey_coverage,
-            ' Coverage of Survey'
+            unknown_amount,
+            ' Still Unknown'
           )
         } else {
           icon <-  'x'
@@ -445,11 +452,14 @@ server <- function(input, output, session) {
           info <- paste0(
             'No DIP Variable',
             '<br>',
-            extra_coverage,
-            ' Coverage from Survey',
+            already_covered, 
+            ' Known from DIP', 
             '<br>',
-            survey_coverage,
-            ' Coverage of Survey'
+            extra_coverage,
+            ' Additional Coverage from Survey',
+            '<br>',
+            unknown_amount,
+            ' Still Unknown'
           )
         }
         
