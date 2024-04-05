@@ -267,10 +267,10 @@ combined_summary <- combined_summary %>%
   # tidy up the wording of cross status
   mutate(
     cross_status = case_when(
-      cross_status == 'added info' ~ 'Present in survey only',
-      cross_status == 'lost info' ~ 'Present in DIP dataset only',
-      cross_status == 'both NA or invalid' ~ 'Not present in survey OR DIP',
-      cross_status == 'both known' ~ 'Present in survey AND DIP'
+      cross_status == 'added info' ~ 'Survey only',
+      cross_status == 'lost info' ~ 'DIP only',
+      cross_status == 'both NA or invalid' ~ 'Neither source',
+      cross_status == 'both known' ~ 'DIP and survey'
     )
   ) %>% 
   # filter out status variables now from the summary set, not useful 
