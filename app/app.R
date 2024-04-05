@@ -326,14 +326,24 @@ server <- function(input, output, session) {
     datatable(
       combined_overview %>% 
         select(
+          # select desired vars and numeric versions for hidden sorting
           "Dataset" = dataset, 
           "File Name" = file_name, 
           "DIP Dataset Records" = in_dip_dataset_str, 
-          "DIP Dataset Records Linked to Survey Records" = in_both_str, 
+          in_dip_dataset,
+          "DIP Dataset Records Linked to Survey Records" = in_both_str,
+          in_both,
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
-          "Percent of DIP Dataset Covered" = pct_dip_in_demo_str
+          pct_demo_in_dip,
+          "Percent of DIP Dataset Covered" = pct_dip_in_demo_str,
+          pct_dip_in_demo
           ), 
-      options = list(pageLength = 100),
+      options = list(pageLength = 100,
+                     # use numeric columns (not visible) to properly sort string versions of columns (shown in app)
+                     columnDefs = list(list(targets = 2, orderData = 3),list(targets = 4, orderData = 5),
+                                       list(targets = 6, orderData = 7),list(targets = 8, orderData = 9),
+                                       list(targets = c(3,5,7,9), visible = FALSE))
+                     ),
       rownames=FALSE,
       filter = list(position="top"))
   })
