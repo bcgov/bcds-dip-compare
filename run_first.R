@@ -148,12 +148,19 @@ combined_detailed <- combined_detailed %>%
     bcds_value = if_else(is.na(bcds_value), 'Not in Survey', bcds_value)
   ) %>% 
   # remove total counts 
-  filter( var!= "TOTAL") 
+  filter( var!= "TOTAL") %>% 
+  # fix typo
+  mutate(
+    var = case_when(
+      var == "dip_gdr" ~ "gender",
+      TRUE ~ var
+    )
+  )
 
 # filter out status variables now from the full detailed set, not useful 
 combined_detailed <- combined_detailed %>% 
   filter(!var %in% c('gender status', 'dob status')) 
-  
+
 combined_detailed 
 
 # Write the combined data to a new CSV file for review
@@ -194,6 +201,27 @@ combined_list_vars <- tmp %>% group_by(name, var_main) %>%
   )) %>% 
   filter(
     var_main != 'gender status'
+  ) 
+
+combined_list_vars <- combined_list_vars %>% 
+  # fix typo
+  mutate(
+    var_main = case_when(
+      var_main == "disability: phsyical capacity" ~ "disability: physical capacity",
+      TRUE ~ var_main
+    )
+  ) %>% 
+  # add "survey" variable; manually fix non-matching default survey variables
+  mutate(
+    survey_var = case_when(
+      var_main == "disability 2" ~ "disability",
+      var_main == "indigenous ever" ~ "indigenous",
+      var_main == "indigenous ever backdated" ~ "indigenous",
+      var_main == "FN income assist" ~ "indigenous",
+      var_main == "dip_gdr" ~ "gender",
+      grepl("disability: ",var_main) ~ "disability",
+      TRUE ~ var_main
+    )
   )
 
 write_csv(
@@ -274,17 +302,15 @@ combined_summary <- combined_summary %>%
     )
   ) %>% 
   # filter out status variables now from the summary set, not useful 
-  filter(!var %in% c('gender status')) 
+  filter(!var %in% c('gender status')) %>% 
+  # fix typo
+  mutate(
+    var = case_when(
+      var == "dip_gdr" ~ "gender",
+      TRUE ~ var
+    )
+  ) 
 
-# add dip var names to the file
-combined_summary <- combined_summary %>% 
-  left_join(select(combined_list_vars,name,var_main,var_dip),by=c("file_name"="name","var"="var_main"))
-
-# update "no such variables" to desired names, e.g., N/A
-combined_summary <- combined_summary %>% 
-  mutate(var_dip=case_when(var_dip=="no such variable" ~ "N/A",TRUE ~ var_dip))
-
-  
 combined_summary
 
 # Write the combined data to a new CSV file for review
