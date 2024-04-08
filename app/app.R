@@ -418,6 +418,13 @@ server <- function(input, output, session) {
   
   ## render table ----
   output$data_summary <- renderDT({
+    # add warning messages in case any filter has none selected
+    validate(
+      need(input$data_group_summary, 'Select at least one data provider.'),
+      need(input$var_summary, 'Select at least one survey variable.'),
+      need(input$dip_var_summary, 'Select at least one DIP variable.')
+    )
+    
     datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 50))
     
   })
@@ -523,6 +530,13 @@ server <- function(input, output, session) {
   
   ### render info boxes ----
   output$summary_info <- renderUI({
+    # add warning messages in case any filter has none selected
+    validate(
+      need(input$data_group_summary, 'Select at least one data provider.'),
+      need(input$var_summary, 'Select at least one survey variable.'),
+      need(input$dip_var_summary, 'Select at least one DIP variable.')
+    )
+    
     summary_info()
   })
   
@@ -581,6 +595,11 @@ server <- function(input, output, session) {
 
   ## render table ----
   output$data_detailed <- renderDT({
+    # add warning message in case none selected
+    validate(
+      need(input$data_group_detailed, 'Select at least one data provider.')
+    )
+    
     datatable(filtered_data_detailed(), rownames=FALSE, options = list(pageLength = 50))
 
   })
@@ -588,12 +607,18 @@ server <- function(input, output, session) {
   ## render heatmap ----
   output$heatmap_detailed <- renderPlotly({
     
+    # add warning message in case none selected
+    validate(
+      need(input$data_group_detailed, 'Select at least one data provider.')
+    )
+    
     # choose which column to use for the heat map
     col_to_use <- if (input$detail_plot_option == 'bcds'){
       col_to_use = 'unique_percent_survey'
     } else {
       col_to_use = 'unique_percent'
     }
+    
     temp <- combined_detailed %>% 
       left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main")) %>% 
       filter(file_name == input$file_detailed) %>% 
