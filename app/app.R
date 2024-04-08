@@ -140,7 +140,23 @@ ui <- fluidPage(
               # depends on choice of file_name
               pickerInput(
                 inputId = "var_summary", 
-                label = "Choose Variable(s):", 
+                label = "Choose Survey Variable(s):", 
+                choices = NULL,
+                selected = NULL,
+                options = pickerOptions(
+                  actionsBox = TRUE, 
+                  liveSearch = TRUE,
+                  selectedTextFormat = "count > 3",
+                  size = 10
+                ), 
+                multiple = TRUE
+              ),
+              
+              # Filter for the 'dip var' variable
+              # depends on choice of var
+              pickerInput(
+                inputId = "dip_var_summary", 
+                label = "Choose DIP Variable(s):", 
                 choices = NULL,
                 selected = NULL,
                 options = pickerOptions(
@@ -230,18 +246,17 @@ ui <- fluidPage(
              # depends on choice of file_name 
              selectInput(
                "var_detailed", 
-               "Choose Variable:", 
+               "Choose Survey Variable:", 
                choices = NULL #unique(combined_detailed$var)
              ),
              
-             # Description of DIP variable name for selected input
-             fluidRow(
-               box(
-                 width = NULL,
-                 solidHeader = TRUE,
-                 title = HTML("<small><p><b>DIP Variable Name:</b></small>"),
-                 span(textOutput("dipVarName"),style="font-size:12px"))
-             )
+             # Filter for the 'dip var' variable
+             # depends on choice of var 
+             selectInput(
+               "dip_var_detailed", 
+               "Choose DIP Variable:", 
+               choices = NULL #unique(combined_detailed$var)
+             ),
            ),
            
            mainPanel(
@@ -353,7 +368,8 @@ server <- function(input, output, session) {
   
   filtered_by_data_group_summary <- reactive({
     combined_summary %>% 
-      filter(data_group %in% input$data_group_summary)
+      filter(data_group %in% input$data_group_summary) %>% 
+      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
   })
   
   # choose variables based on data group filters 
@@ -370,16 +386,29 @@ server <- function(input, output, session) {
   
   # choose variables based on the file filters
   observeEvent(filtered_by_file_summary(),{
-    choices <- unique(filtered_by_file_summary()$var)
+    choices <- unique(filtered_by_file_summary()$survey_var)
     updatePickerInput(inputId = 'var_summary', choices = choices, selected = choices)
+  })
+  
+  # filter by var
+  filtered_by_var_summary <- reactive({
+    req(input$var_summary)
+    filtered_by_file_summary() %>% 
+      filter(survey_var %in% input$var_summary)
+  }) 
+  
+  # choose variables based on the file filters
+  observeEvent(filtered_by_var_summary(),{
+    choices <- unique(filtered_by_var_summary()$var_dip)
+    updatePickerInput(inputId = 'dip_var_summary', choices = choices, selected = choices)
   })
   
   # create final filtered table
   filtered_data_summary <- reactive({
-    req(input$var_summary)
-    filter(filtered_by_file_summary(), var %in% input$var_summary) %>% 
+    req(input$dip_var_summary)
+    filter(filtered_by_var_summary(), var_dip %in% input$dip_var_summary) %>% 
       select(
-        "Demographic Variable" = var, 
+        "Survey Variable" = survey_var, 
         "DIP Variable Name" = var_dip,
         "Cross-Status" = cross_status, 
         "Unique IDs in DIP Dataset" = unique_n_str, 
@@ -400,26 +429,36 @@ server <- function(input, output, session) {
   ## summary info boxes ----
   summary_info <- reactive({
     
-    req(input$var_summary)
-    var_list <- input$var_summary
+    list1 <- combined_list_vars %>% 
+      filter(file_name == input$file_summary) %>% 
+      filter(survey_var %in% input$var_summary) %>% 
+      filter(var_dip %in% input$dip_var_summary) %>% 
+      pull(var_dip)
+    
+    list2 <- combined_list_vars %>% 
+      filter(file_name == input$file_summary) %>% 
+      filter(survey_var %in% input$var_summary) %>% 
+      filter(var_dip %in% input$dip_var_summary) %>% 
+      pull(survey_var)
     
     temp <- combined_summary %>% 
+      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main")) %>% 
       filter(file_name == input$file_summary)
     
     info <- lapply(
-      var_list, function(var_name){
+      1:length(list1), function(index){
+        
+        dip_var_name = list1[index]
+        var_name = list2[index]
         
         # check if it exists in DIP
         in_dip <- combined_list_vars %>% 
-          filter(file_name == input$file_summary, var_main==var_name) %>% 
+          filter(file_name == input$file_summary, survey_var==var_name, var_dip == dip_var_name) %>% 
           pull(exists_in_dip)
         
         # get info about the variable 
         t1 <- temp %>% 
-          filter(var==var_name)
-        
-        # get dip var name
-        dip_var_name <- unique(t1 %>% pull(var_dip))
+          filter(survey_var==var_name, var_dip == dip_var_name)
         
         extra_coverage <- t1 %>% 
           filter(cross_status == 'Survey only') %>% 
@@ -430,11 +469,6 @@ server <- function(input, output, session) {
           pull(unique_percent) %>% sum()
         
         already_covered <- sprintf("%.2f%%", already_covered)
-        
-        # no longer showing survey coverage
-        # survey_coverage <- t1 %>% 
-        #   filter(cross_status == 'Present in survey only') %>% 
-        #   pull(unique_percent_survey_str)
         
         unknown_amount <- t1 %>% 
           filter(cross_status == 'Neither source') %>% 
@@ -497,7 +531,8 @@ server <- function(input, output, session) {
   
   filtered_by_data_group_detailed <- reactive({
     combined_detailed %>% 
-      filter(data_group %in% input$data_group_detailed)
+      filter(data_group %in% input$data_group_detailed) %>% 
+      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
   })
   
   # choose variables based on data group filters 
@@ -514,32 +549,27 @@ server <- function(input, output, session) {
   
   # choose variables based on the file filters
   observeEvent(filtered_by_file_detailed(),{
-    choices <- unique(filtered_by_file_detailed()$var)
+    choices <- unique(filtered_by_file_detailed()$survey_var)
     updateSelectInput(inputId = 'var_detailed', choices = choices)
   })
   
-  # get data for dip var name based on inputs/filters
-  filtered_by_data_detailed_var_names <- reactive({
-    combined_list_vars %>%
-      filter(name %in% input$file_detailed) %>% 
-      filter(var_main == input$var_detailed)
-  })
+  # filter by var
+  filtered_by_var_detailed <- reactive({
+    req(input$var_detailed)
+    filtered_by_file_detailed() %>% 
+      filter(survey_var == input$var_detailed)
+  }) 
   
-  # create the description of the dip var name, N/A if no such variable, otherwise actual dip var name
-  output$dipVarName <- renderText({
-    dip_var <- filtered_by_data_detailed_var_names()$var_dip
-    if(!dip_var=="no such variable") {
-      paste(dip_var)
-    } else {
-      paste("N/A")
-    }
+  # choose variables based on the file filters
+  observeEvent(filtered_by_var_detailed(),{
+    choices <- unique(filtered_by_var_detailed()$var_dip)
+    updateSelectInput(inputId = 'dip_var_detailed', choices = choices)
   })
-  
   
   # create final filtered table
   filtered_data_detailed <- reactive({
-    filtered_by_file_detailed() %>%
-      filter(var %in% input$var_detailed) %>% 
+    filtered_by_var_detailed() %>%
+      filter(var_dip %in% input$dip_var_detailed) %>% 
       select(
         "Value in DIP" = dip_value,
         "Value in Survey" = bcds_value,
@@ -565,8 +595,10 @@ server <- function(input, output, session) {
       col_to_use = 'unique_percent'
     }
     temp <- combined_detailed %>% 
+      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main")) %>% 
       filter(file_name == input$file_detailed) %>% 
-      filter(var == input$var_detailed) %>% 
+      filter(survey_var == input$var_detailed) %>% 
+      filter(var_dip == input$dip_var_detailed) %>% 
       mutate(text = paste0(
         "BC Demographic Survey Value: ", bcds_value, "\n",
         "DIP Dataset Value: ", dip_value, "\n",
