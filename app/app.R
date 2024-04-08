@@ -637,12 +637,6 @@ server <- function(input, output, session) {
       hoverinfo = 'text'
     ) %>% 
       layout(
-        title = list(
-          text = "Distribution of Demographic Values Across DIP and BC Demographic Survey",
-          automargin = TRUE,
-          yanchor = 'top',
-          y = 0.98
-        ),
         xaxis = list(
           title = "BC Demographic Survey",
           side="top",
