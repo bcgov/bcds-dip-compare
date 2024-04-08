@@ -654,8 +654,8 @@ server <- function(input, output, session) {
     rownames(t1) = row_names
     
     fig <- plot_ly(
-      x = colnames(t1),
-      y = rownames(t1),
+      x = lapply(colnames(t1), function(x) replace(x, is.na(x), 'NA')),
+      y = lapply(rownames(t1), function(x) replace(x, is.na(x), 'NA')),
       z = t1, 
       text = t2,
       type = 'heatmap',
@@ -669,7 +669,9 @@ server <- function(input, output, session) {
           pad = list(t = 10)
         ),
         yaxis = list(
-          title = "DIP Dataset", autorange = "reversed"
+          title = "DIP Dataset", 
+          autorange = "reversed",
+          type = "category"
         ),
         margin = list(
           l = 50,
