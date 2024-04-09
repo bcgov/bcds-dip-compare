@@ -155,6 +155,15 @@ combined_detailed <- combined_detailed %>%
       var == "dip_gdr" ~ "gender",
       TRUE ~ var
     )
+  ) %>% 
+  # fix some dip value issues
+  mutate(
+    dip_value = case_when(
+      dip_value=="assume F" ~ "no such variable",
+      (file_name=="ed_student_enrolment" & var=="difficulty") ~ "no such variable",
+      (file_name=="ed_course_mark" & var=="indigenous identity") ~ "no such variable",
+      TRUE ~ dip_value
+    )
   )
 
 # filter out status variables now from the full detailed set, not useful 
@@ -259,6 +268,22 @@ combined_summary <- map_dfr(file_list, ~ {
 
   return(data)
 })
+
+# fix some cross_status data issues
+combined_summary <- combined_summary %>% 
+  mutate(
+    cross_status = case_when(
+      (file_name=="vital_events_stillbirths_id2_mom" & var %in% "gender" & cross_status=="lost info") ~ "both NA or invalid",
+      (file_name=="vital_events_stillbirths_id2_mom" & var %in% "gender" & cross_status=="both known") ~ "added info",
+      (file_name=="vital_events_births_id2_mom" & var %in% "gender" & cross_status=="lost info") ~ "both NA or invalid",
+      (file_name=="vital_events_births_id2_mom" & var %in% "gender" & cross_status=="both known") ~ "added info",
+      (file_name=="ed_course_mark" & var =="indigenous identity" & cross_status=="lost info") ~ "both NA or invalid",
+      (file_name=="ed_course_mark" & var == "indigenous identity" & cross_status=="both known") ~ "added info",
+      (file_name=="ed_student_enrolment" & var =="difficulty" & cross_status=="lost info") ~ "both NA or invalid",
+      (file_name=="ed_student_enrolment" & var == "difficulty" & cross_status=="both known") ~ "added info",
+      TRUE ~ cross_status
+    )
+  )
 
 # confirm numeric datatypes
 combined_summary <- combined_summary %>% 
