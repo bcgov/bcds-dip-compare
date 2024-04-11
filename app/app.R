@@ -32,7 +32,7 @@ ui <- tagList(
   # additional css to make certain things work
   tags$head(tags$link(rel = "shortcut icon", href = "favicon.png")), ## to add BCGov favicon
   tags$style(type='text/css', ".btn.dropdown-toggle.btn-default { background: white;}"), ## make filter drop-downs white
-  tags$body(style = "overflow-x:scroll"), ## allow scrolling on x-axis in browser
+  tags$body(style = "background-color:#d4dfeb;overflow-x:scroll"), ## allow scrolling on x-axis in browser
   
   ## deprecated so copied appropriate code into functions.R
   useShinydashboard(),
@@ -49,49 +49,53 @@ ui <- tagList(
     ## title/header/footer ----
     title = "",
 
-    header = fluidRow(bcsapps::bcsHeaderUI(
+    header = bcsapps::bcsHeaderUI(
       id = 'header',
       appname = "BC Demographic Survey: DIP Linkage Rates",
       github = NULL # replace with github URL or NULL
-    )),
+    ),
 
-    footer = fluidRow(bcsapps::bcsFooterUI(id = 'footer')),
+    footer = bcsapps::bcsFooterUI(id = 'footer'),
  
     # Create tabs
     # home ----
     tabPanel(
-      "Home",
+      title = div(style = "padding:9.5px 0",
+                  tags$i(class = 'fa-solid fa-house'),
+                  "Home"),
       value="home",
       style = "padding-top:160px",
-      mainPanel(
-        fluidRow(
-          column(width = 10,
-                 br(),
-                 h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
-                 br(),
-                 "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
-                                Data Innovation Program (DIP).",
-                 br(),br(),
-                 "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
-                 br(),br(),
-                 "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
-                 br(),br(),
-                 "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
-                 br(),br(),
-                 "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
-                 "For more details on the data included in the dashboard and associated caveats, see the ",
-                 actionLink("link_about", "About")," tab.",
-                 br(),br()
-          ))
-      )
+      fluidRow(style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+        column(width = 12,
+               offset = 0,
+               br(),
+               h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
+               br(),
+               "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
+                              Data Innovation Program (DIP).",
+               br(),br(),
+               "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
+               br(),br(),
+               "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
+               br(),br(),
+               "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
+               br(),br(),
+               "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
+               "For more details on the data included in the dashboard and associated caveats, see the ",
+               actionLink("link_about", "About")," tab.",
+               br(),br()
+        ))
     )
     ,
     # overall linkage rates ----
     tabPanel(
-     "Overall Linkage Rates",
+      title = div(style = "padding:9.5px 0",
+                  #tags$i(class = 'fa-solid fa-house'),
+                  "Overall Linkage Rates"),
      value="overall",
-     mainPanel(
+     style = "padding-top:160px",
        fluidRow(
+         style="padding-right:30px;padding-left:30px;min-width:fit-content",
          box(
            width = NULL,
            solidHeader = TRUE,
@@ -109,18 +113,23 @@ ui <- tagList(
            )
          )
        ),
+     fluidRow(
+       style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
        DTOutput("data_overview"), ## data_overview ----
-       width=12
      )
     )
   ,
      
    # linked summary ----
    tabPanel(
-     "Linked Variables - Summary",
+     title = div(style = "padding:9.5px 0",
+                 #tags$i(class = 'fa-solid fa-house'),
+                 "Linked Variables - Summary"),
      value="summary",
+     style = "padding-top:160px",
       sidebarLayout(
         sidebarPanel(
+          style = "padding-right:30px;padding-left:30px;min-height:750px",
           
           # filter for the data group variable
           pickerInput(
@@ -180,7 +189,7 @@ ui <- tagList(
             box(
               width = NULL,
               solidHeader = TRUE,
-              collapsible = TRUE, # not sure why not working 
+              collapsible = TRUE, 
               collapsed = FALSE, 
               title = HTML("<small><p><b>Cross-Status Definitions:</b></small>"),
               HTML(
@@ -198,12 +207,13 @@ ui <- tagList(
                    )
               )
           ),
+          
           # Information added about the dob variable name only when selected/exists (dobflag created in server)
           conditionalPanel(condition = 'output.dobflag == true',
                            HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
                                 See metadata for the relevant dataset to determine the variable name.</small>"))
         ),
-        mainPanel(
+        mainPanel(style = "padding-right:30px;padding-left:30px;background-color:white;min-height:750px",
           
           tabsetPanel(
             tabPanel(
@@ -222,12 +232,15 @@ ui <- tagList(
   
    # linked individual demogs ----
    tabPanel(
-     "Linked Individual Demogs",
+     div(style = "padding:9.5px 0",
+         #tags$i(class = 'fa-solid fa-house'),
+         "Linked Individual Demogs"),
+     style = "padding-top:160px",
      value="detailed",
      sidebarLayout(
        
        sidebarPanel(
-         
+         style = "padding-right:30px;padding-left:30px;",
          # filter for the data group variable
          pickerInput(
            "data_group_detailed",
@@ -268,7 +281,7 @@ ui <- tagList(
        ),
        
        mainPanel(
-         
+         style = "padding-right:30px;padding-left:30px;background-color:white;",
          tabsetPanel(
            
            ## table ----
@@ -296,17 +309,21 @@ ui <- tagList(
    ),
   # about ----
   tabPanel(
-    "About",
+    div(style = "padding:9.5px 0",
+        #tags$i(class = 'fa-solid fa-house'),
+        "About"),
+    style = "padding-top:160px",
     value="about",
-    mainPanel(
-      fluidRow(class = "bg-row",
-               h1(style="padding-left:15px;margin-bottom:25px",
-                  "About the Dashboard"),
-               div(style = "margin-left:20px;margin-right:20px",
-                   includeMarkdown("R/methodology.Rmd"),
-                   br(),
-                   br()))
-    )
+    fluidRow(
+      style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      class = "bg-row",
+      h1(style="padding-left:15px;margin-bottom:25px",
+        "About the Dashboard"),
+      div(style = "margin-left:20px;margin-right:20px",
+         includeMarkdown("R/methodology.Rmd"),
+         br(),
+         br()))
+    
   )
   )
 )
@@ -318,8 +335,7 @@ server <- function(input, output, session) {
   
   # formatting ----
   ## Change links to false to remove the link list from the header
-  bcstatslinks::linkModServer('links')
-  output$links_yn <- shiny::renderUI(bcstatslinks::linkModUI('links'))
+  bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
   bcsapps::bcsFooterServer(id = 'footer')
   
   # tab links ----
@@ -432,7 +448,7 @@ server <- function(input, output, session) {
       need(input$dip_var_summary, 'Select at least one DIP variable.')
     )
     
-    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 50, scrollY = "1000px"))
+    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 50, scrollY = "600px"))
     
   })
   
@@ -607,7 +623,11 @@ server <- function(input, output, session) {
       need(input$data_group_detailed, 'Select at least one data provider.')
     )
     
-    datatable(filtered_data_detailed(), rownames=FALSE, options = list(pageLength = 50))
+    datatable(
+      filtered_data_detailed(), 
+      rownames=FALSE, 
+      options = list(pageLength = 50, scrollY = "600px")
+      )
 
   })
   
