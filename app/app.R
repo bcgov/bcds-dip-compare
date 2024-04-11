@@ -115,7 +115,7 @@ ui <- tagList(
     # overall linkage rates ----
     tabPanel(
       title = div(style = "padding:9.5px 0",
-                  #tags$i(class = 'fa-solid fa-house'),
+                  tags$i(class = 'fa-solid fa-link'),
                   "Overall Linkage Rates"),
      value="overall",
      style = "padding-top:160px",
@@ -148,7 +148,7 @@ ui <- tagList(
    # linked summary ----
    tabPanel(
      title = div(style = "padding:9.5px 0",
-                 #tags$i(class = 'fa-solid fa-house'),
+                 tags$i(class = 'fa-solid fa-chart-bar'),
                  "Linked Variables - Summary"),
      value="summary",
      style = "padding-top:160px",
@@ -258,7 +258,7 @@ ui <- tagList(
    # linked individual demogs ----
    tabPanel(
      div(style = "padding:9.5px 0",
-         #tags$i(class = 'fa-solid fa-house'),
+         tags$i(class = 'fa-solid fa-code-compare'),
          "Linked Individual Demogs"),
      style = "padding-top:160px",
      value="detailed",
@@ -335,7 +335,7 @@ ui <- tagList(
   # about ----
   tabPanel(
     div(style = "padding:9.5px 0",
-        #tags$i(class = 'fa-solid fa-house'),
+        tags$i(class = 'fa-solid fa-circle-info'),
         "About"),
     style = "padding-top:160px",
     value="about",
