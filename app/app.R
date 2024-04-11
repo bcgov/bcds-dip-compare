@@ -55,7 +55,32 @@ ui <- tagList(
       github = NULL # replace with github URL or NULL
     ),
 
-    footer = bcsapps::bcsFooterUI(id = 'footer'),
+    footer = fluidRow(
+      style = "padding-top:15px;margin-top:-15px;min-width:-webkit-fill-available;",
+      br(),br(),
+      div(style = "padding-left:45px;margin-top:-50px;",
+          br(),br(),
+          h3('This dashboard was produced in 2024. Linkage rates will change overtime.'),
+          "Questions for DIP?", 
+          a(style = "text-decoration:underline",
+            href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            "Open a ticket here."),
+          br(),
+          
+          "Questions about the Dashboard?",
+          a(style = "text-decoration:underline",
+            href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            "Contact BC Stats."),
+          br(),
+          
+          "Questions about the BC Demographic Survey?",
+          a(style = "text-decoration:underline",
+            href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+          "Contact them here.")),
+      
+          #br(),br(),
+          bcsapps::bcsFooterUI(id = 'footer')
+              ),
  
     # Create tabs
     # home ----
