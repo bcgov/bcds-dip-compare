@@ -32,7 +32,7 @@ ui <- tagList(
   # additional css to make certain things work
   tags$head(tags$link(rel = "shortcut icon", href = "favicon.png")), ## to add BCGov favicon
   tags$style(type='text/css', ".btn.dropdown-toggle.btn-default { background: white;}"), ## make filter drop-downs white
-  tags$body(style = "background-color:#d4dfeb;overflow-x:scroll"), ## allow scrolling on x-axis in browser
+  tags$body(style = "overflow-x:scroll"), ## allow scrolling on x-axis in browser
   
   ## deprecated so copied appropriate code into functions.R
   useShinydashboard(),
