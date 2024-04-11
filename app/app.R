@@ -23,290 +23,293 @@ library(shinyWidgets)
 library(shinydashboard)
 
 # Define UI ----
-ui <- fluidPage(
 
-  theme = "styles.css",
-  HTML("<html lang='en'>"),
+ui <- tagList(
+
+  shinyjs::useShinyjs(),
+  hover::use_hover(popback = TRUE),
+  
+  # additional css to make certain things work
+  tags$head(tags$link(rel = "shortcut icon", href = "favicon.png")), ## to add BCGov favicon
+  tags$style(type='text/css', ".btn.dropdown-toggle.btn-default { background: white;}"), ## make filter drop-downs white
+  tags$body(style = "overflow-x:scroll"), ## allow scrolling on x-axis in browser
   
   ## deprecated so copied appropriate code into functions.R
   useShinydashboard(),
-  ## allow scrolling on x-axis in browser
-  tags$body(style = "overflow-x:scroll"),
   
-  fluidRow(
+  navbarPage(
+    id = 'navbar',
+    theme = "styles.css",
+    lang = 'en',
+    position = c('fixed-top'),
+    collapsible = TRUE,
+    #fluid=TRUE,
+    selected = 'home',
     
-    ## Replace appname with the title that will appear in the header
-    bcsapps::bcsHeaderUI(
+    ## title/header/footer ----
+    title = "",
+
+    header = fluidRow(bcsapps::bcsHeaderUI(
       id = 'header',
       appname = "BC Demographic Survey: DIP Linkage Rates",
       github = NULL # replace with github URL or NULL
-      ),
-    
-    tags$head(tags$link(rel = "shortcut icon", href = "favicon.png")), ## to add BCGov favicon
-    tags$style(type='text/css', ".btn.dropdown-toggle.btn-default { background: white;}"), ## make filter drop-downs white
-    
-    column(
-      width = 12,
-      style = "margin-top:100px",
-           
-      # Create tabs
-      tabsetPanel(
-        id="nav_bar",
-        # home ----
-        tabPanel(
-          "Home",
-          mainPanel(
-            fluidRow(
-              column(width = 10,
-                     br(),
-                     h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
-                     br(),
-                     "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
-                                    Data Innovation Program (DIP).",
-                     br(),br(),
-                     "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
-                     br(),br(),
-                     "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
-                     br(),br(),
-                     "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
-                     br(),br(),
-                     "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
-                     "For more details on the data included in the dashboard and associated caveats, see the ",
-                     actionLink("link_about", "About")," tab.",
-                     br(),br()
-              ))
-          )
-        )
-        ,
-        # overall linkage rates ----
-        tabPanel(
-         "Overall Linkage Rates",
-         value="overall",
-         mainPanel(
-           fluidRow(
-             box(
-               width = NULL,
-               solidHeader = TRUE,
-               collapsible = TRUE,
-               collapsed = FALSE,
-               title = HTML("<small><p><b>File Name Information:</b></small>"),
-               HTML(
-                 "<small>
-                 <p>This tab contains all possible datasets accessed for checking linkage rates.
-                 Note that some datasets may not appear in the rest of the tabs due to several reasons described below.
-                 <p><b>NOT_DONE_subset:</b> These datasets were deemed subsets of other datasets, and were not assessed further.
-                 <p><b>NOT_DONE_no_studyid:</b> These datasets did not contain a studyid variable required for linking to BC Demographic Survey information.
-                 <p><b>NOT_DONE_see_:</b> These datasets were not done, as they were deemed a repeat of another (e.g., calendar year dataset versus fiscal year dataset).
-                 </small>"
-               )
-             )
-           ),
-           DTOutput("data_overview"), ## data_overview ----
-           width=12
-         )
-        )
-      ,
-         
-       # linked summary ----
-       tabPanel(
-         "Linked Variables - Summary",
-         value="summary",
-          sidebarLayout(
-            sidebarPanel(
-              
-              # filter for the data group variable
-              pickerInput(
-                inputId = "data_group_summary",
-                label = "Choose Data Provider:",
-                choices = unique(combined_summary$data_group),
-                selected = unique(combined_summary$data_group),
-                options = pickerOptions(
-                  actionsBox = TRUE, 
-                  liveSearch = TRUE,
-                  selectedTextFormat = "count > 3",
-                  size = 10
-                ),
-                multiple = TRUE
-              ),
-              
-              # Filter for the 'file_name' variable
-              selectInput(
-                "file_summary", 
-                "Choose File:", 
-                choices = NULL #unique(combined_summary$file_name)
-              ),
-              
-              # Filter for the 'var' variable
-              # depends on choice of file_name
-              pickerInput(
-                inputId = "var_summary", 
-                label = "Choose Survey Variable(s):", 
-                choices = NULL,
-                selected = NULL,
-                options = pickerOptions(
-                  actionsBox = TRUE, 
-                  liveSearch = TRUE,
-                  selectedTextFormat = "count > 3",
-                  size = 10
-                ), 
-                multiple = TRUE
-              ),
-              
-              # Filter for the 'dip var' variable
-              # depends on choice of var
-              pickerInput(
-                inputId = "dip_var_summary", 
-                label = "Choose DIP Variable(s):", 
-                choices = NULL,
-                selected = NULL,
-                options = pickerOptions(
-                  actionsBox = TRUE, 
-                  liveSearch = TRUE,
-                  selectedTextFormat = "count > 3",
-                  size = 10
-                ), 
-                multiple = TRUE
-              ),
-              
-              fluidRow(
-                box(
-                  width = NULL,
-                  solidHeader = TRUE,
-                  collapsible = TRUE, # not sure why not working 
-                  collapsed = FALSE, 
-                  title = HTML("<small><p><b>Cross-Status Definitions:</b></small>"),
-                  HTML(
-                    "<small>
-                    <p><b>Survey only:</b> 
-                    <p>These records contain no demographic information for the given variable within the DIP Dataset, but are supplemented by valid demographic information from the BC Demographic Survey.
-                    <p><b>DIP only:</b>
-                    <p>These records contain demographic information for the given variable within the DIP Dataset, and have no valid supplemental information from the BC Demographic Survey.
-                    <p><b>DIP and survey:</b>
-                    <p>These records contain demographic information for the given variable within the DIP Dataset, and have valid supplemental information from the BC Demographic Survey. This information may or may not align.
-                    <p><b>Neither source:</b>
-                    <p>These records contain no demographic information for the given variable within the DIP Dataset, and have no valid supplemental information from the BC Demographic Survey.
-                    <p>
-                    </small>"
-                       )
-                  )
-              ),
-              # Information added about the dob variable name only when selected/exists (dobflag created in server)
-              conditionalPanel(condition = 'output.dobflag == true',
-                               HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
-                                    See metadata for the relevant dataset to determine the variable name.</small>"))
-            ),
-            mainPanel(
-              
-              tabsetPanel(
-                tabPanel(
-                  'Highlights',
-                  uiOutput('summary_info'), ## summary highlights ----                
-                ),
-                
-                tabPanel(
-                  'Table',
-                  DTOutput("data_summary") ## data_summary ----
-                )
-              )
-            )
-          )
-         ),
-      
-       # linked individual demogs ----
-       tabPanel(
-         "Linked Individual Demogs",
-         value="detailed",
-         sidebarLayout(
-           
-           sidebarPanel(
-             
-             # filter for the data group variable
-             pickerInput(
-               "data_group_detailed",
-               "Choose Data Provider:",
-               choices = unique(combined_detailed$data_group),
-               selected = unique(combined_detailed$data_group),
-               options = pickerOptions(
-                 actionsBox = TRUE, 
-                 liveSearch = TRUE,
-                 selectedTextFormat = "count > 3",
-                 size = 10
-               ),
-               multiple = TRUE
-             ),
-             
-             # Filter for the 'file_name' variable
-             selectInput(
-               "file_detailed", 
-               "Choose File:", 
-               choices = NULL #unique(combined_detailed$file_name)
-             ),
-             
-             # Filter for the 'var' variable
-             # depends on choice of file_name 
-             selectInput(
-               "var_detailed", 
-               "Choose Survey Variable:", 
-               choices = NULL #unique(combined_detailed$var)
-             ),
-             
-             # Filter for the 'dip var' variable
-             # depends on choice of var 
-             selectInput(
-               "dip_var_detailed", 
-               "Choose DIP Variable:", 
-               choices = NULL #unique(combined_detailed$var)
-             ),
-           ),
-           
-           mainPanel(
-             
-             tabsetPanel(
-               
-               ## table ----
-               tabPanel(
-                 "Table",
-                 DTOutput("data_detailed") ### data_detailed ----
-               ),
-               
-               ## heatmap ----
-               tabPanel(
-                 "Heatmap",
-                  radioButtons(
-                    "detail_plot_option", "Plot heatmap based on:",
-                    c(
-                      'Percent of BC Demographic Survey' = 'bcds', 
-                      'Percent of DIP Dataset' = 'dip'
-                      ),
-                    inline=TRUE
-                    ),
-                 plotlyOutput("heatmap_detailed", height="800px") ### heatmap_detailed ----
-                )
-             )
+    )),
+
+    footer = fluidRow(bcsapps::bcsFooterUI(id = 'footer')),
+ 
+    # Create tabs
+    # home ----
+    tabPanel(
+      "Home",
+      value="home",
+      style = "padding-top:160px",
+      mainPanel(
+        fluidRow(
+          column(width = 10,
+                 br(),
+                 h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
+                 br(),
+                 "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
+                                Data Innovation Program (DIP).",
+                 br(),br(),
+                 "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
+                 br(),br(),
+                 "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
+                 br(),br(),
+                 "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
+                 br(),br(),
+                 "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
+                 "For more details on the data included in the dashboard and associated caveats, see the ",
+                 actionLink("link_about", "About")," tab.",
+                 br(),br()
+          ))
+      )
+    )
+    ,
+    # overall linkage rates ----
+    tabPanel(
+     "Overall Linkage Rates",
+     value="overall",
+     mainPanel(
+       fluidRow(
+         box(
+           width = NULL,
+           solidHeader = TRUE,
+           collapsible = TRUE,
+           collapsed = FALSE,
+           title = HTML("<small><p><b>File Name Information:</b></small>"),
+           HTML(
+             "<small>
+             <p>This tab contains all possible datasets accessed for checking linkage rates.
+             Note that some datasets may not appear in the rest of the tabs due to several reasons described below.
+             <p><b>NOT_DONE_subset:</b> These datasets were deemed subsets of other datasets, and were not assessed further.
+             <p><b>NOT_DONE_no_studyid:</b> These datasets did not contain a studyid variable required for linking to BC Demographic Survey information.
+             <p><b>NOT_DONE_see_:</b> These datasets were not done, as they were deemed a repeat of another (e.g., calendar year dataset versus fiscal year dataset).
+             </small>"
            )
          )
        ),
-      # about ----
-      tabPanel(
-        "About",
-        value="about",
+       DTOutput("data_overview"), ## data_overview ----
+       width=12
+     )
+    )
+  ,
+     
+   # linked summary ----
+   tabPanel(
+     "Linked Variables - Summary",
+     value="summary",
+      sidebarLayout(
+        sidebarPanel(
+          
+          # filter for the data group variable
+          pickerInput(
+            inputId = "data_group_summary",
+            label = "Choose Data Provider:",
+            choices = unique(combined_summary$data_group),
+            selected = unique(combined_summary$data_group),
+            options = pickerOptions(
+              actionsBox = TRUE, 
+              liveSearch = TRUE,
+              selectedTextFormat = "count > 3",
+              size = 10
+            ),
+            multiple = TRUE
+          ),
+          
+          # Filter for the 'file_name' variable
+          selectInput(
+            "file_summary", 
+            "Choose File:", 
+            choices = NULL #unique(combined_summary$file_name)
+          ),
+          
+          # Filter for the 'var' variable
+          # depends on choice of file_name
+          pickerInput(
+            inputId = "var_summary", 
+            label = "Choose Survey Variable(s):", 
+            choices = NULL,
+            selected = NULL,
+            options = pickerOptions(
+              actionsBox = TRUE, 
+              liveSearch = TRUE,
+              selectedTextFormat = "count > 3",
+              size = 10
+            ), 
+            multiple = TRUE
+          ),
+          
+          # Filter for the 'dip var' variable
+          # depends on choice of var
+          pickerInput(
+            inputId = "dip_var_summary", 
+            label = "Choose DIP Variable(s):", 
+            choices = NULL,
+            selected = NULL,
+            options = pickerOptions(
+              actionsBox = TRUE, 
+              liveSearch = TRUE,
+              selectedTextFormat = "count > 3",
+              size = 10
+            ), 
+            multiple = TRUE
+          ),
+          
+          fluidRow(
+            box(
+              width = NULL,
+              solidHeader = TRUE,
+              collapsible = TRUE, # not sure why not working 
+              collapsed = FALSE, 
+              title = HTML("<small><p><b>Cross-Status Definitions:</b></small>"),
+              HTML(
+                "<small>
+                <p><b>Survey only:</b> 
+                <p>These records contain no demographic information for the given variable within the DIP Dataset, but are supplemented by valid demographic information from the BC Demographic Survey.
+                <p><b>DIP only:</b>
+                <p>These records contain demographic information for the given variable within the DIP Dataset, and have no valid supplemental information from the BC Demographic Survey.
+                <p><b>DIP and survey:</b>
+                <p>These records contain demographic information for the given variable within the DIP Dataset, and have valid supplemental information from the BC Demographic Survey. This information may or may not align.
+                <p><b>Neither source:</b>
+                <p>These records contain no demographic information for the given variable within the DIP Dataset, and have no valid supplemental information from the BC Demographic Survey.
+                <p>
+                </small>"
+                   )
+              )
+          ),
+          # Information added about the dob variable name only when selected/exists (dobflag created in server)
+          conditionalPanel(condition = 'output.dobflag == true',
+                           HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
+                                See metadata for the relevant dataset to determine the variable name.</small>"))
+        ),
         mainPanel(
-          fluidRow(class = "bg-row",
-                   h1(style="padding-left:15px;margin-bottom:25px",
-                      "About the Dashboard"),
-                   div(style = "margin-left:20px;margin-right:20px",
-                       includeMarkdown("R/methodology.Rmd"),
-                       br(),
-                       br()))
+          
+          tabsetPanel(
+            tabPanel(
+              'Highlights',
+              uiOutput('summary_info'), ## summary highlights ----                
+            ),
+            
+            tabPanel(
+              'Table',
+              DTOutput("data_summary") ## data_summary ----
+            )
+          )
         )
       )
-      ,
-      )
-    ),
-    
-    bcsapps::bcsFooterUI(id = 'footer')
+     ),
+  
+   # linked individual demogs ----
+   tabPanel(
+     "Linked Individual Demogs",
+     value="detailed",
+     sidebarLayout(
+       
+       sidebarPanel(
+         
+         # filter for the data group variable
+         pickerInput(
+           "data_group_detailed",
+           "Choose Data Provider:",
+           choices = unique(combined_detailed$data_group),
+           selected = unique(combined_detailed$data_group),
+           options = pickerOptions(
+             actionsBox = TRUE, 
+             liveSearch = TRUE,
+             selectedTextFormat = "count > 3",
+             size = 10
+           ),
+           multiple = TRUE
+         ),
+         
+         # Filter for the 'file_name' variable
+         selectInput(
+           "file_detailed", 
+           "Choose File:", 
+           choices = NULL #unique(combined_detailed$file_name)
+         ),
+         
+         # Filter for the 'var' variable
+         # depends on choice of file_name 
+         selectInput(
+           "var_detailed", 
+           "Choose Survey Variable:", 
+           choices = NULL #unique(combined_detailed$var)
+         ),
+         
+         # Filter for the 'dip var' variable
+         # depends on choice of var 
+         selectInput(
+           "dip_var_detailed", 
+           "Choose DIP Variable:", 
+           choices = NULL #unique(combined_detailed$var)
+         ),
+       ),
+       
+       mainPanel(
+         
+         tabsetPanel(
+           
+           ## table ----
+           tabPanel(
+             "Table",
+             DTOutput("data_detailed") ### data_detailed ----
+           ),
+           
+           ## heatmap ----
+           tabPanel(
+             "Heatmap",
+              radioButtons(
+                "detail_plot_option", "Plot heatmap based on:",
+                c(
+                  'Percent of BC Demographic Survey' = 'bcds', 
+                  'Percent of DIP Dataset' = 'dip'
+                  ),
+                inline=TRUE
+                ),
+             plotlyOutput("heatmap_detailed", height="800px") ### heatmap_detailed ----
+            )
+         )
+       )
+     )
+   ),
+  # about ----
+  tabPanel(
+    "About",
+    value="about",
+    mainPanel(
+      fluidRow(class = "bg-row",
+               h1(style="padding-left:15px;margin-bottom:25px",
+                  "About the Dashboard"),
+               div(style = "margin-left:20px;margin-right:20px",
+                   includeMarkdown("R/methodology.Rmd"),
+                   br(),
+                   br()))
+    )
   )
   )
+)
 
 
 
@@ -315,24 +318,25 @@ server <- function(input, output, session) {
   
   # formatting ----
   ## Change links to false to remove the link list from the header
-  bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
+  bcstatslinks::linkModServer('links')
+  output$links_yn <- shiny::renderUI(bcstatslinks::linkModUI('links'))
   bcsapps::bcsFooterServer(id = 'footer')
   
   # tab links ----
   observeEvent(input$link_about, {
-    updateTabItems(session, "nav_bar", "about")
+    updateTabsetPanel(session, "navbar", "about")
   })
   
   observeEvent(input$link_overall, {
-    updateTabItems(session, "nav_bar", "overall")
+    updateTabsetPanel(session, "navbar", "overall")
   })
   
   observeEvent(input$link_summary, {
-    updateTabItems(session, "nav_bar", "summary")
+    updateTabsetPanel(session, "navbar", "summary")
   })
   
   observeEvent(input$link_detailed, {
-    updateTabItems(session, "nav_bar", "detailed")
+    updateTabsetPanel(session, "navbar", "detailed")
   })
 
   # data_overview ----
@@ -353,11 +357,14 @@ server <- function(input, output, session) {
           "Percent of DIP Dataset Covered" = pct_dip_in_demo_str,
           pct_dip_in_demo
           ), 
+      #extensions = 'FixedHeader',
       options = list(pageLength = 100,
                      # use numeric columns (not visible) to properly sort string versions of columns (shown in app)
                      columnDefs = list(list(targets = 2, orderData = 3),list(targets = 4, orderData = 5),
                                        list(targets = 6, orderData = 7),list(targets = 8, orderData = 9),
-                                       list(targets = c(3,5,7,9), visible = FALSE))
+                                       list(targets = c(3,5,7,9), visible = FALSE)),
+                     #fixedHeader = TRUE
+                     scrollY = "1000px"
                      ),
       rownames=FALSE,
       filter = list(position="top"))
@@ -425,7 +432,7 @@ server <- function(input, output, session) {
       need(input$dip_var_summary, 'Select at least one DIP variable.')
     )
     
-    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 50))
+    datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 50, scrollY = "1000px"))
     
   })
   
