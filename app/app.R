@@ -78,7 +78,7 @@ ui <- tagList(
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
           "Contact them here.")),
       
-          #br(),br(),
+          br(),br(),
           bcsapps::bcsFooterUI(id = 'footer')
               ),
  
