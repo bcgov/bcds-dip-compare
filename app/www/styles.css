@@ -86,5 +86,15 @@ html, body, h1, h2, h3, h4, h5, h6 {
   font-family: BCSans;
 }
 
+/*Navbar customization*/
+.navbar {
+    margin-top:80px; /*push navbar down height of BCStats header*/
+    background:#d4dfeb; /*change background color*/
+    border-color:#29619d;
+}
+.navbar-header { /*remove navbar header*/
+  height:0;
+}
+
 
 
