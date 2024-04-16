@@ -29,9 +29,9 @@ library(rmapshaper)
 library(sf)
 options(scipen = 999)
 
-##############################
+#*******************************
 # OVERVIEW OF LINKAGE RATES ----
-##############################
+#*******************************
 
 # first get the detailed .csvs
 directory <- safepaths::use_network_path(
@@ -90,9 +90,9 @@ write_csv(
 if(!dir.exists("app/data")) {dir.create("app/data") } # create data folder if doesn't exist
 saveRDS(combined_overview, "app/data/combined_overview.rds")
 
-##############################
+#*******************************
 # DETAILED VAR LINKAGE RATES ----
-##############################
+#*******************************
 
 # first get the detailed .csvs
 directory <- safepaths::use_network_path(
@@ -105,18 +105,30 @@ file_list
 
 # Read all CSV files, add a column for the filename, and combine them into one data frame
 combined_detailed <- map_dfr(file_list, ~ {
-  file_name <- basename(.x)
+  name <- basename(.x)
   data_group <- basename(dirname(.x))
   data <- read_csv(.x, na=c("","NA", "MASK"))
   data <- mutate(
     data, 
-    file_name = str_split(file_name, "_primary_variable")[[1]][1],
+    name = name,
+    file_name = str_split(name, "_primary_variable|_ind_variable|_missed_variable")[[1]][1],
     data_group = data_group
     )
   return(data)
 })
 
-combined_detailed
+multi_file_groups <- combined_detailed %>% 
+  distinct(name,file_name) %>% 
+  group_by(file_name) %>%
+  summarise(
+    name_combo = paste(name, collapse=", ")) %>% 
+  filter(grepl(",",name_combo)) %>% 
+  pull(file_name)
+
+combined_detailed <- combined_detailed %>% 
+  mutate(var = case_when((file_name %in% multi_file_groups & grepl("_primary",name) & var=="indigenous") ~ "indigenous identity",
+                         TRUE ~ var)) %>% 
+  select(-name)
 
 # confirm numeric datatypes
 combined_detailed <- combined_detailed %>% 
@@ -168,7 +180,9 @@ combined_detailed <- combined_detailed %>%
 
 # filter out status variables now from the full detailed set, not useful 
 combined_detailed <- combined_detailed %>% 
-  filter(!var %in% c('gender status', 'dob status')) 
+  filter(!var %in% c('gender status', 'dob status')) %>% 
+  # filter out age
+  filter(var != 'age')
 
 combined_detailed 
 
@@ -183,9 +197,9 @@ write_csv(
 # write combined data to rds for use by app
 saveRDS(combined_detailed, "app/data/combined_detailed.rds")
 
-##############################
+#*******************************
 # DETAILS ON COLUMN NAMES ----
-##############################
+#*******************************
 
 # get a list of what does/doesn't exist in each dataset, and what the column name is
 # this should be complete for every dataset? 
@@ -243,9 +257,9 @@ write_csv(
 # write combined data to rds for use by app
 saveRDS(combined_list_vars, "app/data/combined_list.rds")
 
-##############################
+#*******************************
 # SUMMARY OF LINKAGE BY VAR ----
-##############################
+#*******************************
 
 # first get the summary .csvs
 directory <- safepaths::use_network_path(
@@ -258,16 +272,29 @@ file_list
 
 # Read all CSV files, add a column for the filename, and combine them into one data frame
 combined_summary <- map_dfr(file_list, ~ {
-
-  file_name <- basename(.x)
+  name <- basename(.x)
   data_group <- basename(dirname(.x))
   data <- read_csv(.x, na=c("","NA", "MASK"))
-  data <- mutate(data, file_name = str_split(file_name, "_primary_variable")[[1]][1])
+  data <- mutate(data, file_name = str_split(name, "_primary_variable|_ind_variable|_missed_variable")[[1]][1])
   data <- mutate(data, mask_flag = is.na(unique_n))
   data <- mutate(data, data_group = data_group)
+  data <- mutate(data, name = name)
 
   return(data)
 })
+
+multi_file_groups <- combined_summary %>% 
+  distinct(name,file_name) %>% 
+  group_by(file_name) %>%
+  summarise(
+    name_combo = paste(name, collapse=", ")) %>% 
+  filter(grepl(",",name_combo)) %>% 
+  pull(file_name)
+
+combined_summary <- combined_summary %>% 
+  mutate(var = case_when((file_name %in% multi_file_groups & grepl("_primary",name) & var=="indigenous") ~ "indigenous identity",
+                         TRUE ~ var)) %>% 
+  select(-name)
 
 # fix some cross_status data issues
 combined_summary <- combined_summary %>% 
@@ -334,7 +361,9 @@ combined_summary <- combined_summary %>%
       var == "dip_gdr" ~ "gender",
       TRUE ~ var
     )
-  ) 
+  ) %>% 
+  # filter out age
+  filter(var != 'age')  
 
 combined_summary
 
