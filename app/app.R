@@ -523,7 +523,19 @@ server <- function(input, output, session) {
           filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
           pull(unique_percent) %>% sum()
         
-        already_covered <- sprintf("%.2f%%", already_covered)
+        # find count of MASK
+        already_covered_mask <- t1 %>% 
+          filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
+          filter(unique_percent_str=="MASK")
+        
+        # treat already covered % differently, depending on MASK result
+        if(nrow(already_covered_mask) == 2) {
+          already_covered <- "MASK"
+        } else if(nrow(already_covered_mask)==1) {
+          already_covered <- paste0("&GreaterEqual;",sprintf("%.2f%%", already_covered))
+        } else {
+          already_covered <- sprintf("%.2f%%", already_covered)
+        }
         
         unknown_amount <- t1 %>% 
           filter(cross_status == 'Neither source') %>% 
