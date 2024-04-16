@@ -117,6 +117,7 @@ combined_detailed <- map_dfr(file_list, ~ {
   return(data)
 })
 
+# fix typo from health files
 multi_file_groups <- combined_detailed %>% 
   distinct(name,file_name) %>% 
   group_by(file_name) %>%
@@ -176,7 +177,9 @@ combined_detailed <- combined_detailed %>%
       (file_name=="ed_course_mark" & var=="indigenous identity") ~ "no such variable",
       TRUE ~ dip_value
     )
-  )
+  ) %>% 
+  # remove no such variable indigenous duplicate for fmep_parent (FN income assist is the indigenous for this file)
+  filter(!(var == "indigenous" & file_name=="fmep_parent"))
 
 # filter out status variables now from the full detailed set, not useful 
 combined_detailed <- combined_detailed %>% 
@@ -283,6 +286,7 @@ combined_summary <- map_dfr(file_list, ~ {
   return(data)
 })
 
+# fix typo from health files
 multi_file_groups <- combined_summary %>% 
   distinct(name,file_name) %>% 
   group_by(file_name) %>%
@@ -310,7 +314,9 @@ combined_summary <- combined_summary %>%
       (file_name=="ed_student_enrolment" & var == "difficulty" & cross_status=="both known") ~ "added info",
       TRUE ~ cross_status
     )
-  )
+  )  %>% 
+  # remove no such variable indigenous duplicate for fmep_parent (FN income assist is the indigenous for this file)
+  filter(!(var == "indigenous" & file_name=="fmep_parent"))
 
 # confirm numeric datatypes
 combined_summary <- combined_summary %>% 
