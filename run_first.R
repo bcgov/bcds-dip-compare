@@ -189,6 +189,10 @@ combined_detailed <- combined_detailed %>%
 
 combined_detailed 
 
+# remove 'Not in Survey' results from data - detailed to be linked data only
+combined_detailed <- combined_detailed %>% 
+  filter(bcds_value != "Not in Survey")
+
 # Write the combined data to a new CSV file for review
 write_csv(
   combined_detailed, 
