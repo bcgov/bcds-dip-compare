@@ -96,5 +96,34 @@ html, body, h1, h2, h3, h4, h5, h6 {
   height:0;
 }
 
+@media (max-width: 900px) {
+  .navbar-collapse.collapse {
+        display: none!important;  /* creates collapsing */
+    }
+  .navbar-toggle {
+        display: block; /* adds hamburger button */
+    }
+  .navbar-header { /* moves hamburger button to right*/
+        float: none;
+    }
+  .collapse.in{
+        display:block !important; /* displays drop down menu when hamburger button toggled  */
+    }
+  .navbar-nav>li { /*bumps menu list items to their own row (rather than on one line)*/
+        float: none;
+    }
+    
+  .navbar-nav {
+        float: none!important; /*forces menu list to take up full width of drop down*/
+        margin-top: 7.5px; /*top margin of drop down menu*/
+        margin-bottom:10px; /*bottom margin of drop down menu*/
+        overflow:auto; /*creates scroll bar when content exceeds max-height*/
+        max-height:300px; /*add max height to inner object to display scroll*/
+    }
+  .navbar-nav>li>a { /*reduces size (top/bottom) of list items*/
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+}
 
 
