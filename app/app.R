@@ -51,7 +51,7 @@ ui <- tagList(
 
     header = bcsapps::bcsHeaderUI(
       id = 'header',
-      appname = "BC Demographic Survey: DIP Linkage Rates",
+      appname = "BC Demographic Survey: DIP Data Linkage Rates",
       github = NULL # replace with github URL or NULL
     ),
 
@@ -94,16 +94,16 @@ ui <- tagList(
         column(width = 12,
                offset = 0,
                br(),
-               h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
+               h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
                br(),
-               "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
+               "This dashboard is for discovering how the recent BC Demographic Survey data links to existing data in the
                               Data Innovation Program (DIP).",
                br(),br(),
                "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
                br(),br(),
-               "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
+               "See the ",actionLink("link_summary", "Linked Variables Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
                br(),br(),
-               "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
+               "See the ",actionLink("link_detailed", "Linked Individual Demographics")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
                br(),br(),
                "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
                "For more details on the data included in the dashboard and associated caveats, see the ",
@@ -149,7 +149,7 @@ ui <- tagList(
    tabPanel(
      title = div(style = "padding:9.5px 0",
                  tags$i(class = 'fa-solid fa-chart-bar'),
-                 "Linked Variables - Summary"),
+                 "Linked Variables Summary"),
      value="summary",
      style = "padding-top:160px",
       sidebarLayout(
@@ -259,7 +259,7 @@ ui <- tagList(
    tabPanel(
      div(style = "padding:9.5px 0",
          tags$i(class = 'fa-solid fa-code-compare'),
-         "Linked Individual Demogs"),
+         "Linked Individual Demographics"),
      style = "padding-top:160px",
      value="detailed",
      sidebarLayout(
