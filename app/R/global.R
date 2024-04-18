@@ -36,6 +36,6 @@ library(DT)         ## for tables
 ## read in rds versions
 combined_overview <- readRDS("data/combined_overview.rds")
 combined_detailed <- readRDS("data/combined_detailed.rds")
-combined_list_vars <- readRDS("data/combined_list.rds")
+#combined_list_vars <- readRDS("data/combined_list.rds")
 combined_summary <- readRDS("data/combined_summary.rds")
 
