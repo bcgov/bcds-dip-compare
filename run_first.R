@@ -30,6 +30,78 @@ library(sf)
 options(scipen = 999)
 
 #*******************************
+# DATASET INFORMATION LOOKUP ----
+#*******************************
+
+# get a list of nice dataset names and notes about each dataset
+dataset_info_path <- safepaths::use_network_path(
+  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_cross_walk.csv"
+)
+
+dataset_info <- read_csv(dataset_info_path) 
+
+#*******************************
+# DETAILS ON COLUMN NAMES ----
+#*******************************
+
+# get a list of what does/doesn't exist in each dataset, and what the column name is
+# this should be complete for every dataset? 
+# note: weird extra msp row - gender fmou - remove?
+col_names_path <- safepaths::use_network_path(
+  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/column_names/linkage_variable_names.csv"
+)
+
+tmp <- read_csv(col_names_path) %>% 
+  filter(var_main != 'gender_FMOU') %>% 
+  filter(set == 'primary') %>% # remove later 
+  mutate(exists_in_dip = var_dip!='no such variable') %>% 
+  mutate(file_name = name)
+
+combined_list_vars <- tmp %>% group_by(name, var_main) %>% 
+  mutate(row_num = row_number()) %>% 
+  # fix gender and dob to gender status and dob status
+  mutate(var_main = case_when(
+    var_main == 'gender' & row_num == 2 ~ 'gender status',
+    var_main == 'dob' ~ 'dob status',
+    TRUE ~ var_main
+  )) %>% 
+  filter(
+    var_main != 'gender status'
+  ) 
+
+combined_list_vars <- combined_list_vars %>% 
+  # fix typo
+  mutate(
+    var_main = case_when(
+      var_main == "disability: phsyical capacity" ~ "disability: physical capacity",
+      TRUE ~ var_main
+    )
+  ) %>% 
+  # add "survey" variable; manually fix non-matching default survey variables
+  mutate(
+    survey_var = case_when(
+      var_main == "disability 2" ~ "disability",
+      var_main == "indigenous ever" ~ "indigenous",
+      var_main == "indigenous ever backdated" ~ "indigenous",
+      var_main == "FN income assist" ~ "indigenous",
+      var_main == "dip_gdr" ~ "gender",
+      grepl("disability: ",var_main) ~ "disability",
+      TRUE ~ var_main
+    )
+  )
+
+write_csv(
+  combined_list_vars, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_list.csv"
+  )
+)
+
+# write combined data to rds for use by app
+saveRDS(combined_list_vars, "app/data/combined_list.rds")
+
+
+#*******************************
 # OVERVIEW OF LINKAGE RATES ----
 #*******************************
 
@@ -203,66 +275,6 @@ write_csv(
 
 # write combined data to rds for use by app
 saveRDS(combined_detailed, "app/data/combined_detailed.rds")
-
-#*******************************
-# DETAILS ON COLUMN NAMES ----
-#*******************************
-
-# get a list of what does/doesn't exist in each dataset, and what the column name is
-# this should be complete for every dataset? 
-# note: weird extra msp row - gender fmou - remove?
-col_names_path <- safepaths::use_network_path(
-  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/column_names/linkage_variable_names.csv"
-)
-
-tmp <- read_csv(col_names_path) %>% 
-  filter(var_main != 'gender_FMOU') %>% 
-  filter(set == 'primary') %>% # remove later 
-  mutate(exists_in_dip = var_dip!='no such variable') %>% 
-  mutate(file_name = name)
-
-combined_list_vars <- tmp %>% group_by(name, var_main) %>% 
-  mutate(row_num = row_number()) %>% 
-  # fix gender and dob to gender status and dob status
-  mutate(var_main = case_when(
-    var_main == 'gender' & row_num == 2 ~ 'gender status',
-    var_main == 'dob' ~ 'dob status',
-    TRUE ~ var_main
-  )) %>% 
-  filter(
-    var_main != 'gender status'
-  ) 
-
-combined_list_vars <- combined_list_vars %>% 
-  # fix typo
-  mutate(
-    var_main = case_when(
-      var_main == "disability: phsyical capacity" ~ "disability: physical capacity",
-      TRUE ~ var_main
-    )
-  ) %>% 
-  # add "survey" variable; manually fix non-matching default survey variables
-  mutate(
-    survey_var = case_when(
-      var_main == "disability 2" ~ "disability",
-      var_main == "indigenous ever" ~ "indigenous",
-      var_main == "indigenous ever backdated" ~ "indigenous",
-      var_main == "FN income assist" ~ "indigenous",
-      var_main == "dip_gdr" ~ "gender",
-      grepl("disability: ",var_main) ~ "disability",
-      TRUE ~ var_main
-    )
-  )
-
-write_csv(
-  combined_list_vars, 
-  safepaths::use_network_path(
-    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_list.csv"
-  )
-)
-
-# write combined data to rds for use by app
-saveRDS(combined_list_vars, "app/data/combined_list.rds")
 
 #*******************************
 # SUMMARY OF LINKAGE BY VAR ----
