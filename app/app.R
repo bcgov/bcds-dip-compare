@@ -137,7 +137,7 @@ ui <- tagList(
         sidebarPanel(
           style = "padding-right:30px;padding-left:30px;min-height:750px",
           
-          # filter for the data group variable
+          # filter for the data provider variable
           pickerInput(
             inputId = "data_group_summary",
             label = "Choose Data Provider:",
@@ -152,15 +152,15 @@ ui <- tagList(
             multiple = TRUE
           ),
           
-          # Filter for the 'file_name' variable
+          # Filter for the 'Resource' variable
           selectInput(
             "file_summary", 
-            "Choose File:", 
+            "Choose Resource:", 
             choices = NULL #unique(combined_summary$file_name)
           ),
           
-          # Filter for the 'var' variable
-          # depends on choice of file_name
+          # Filter for the 'survey var' variable
+          # depends on choice of Resource
           pickerInput(
             inputId = "var_summary", 
             label = "Choose Survey Variable(s):", 
@@ -176,7 +176,7 @@ ui <- tagList(
           ),
           
           # Filter for the 'dip var' variable
-          # depends on choice of var
+          # depends on choice of survey var
           pickerInput(
             inputId = "dip_var_summary", 
             label = "Choose DIP Variable(s):", 
@@ -247,7 +247,8 @@ ui <- tagList(
        
        sidebarPanel(
          style = "padding-right:30px;padding-left:30px;",
-         # filter for the data group variable
+         
+         # filter for the data provider variable
          pickerInput(
            "data_group_detailed",
            "Choose Data Provider:",
@@ -262,15 +263,15 @@ ui <- tagList(
            multiple = TRUE
          ),
          
-         # Filter for the 'file_name' variable
+         # Filter for the Resource variable
          selectInput(
            "file_detailed", 
-           "Choose File:", 
+           "Choose Resource:", 
            choices = NULL #unique(combined_detailed$file_name)
          ),
          
-         # Filter for the 'var' variable
-         # depends on choice of file_name 
+         # Filter for the 'survey var' variable
+         # depends on choice of Resource 
          selectInput(
            "var_detailed", 
            "Choose Survey Variable:", 
@@ -278,7 +279,7 @@ ui <- tagList(
          ),
          
          # Filter for the 'dip var' variable
-         # depends on choice of var 
+         # depends on choice of survey var 
          selectInput(
            "dip_var_detailed", 
            "Choose DIP Variable:", 
