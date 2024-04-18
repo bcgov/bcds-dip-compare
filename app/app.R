@@ -152,6 +152,21 @@ ui <- tagList(
             multiple = TRUE
           ),
           
+          # filter for the dataset variable
+          pickerInput(
+            "dataset_summary",
+            "Choose Dataset:",
+            choices = NULL,
+            selected = NULL,
+            options = pickerOptions(
+              actionsBox = TRUE, 
+              liveSearch = TRUE,
+              selectedTextFormat = "count > 3",
+              size = 10
+            ),
+            multiple = TRUE
+          ),
+          
           # Filter for the 'Resource' variable
           selectInput(
             "file_summary", 
@@ -254,6 +269,21 @@ ui <- tagList(
            "Choose Data Provider:",
            choices = unique(combined_detailed$`Data Provider/Ministry`),
            selected = unique(combined_detailed$`Data Provider/Ministry`),
+           options = pickerOptions(
+             actionsBox = TRUE, 
+             liveSearch = TRUE,
+             selectedTextFormat = "count > 3",
+             size = 10
+           ),
+           multiple = TRUE
+         ),
+         
+         # filter for the dataset variable
+         pickerInput(
+           "dataset_detailed",
+           "Choose Dataset:",
+           choices = NULL,
+           selected = NULL,
            options = pickerOptions(
              actionsBox = TRUE, 
              liveSearch = TRUE,
@@ -409,13 +439,25 @@ server <- function(input, output, session) {
   
   # choose variables based on data group filters 
   observeEvent(filtered_by_data_group_summary(), {
-    choices <- sort(unique(filtered_by_data_group_summary()$Resource))
-    updateSelectInput(inputId = 'file_summary', choices=choices)
+    choices <- sort(unique(filtered_by_data_group_summary()$Dataset))
+    updatePickerInput(inputId = 'dataset_summary', choices=choices,selected=choices)
+  })
+  
+  filtered_by_dataset_summary <- reactive({
+    req(input$dataset_summary)
+    filtered_by_data_group_summary() %>% 
+      filter(Dataset %in% input$dataset_summary)
+  }) 
+  
+  # choose variables based on the dataset filters
+  observeEvent(filtered_by_dataset_summary(),{
+    choices <- unique(filtered_by_dataset_summary()$Resource)
+    updateSelectInput(inputId = 'file_summary', choices = choices)
   })
   
   filtered_by_file_summary <- reactive({
     req(input$file_summary)
-    filtered_by_data_group_summary() %>% 
+    filtered_by_dataset_summary() %>% 
       filter(Resource == input$file_summary)
   }) 
   
@@ -456,6 +498,7 @@ server <- function(input, output, session) {
     # add warning messages in case any filter has none selected
     validate(
       need(input$data_group_summary, 'Select at least one data provider.'),
+      need(input$dataset_summary, 'Select at least one dataset.'),
       need(input$var_summary, 'Select at least one survey variable.'),
       need(input$dip_var_summary, 'Select at least one DIP variable.')
     )
@@ -574,6 +617,7 @@ server <- function(input, output, session) {
     # add warning messages in case any filter has none selected
     validate(
       need(input$data_group_summary, 'Select at least one data provider.'),
+      need(input$dataset_summary, 'Select at least one dataset.'),
       need(input$var_summary, 'Select at least one survey variable.'),
       need(input$dip_var_summary, 'Select at least one DIP variable.')
     )
@@ -591,13 +635,25 @@ server <- function(input, output, session) {
   
   # choose variables based on data group filters 
   observeEvent(filtered_by_data_group_detailed(), {
-    choices <- sort(unique(filtered_by_data_group_detailed()$Resource))
-    updateSelectInput(inputId = 'file_detailed', choices=choices)
+    choices <- sort(unique(filtered_by_data_group_detailed()$Dataset))
+    updatePickerInput(inputId = 'dataset_detailed', choices=choices,selected=choices)
+  })
+  
+  filtered_by_dataset_detailed <- reactive({
+    req(input$dataset_detailed)
+    filtered_by_data_group_detailed() %>% 
+      filter(Dataset %in% input$dataset_detailed)
+  }) 
+ 
+  # choose variables based on the dataset filters
+  observeEvent(filtered_by_dataset_detailed(),{
+    choices <- unique(filtered_by_dataset_detailed()$Resource)
+    updateSelectInput(inputId = 'file_detailed', choices = choices)
   })
   
   filtered_by_file_detailed <- reactive({
     req(input$file_detailed)
-    filtered_by_data_group_detailed() %>% 
+    filtered_by_dataset_detailed() %>% 
       filter(Resource == input$file_detailed)
   }) 
   
@@ -614,7 +670,7 @@ server <- function(input, output, session) {
       filter(survey_var == input$var_detailed)
   }) 
   
-  # choose variables based on the file filters
+  # choose variables based on the survey var filters
   observeEvent(filtered_by_var_detailed(),{
     choices <- unique(filtered_by_var_detailed()$var_dip)
     updateSelectInput(inputId = 'dip_var_detailed', choices = choices)
@@ -637,7 +693,8 @@ server <- function(input, output, session) {
   output$data_detailed <- renderDT({
     # add warning message in case none selected
     validate(
-      need(input$data_group_detailed, 'Select at least one data provider.')
+      need(input$data_group_detailed, 'Select at least one data provider.'),
+      need(input$dataset_detailed, 'Select at least one dataset.')
     )
     
     datatable(
