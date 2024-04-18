@@ -98,7 +98,7 @@ write_csv(
 )
 
 # write combined data to rds for use by app
-saveRDS(combined_list_vars, "app/data/combined_list.rds")
+#saveRDS(combined_list_vars, "app/data/combined_list.rds") # app not using
 
 
 #*******************************
@@ -298,6 +298,10 @@ combined_detailed <- combined_detailed %>%
 combined_detailed <- combined_detailed %>% 
   left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
 
+# remove difficulty from data
+combined_detailed <- combined_detailed %>%
+  filter(survey_var!="difficulty")
+
 # add dataset information
 combined_detailed <- combined_detailed %>% 
   rename(`SAE Resource Name (Short)`=file_name) %>% 
@@ -444,6 +448,10 @@ combined_summary
 # add survey column name
 combined_summary <- combined_summary %>% 
   left_join(select(combined_list_vars,name,var_main,var_dip,survey_var,exists_in_dip),by=c("file_name"="name","var"="var_main"))
+
+# remove difficulty from data
+combined_summary <- combined_summary %>%
+  filter(survey_var!="difficulty")
 
 # add dataset information
 combined_summary <- combined_summary %>% 
