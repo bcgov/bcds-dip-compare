@@ -51,7 +51,7 @@ ui <- tagList(
 
     header = bcsapps::bcsHeaderUI(
       id = 'header',
-      appname = "BC Demographic Survey: DIP Linkage Rates",
+      appname = "BC Demographic Survey: DIP Data Linkage Rates",
       github = NULL # replace with github URL or NULL
     ),
 
@@ -94,16 +94,16 @@ ui <- tagList(
         column(width = 12,
                offset = 0,
                br(),
-               h1("BC Demographic Survey: DIP Linkage Rates", style="color:#29619d"),
+               h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
                br(),
-               "This dashboard includes information on how the recent BC Demographic Survey data links to existing data in the
+               "This dashboard is for discovering how the recent BC Demographic Survey data links to existing data in the
                               Data Innovation Program (DIP).",
                br(),br(),
                "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
                br(),br(),
-               "See the ",actionLink("link_summary", "Linked Variables - Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
+               "See the ",actionLink("link_summary", "Linked Variables Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
                br(),br(),
-               "See the ",actionLink("link_detailed", "Linked Individual Demogs")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
+               "See the ",actionLink("link_detailed", "Linked Individual Demographics")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
                br(),br(),
                "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
                "For more details on the data included in the dashboard and associated caveats, see the ",
@@ -119,25 +119,6 @@ ui <- tagList(
                   "Overall Linkage Rates"),
      value="overall",
      style = "padding-top:160px",
-       fluidRow(
-         style="padding-right:30px;padding-left:30px;min-width:fit-content",
-         box(
-           width = NULL,
-           solidHeader = TRUE,
-           collapsible = TRUE,
-           collapsed = FALSE,
-           title = HTML("<small><p><b>File Name Information:</b></small>"),
-           HTML(
-             "<small>
-             <p>This tab contains all possible datasets accessed for checking linkage rates.
-             Note that some datasets may not appear in the rest of the tabs due to several reasons described below.
-             <p><b>NOT_DONE_subset:</b> These datasets were deemed subsets of other datasets, and were not assessed further.
-             <p><b>NOT_DONE_no_studyid:</b> These datasets did not contain a studyid variable required for linking to BC Demographic Survey information.
-             <p><b>NOT_DONE_see_:</b> These datasets were not done, as they were deemed a repeat of another (e.g., calendar year dataset versus fiscal year dataset).
-             </small>"
-           )
-         )
-       ),
      fluidRow(
        style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
        DTOutput("data_overview"), ## data_overview ----
@@ -149,19 +130,19 @@ ui <- tagList(
    tabPanel(
      title = div(style = "padding:9.5px 0",
                  tags$i(class = 'fa-solid fa-chart-bar'),
-                 "Linked Variables - Summary"),
+                 "Linked Variables Summary"),
      value="summary",
      style = "padding-top:160px",
       sidebarLayout(
         sidebarPanel(
           style = "padding-right:30px;padding-left:30px;min-height:750px",
           
-          # filter for the data group variable
+          # filter for the data provider variable
           pickerInput(
             inputId = "data_group_summary",
             label = "Choose Data Provider:",
-            choices = unique(combined_summary$data_group),
-            selected = unique(combined_summary$data_group),
+            choices = unique(combined_detailed$`Data Provider/Ministry`),
+            selected = unique(combined_detailed$`Data Provider/Ministry`),
             options = pickerOptions(
               actionsBox = TRUE, 
               liveSearch = TRUE,
@@ -171,15 +152,30 @@ ui <- tagList(
             multiple = TRUE
           ),
           
-          # Filter for the 'file_name' variable
+          # filter for the dataset variable
+          pickerInput(
+            "dataset_summary",
+            "Choose Dataset:",
+            choices = NULL,
+            selected = NULL,
+            options = pickerOptions(
+              actionsBox = TRUE, 
+              liveSearch = TRUE,
+              selectedTextFormat = "count > 3",
+              size = 10
+            ),
+            multiple = TRUE
+          ),
+          
+          # Filter for the 'Resource' variable
           selectInput(
             "file_summary", 
-            "Choose File:", 
+            "Choose Resource:", 
             choices = NULL #unique(combined_summary$file_name)
           ),
           
-          # Filter for the 'var' variable
-          # depends on choice of file_name
+          # Filter for the 'survey var' variable
+          # depends on choice of Resource
           pickerInput(
             inputId = "var_summary", 
             label = "Choose Survey Variable(s):", 
@@ -195,7 +191,7 @@ ui <- tagList(
           ),
           
           # Filter for the 'dip var' variable
-          # depends on choice of var
+          # depends on choice of survey var
           pickerInput(
             inputId = "dip_var_summary", 
             label = "Choose DIP Variable(s):", 
@@ -259,19 +255,20 @@ ui <- tagList(
    tabPanel(
      div(style = "padding:9.5px 0",
          tags$i(class = 'fa-solid fa-code-compare'),
-         "Linked Individual Demogs"),
+         "Linked Individual Demographics"),
      style = "padding-top:160px",
      value="detailed",
      sidebarLayout(
        
        sidebarPanel(
          style = "padding-right:30px;padding-left:30px;",
-         # filter for the data group variable
+         
+         # filter for the data provider variable
          pickerInput(
            "data_group_detailed",
            "Choose Data Provider:",
-           choices = unique(combined_detailed$data_group),
-           selected = unique(combined_detailed$data_group),
+           choices = unique(combined_detailed$`Data Provider/Ministry`),
+           selected = unique(combined_detailed$`Data Provider/Ministry`),
            options = pickerOptions(
              actionsBox = TRUE, 
              liveSearch = TRUE,
@@ -281,15 +278,30 @@ ui <- tagList(
            multiple = TRUE
          ),
          
-         # Filter for the 'file_name' variable
+         # filter for the dataset variable
+         pickerInput(
+           "dataset_detailed",
+           "Choose Dataset:",
+           choices = NULL,
+           selected = NULL,
+           options = pickerOptions(
+             actionsBox = TRUE, 
+             liveSearch = TRUE,
+             selectedTextFormat = "count > 3",
+             size = 10
+           ),
+           multiple = TRUE
+         ),
+         
+         # Filter for the Resource variable
          selectInput(
            "file_detailed", 
-           "Choose File:", 
+           "Choose Resource:", 
            choices = NULL #unique(combined_detailed$file_name)
          ),
          
-         # Filter for the 'var' variable
-         # depends on choice of file_name 
+         # Filter for the 'survey var' variable
+         # depends on choice of Resource 
          selectInput(
            "var_detailed", 
            "Choose Survey Variable:", 
@@ -297,7 +309,7 @@ ui <- tagList(
          ),
          
          # Filter for the 'dip var' variable
-         # depends on choice of var 
+         # depends on choice of survey var 
          selectInput(
            "dip_var_detailed", 
            "Choose DIP Variable:", 
@@ -386,24 +398,30 @@ server <- function(input, output, session) {
     datatable(
       combined_overview %>% 
         select(
-          # select desired vars and numeric versions for hidden sorting
-          "Dataset" = dataset, 
-          "File Name" = file_name, 
+          # select desired vars and ranks for hidden sorting
+          "Data Provider/Ministry",
+          "Dataset",
+          "Resource",
+          "SAE Resource Name",
           "DIP Dataset Records" = in_dip_dataset_str, 
-          in_dip_dataset,
+          in_dip_dataset_rank,
           "DIP Dataset Records Linked to Survey Records" = in_both_str,
-          in_both,
+          in_both_rank,
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
-          pct_demo_in_dip,
+          pct_demo_in_dip_rank,
           "Percent of DIP Dataset Covered" = pct_dip_in_demo_str,
-          pct_dip_in_demo
+          pct_dip_in_demo_rank,
+          "Notes"=Notes
           ), 
       #extensions = 'FixedHeader',
       options = list(pageLength = 100,
                      # use numeric columns (not visible) to properly sort string versions of columns (shown in app)
-                     columnDefs = list(list(targets = 2, orderData = 3),list(targets = 4, orderData = 5),
-                                       list(targets = 6, orderData = 7),list(targets = 8, orderData = 9),
-                                       list(targets = c(3,5,7,9), visible = FALSE)),
+                     # columnDefs = list(list(targets = 2, orderData = 3),list(targets = 4, orderData = 5),
+                     #                   list(targets = 6, orderData = 7),list(targets = 8, orderData = 9),
+                     #                   list(targets = c(3,5,7,9), visible = FALSE)),
+                     columnDefs = list(list(targets = 4, orderData = 5),list(targets = 6, orderData = 7),
+                                       list(targets = 8, orderData = 9),list(targets = 10, orderData = 11),
+                                       list(targets = c(5,7,9,11), visible = FALSE)),
                      #fixedHeader = TRUE
                      scrollY = "1000px"
                      ),
@@ -416,20 +434,31 @@ server <- function(input, output, session) {
   
   filtered_by_data_group_summary <- reactive({
     combined_summary %>% 
-      filter(data_group %in% input$data_group_summary) %>% 
-      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
+      filter(`Data Provider/Ministry` %in% input$data_group_summary)
   })
   
   # choose variables based on data group filters 
   observeEvent(filtered_by_data_group_summary(), {
-    choices <- sort(unique(filtered_by_data_group_summary()$file_name))
-    updateSelectInput(inputId = 'file_summary', choices=choices)
+    choices <- sort(unique(filtered_by_data_group_summary()$Dataset))
+    updatePickerInput(inputId = 'dataset_summary', choices=choices,selected=choices)
+  })
+  
+  filtered_by_dataset_summary <- reactive({
+    req(input$dataset_summary)
+    filtered_by_data_group_summary() %>% 
+      filter(Dataset %in% input$dataset_summary)
+  }) 
+  
+  # choose variables based on the dataset filters
+  observeEvent(filtered_by_dataset_summary(),{
+    choices <- unique(filtered_by_dataset_summary()$Resource)
+    updateSelectInput(inputId = 'file_summary', choices = choices)
   })
   
   filtered_by_file_summary <- reactive({
     req(input$file_summary)
-    filtered_by_data_group_summary() %>% 
-      filter(file_name == input$file_summary)
+    filtered_by_dataset_summary() %>% 
+      filter(Resource == input$file_summary)
   }) 
   
   # choose variables based on the file filters
@@ -469,6 +498,7 @@ server <- function(input, output, session) {
     # add warning messages in case any filter has none selected
     validate(
       need(input$data_group_summary, 'Select at least one data provider.'),
+      need(input$dataset_summary, 'Select at least one dataset.'),
       need(input$var_summary, 'Select at least one survey variable.'),
       need(input$dip_var_summary, 'Select at least one DIP variable.')
     )
@@ -484,21 +514,22 @@ server <- function(input, output, session) {
   ## summary info boxes ----
   summary_info <- reactive({
     
-    list1 <- combined_list_vars %>% 
-      filter(file_name == input$file_summary) %>% 
+    list1 <- combined_summary %>% 
+      filter(Resource == input$file_summary) %>% 
       filter(survey_var %in% input$var_summary) %>% 
       filter(var_dip %in% input$dip_var_summary) %>% 
+      distinct(Resource,var_dip,survey_var) %>% 
       pull(var_dip)
     
-    list2 <- combined_list_vars %>% 
-      filter(file_name == input$file_summary) %>% 
+    list2 <- combined_summary %>% 
+      filter(Resource == input$file_summary) %>% 
       filter(survey_var %in% input$var_summary) %>% 
       filter(var_dip %in% input$dip_var_summary) %>% 
+      distinct(Resource,var_dip,survey_var) %>% 
       pull(survey_var)
     
     temp <- combined_summary %>% 
-      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main")) %>% 
-      filter(file_name == input$file_summary)
+      filter(Resource == input$file_summary)
     
     info <- lapply(
       1:length(list1), function(index){
@@ -506,28 +537,39 @@ server <- function(input, output, session) {
         dip_var_name = list1[index]
         var_name = list2[index]
         
-        # check if it exists in DIP
-        in_dip <- combined_list_vars %>% 
-          filter(file_name == input$file_summary, survey_var==var_name, var_dip == dip_var_name) %>% 
-          pull(exists_in_dip)
-        
         # get info about the variable 
         t1 <- temp %>% 
           filter(survey_var==var_name, var_dip == dip_var_name)
         
+        # check if it exists in DIP
+        in_dip <- t1 %>% 
+          distinct(exists_in_dip) %>% pull()
+        
         extra_coverage <- t1 %>% 
           filter(cross_status == 'Survey only') %>% 
-          pull(unique_percent_str)
+          pull(highlights)
         
         already_covered <- t1 %>% 
           filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
-          pull(unique_percent) %>% sum()
+          distinct(str_replace(highlights,"Greater than or equal to ","&GreaterEqual;")) %>% pull()
         
-        already_covered <- sprintf("%.2f%%", already_covered)
+        # find count of MASK
+        # already_covered_mask <- t1 %>% 
+        #   filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
+        #   filter(unique_percent_str=="MASK")
+        # 
+        # # treat already covered % differently, depending on MASK result
+        # if(nrow(already_covered_mask) == 2) {
+        #   already_covered <- "MASK"
+        # } else if(nrow(already_covered_mask)==1) {
+        #   already_covered <- paste0("&GreaterEqual;",sprintf("%.2f%%", already_covered))
+        # } else {
+        #   already_covered <- sprintf("%.2f%%", already_covered)
+        # }
         
         unknown_amount <- t1 %>% 
           filter(cross_status == 'Neither source') %>% 
-          pull(unique_percent_str)
+          pull(highlights)
         
         # create info box material 
         if (in_dip) {
@@ -537,13 +579,10 @@ server <- function(input, output, session) {
             ' Variable Name in DIP: ','<strong>',dip_var_name, '</strong>',
             '<br>',
             already_covered, 
-            ' Known from DIP', 
             '<br>',
             extra_coverage,
-            ' Additional Coverage from Survey',
             '<br>',
-            unknown_amount,
-            ' Still Unknown'
+            unknown_amount
           )
         } else {
           icon <-  'x'
@@ -552,13 +591,10 @@ server <- function(input, output, session) {
             'No DIP Variable',
             '<br>',
             already_covered, 
-            ' Known from DIP', 
             '<br>',
             extra_coverage,
-            ' Additional Coverage from Survey',
             '<br>',
-            unknown_amount,
-            ' Still Unknown'
+            unknown_amount
           )
         }
         
@@ -581,6 +617,7 @@ server <- function(input, output, session) {
     # add warning messages in case any filter has none selected
     validate(
       need(input$data_group_summary, 'Select at least one data provider.'),
+      need(input$dataset_summary, 'Select at least one dataset.'),
       need(input$var_summary, 'Select at least one survey variable.'),
       need(input$dip_var_summary, 'Select at least one DIP variable.')
     )
@@ -593,20 +630,31 @@ server <- function(input, output, session) {
   
   filtered_by_data_group_detailed <- reactive({
     combined_detailed %>% 
-      filter(data_group %in% input$data_group_detailed) %>% 
-      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
+      filter(`Data Provider/Ministry` %in% input$data_group_detailed)
   })
   
   # choose variables based on data group filters 
   observeEvent(filtered_by_data_group_detailed(), {
-    choices <- sort(unique(filtered_by_data_group_detailed()$file_name))
-    updateSelectInput(inputId = 'file_detailed', choices=choices)
+    choices <- sort(unique(filtered_by_data_group_detailed()$Dataset))
+    updatePickerInput(inputId = 'dataset_detailed', choices=choices,selected=choices)
+  })
+  
+  filtered_by_dataset_detailed <- reactive({
+    req(input$dataset_detailed)
+    filtered_by_data_group_detailed() %>% 
+      filter(Dataset %in% input$dataset_detailed)
+  }) 
+ 
+  # choose variables based on the dataset filters
+  observeEvent(filtered_by_dataset_detailed(),{
+    choices <- unique(filtered_by_dataset_detailed()$Resource)
+    updateSelectInput(inputId = 'file_detailed', choices = choices)
   })
   
   filtered_by_file_detailed <- reactive({
     req(input$file_detailed)
-    filtered_by_data_group_detailed() %>% 
-      filter(file_name == input$file_detailed)
+    filtered_by_dataset_detailed() %>% 
+      filter(Resource == input$file_detailed)
   }) 
   
   # choose variables based on the file filters
@@ -622,7 +670,7 @@ server <- function(input, output, session) {
       filter(survey_var == input$var_detailed)
   }) 
   
-  # choose variables based on the file filters
+  # choose variables based on the survey var filters
   observeEvent(filtered_by_var_detailed(),{
     choices <- unique(filtered_by_var_detailed()$var_dip)
     updateSelectInput(inputId = 'dip_var_detailed', choices = choices)
@@ -645,7 +693,8 @@ server <- function(input, output, session) {
   output$data_detailed <- renderDT({
     # add warning message in case none selected
     validate(
-      need(input$data_group_detailed, 'Select at least one data provider.')
+      need(input$data_group_detailed, 'Select at least one data provider.'),
+      need(input$dataset_detailed, 'Select at least one dataset.')
     )
     
     datatable(
@@ -672,8 +721,11 @@ server <- function(input, output, session) {
     }
     
     temp <- combined_detailed %>% 
-      left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main")) %>% 
-      filter(file_name == input$file_detailed) %>% 
+      mutate(unique_percent_survey = ifelse(unique_percent_survey_str=="MASK",NA_integer_,str_replace(unique_percent_survey_str,"%","")),
+             unique_percent = ifelse(unique_percent_str=="MASK",NA_integer_,str_replace(unique_percent_str,"%",""))) %>% 
+      mutate(unique_percent_survey = as.numeric(unique_percent_survey),
+             unique_percent = as.numeric(unique_percent)) %>% 
+      filter(Resource == input$file_detailed) %>% 
       filter(survey_var == input$var_detailed) %>% 
       filter(var_dip == input$dip_var_detailed) %>% 
       mutate(text = paste0(
