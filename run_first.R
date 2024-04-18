@@ -147,6 +147,22 @@ combined_overview <- combined_overview %>%
   )  
   # clean up NAs
 
+# replace numeric with ranks for sorting
+combined_overview <- combined_overview %>% 
+  mutate(in_dip_dataset_rank = ifelse(is.na(in_dip_dataset),NA_real_,rank(in_dip_dataset)),
+         in_both_rank = ifelse(is.na(in_both),NA_real_,rank(in_both)),
+         pct_demo_in_dip_rank = ifelse(is.na(pct_demo_in_dip),NA_real_,rank(pct_demo_in_dip)),
+         pct_dip_in_demo_rank = ifelse(is.na(pct_dip_in_demo),NA_real_,rank(pct_dip_in_demo)),
+         .keep="unused") %>% 
+  select(-in_demographic)
+
+# add dataset information
+combined_overview <- combined_overview %>% 
+  rename(`SAE Resource Name`=dataset,`SAE Resource Name (Short)`=file_name) %>% 
+  select(-folder) %>% 
+  left_join(dataset_info, by=c("SAE Resource Name","SAE Resource Name (Short)")) %>% 
+  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
+  select(-`SAE Resource Name (Short)`)
 
 combined_overview
 
@@ -161,6 +177,18 @@ write_csv(
 # write combined data to rds for use by app
 if(!dir.exists("app/data")) {dir.create("app/data") } # create data folder if doesn't exist
 saveRDS(combined_overview, "app/data/combined_overview.rds")
+
+# write data for catalogue
+# remove rank columns
+overall_linkage_rates <- combined_overview %>% 
+  select(-contains("rank"))
+
+write_csv(
+  overall_linkage_rates, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/overall_linkage_rates.csv"
+  )
+)
 
 #*******************************
 # DETAILED VAR LINKAGE RATES ----
@@ -265,6 +293,22 @@ combined_detailed
 combined_detailed <- combined_detailed %>% 
   filter(bcds_value != "Not in Survey")
 
+
+# add survey column name
+combined_detailed <- combined_detailed %>% 
+  left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
+
+# add dataset information
+combined_detailed <- combined_detailed %>% 
+  rename(`SAE Resource Name (Short)`=file_name) %>% 
+  left_join(dataset_info, by=c("SAE Resource Name (Short)")) %>% 
+  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
+  select(-`SAE Resource Name (Short)`)
+
+# remove unused columns
+combined_detailed <- combined_detailed %>% 
+  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
+  
 # Write the combined data to a new CSV file for review
 write_csv(
   combined_detailed, 
@@ -275,6 +319,14 @@ write_csv(
 
 # write combined data to rds for use by app
 saveRDS(combined_detailed, "app/data/combined_detailed.rds")
+
+# write data for catalogue
+write_csv(
+  combined_detailed, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_individual_demographics.csv"
+  )
+)
 
 #*******************************
 # SUMMARY OF LINKAGE BY VAR ----
@@ -389,6 +441,44 @@ combined_summary <- combined_summary %>%
 
 combined_summary
 
+# add survey column name
+combined_summary <- combined_summary %>% 
+  left_join(select(combined_list_vars,name,var_main,var_dip,survey_var,exists_in_dip),by=c("file_name"="name","var"="var_main"))
+
+# add dataset information
+combined_summary <- combined_summary %>% 
+  rename(`SAE Resource Name (Short)`=file_name) %>% 
+  left_join(dataset_info, by=c("SAE Resource Name (Short)")) %>% 
+  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
+  select(-`SAE Resource Name (Short)`)
+
+# add highlights information
+known_dip_mask_count <- combined_summary %>% 
+  filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
+  filter(unique_percent_str=="MASK") %>% 
+  group_by(Resource,survey_var,var_dip) %>% 
+  tally()
+
+
+combined_summary <- combined_summary %>% 
+  left_join(known_dip_mask_count,by=c("Resource","survey_var","var_dip")) %>% 
+  mutate(highlights_groups = case_when((cross_status == 'DIP only' | cross_status == 'DIP and survey') ~ "Known from DIP",
+                                       cross_status=="Survey only" ~ "Additional Coverage from Survey",
+                                       cross_status=="Neither source" ~ "Still Unknown")) %>% 
+  group_by(Resource,survey_var,var_dip,highlights_groups) %>% 
+  mutate(known_sum = ifelse(highlights_groups=="Known from DIP",sum(unique_percent),NA_real_)) %>% 
+  mutate(highlights = case_when(cross_status=="Survey only" ~ paste0(unique_percent_str," ",highlights_groups),
+                                cross_status=="Neither source" ~ paste0(unique_percent_str," ",highlights_groups),
+                                (highlights_groups=="Known from DIP" & n==2) ~ paste0("MASK ",highlights_groups),
+                                (highlights_groups=="Known from DIP" & n==1) ~  paste0("Greater than or equal to ",sprintf("%.2f%%", known_sum)," ",highlights_groups),
+                                (highlights_groups=="Known from DIP") ~  paste0(sprintf("%.2f%%", known_sum)," ",highlights_groups))) %>% 
+  ungroup() %>% select(-n,-known_sum,-highlights_groups) 
+
+# remove unused columns
+combined_summary <- combined_summary %>% 
+  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-mask_flag,-Notes)
+
+
 # Write the combined data to a new CSV file for review
 write_csv(
   combined_summary, 
@@ -399,3 +489,16 @@ write_csv(
 
 # write combined data to rds for use by app
 saveRDS(combined_summary, "app/data/combined_summary.rds")
+
+# write data for catalogue
+linked_variables_summary <- combined_summary %>% 
+  select(-highlights,-exists_in_dip)
+
+write_csv(
+  linked_variables_summary, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_variables_summary.csv"
+  )
+)
+
+
