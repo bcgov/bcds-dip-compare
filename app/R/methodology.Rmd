@@ -13,9 +13,11 @@ The analysis presented in this dashboard used the secure platform to access avai
 
 
 #### Caveats
+
 - Some DIP datasets were excluded from this analysis because they did not have StudyIds required for linking (i.e., not row-level datasets), or were considered subsets of other datasets already included (i.e., not a main source of information).
+
 - Data from DIP datasets were only manipulated to reduce every StudyID to a single demographic variable per demographic category.
-	- For example, someone with multiple DIP records that all indicate 'female' as their given sex would be reduced to a single record that indicates 'female'. If more than one type of demographic category was listed for a given ID, it would be recorded as 'multiple reported'.
+	- For example, someone with multiple DIP records that all indicate 'female' as their given gender would be reduced to a single record that indicates 'female'. If more than one type of demographic category was listed for a given ID, it would be recorded as 'multiple reported'.
 	- No further manipulation was done to interpret the meaning of the variable being reported.
 	- Therefore, some 'known dip' percentages may appear artificially high (e.g., if the variable includes Unknown values as valid responses).
 - The Survey variable names used in this dashboard were determined by the BC Stats analysts of this project specifically and may differ from published results related to the BC Demographic Survey elsewhere. 

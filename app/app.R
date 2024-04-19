@@ -91,26 +91,85 @@ ui <- tagList(
                   "Home"),
       value="home",
       style = "padding-top:160px",
+      # title
       fluidRow(style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
         column(width = 12,
                offset = 0,
                br(),
                h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
-               br(),
-               "This dashboard is for discovering how the recent BC Demographic Survey data links to existing data in the
-                              Data Innovation Program (DIP).",
-               br(),br(),
-               "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
-               br(),br(),
-               "See the ",actionLink("link_summary", "Linked Variables Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
-               br(),br(),
-               "See the ",actionLink("link_detailed", "Linked Individual Demographics")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
-               br(),br(),
-               "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
-               "For more details on the data included in the dashboard and associated caveats, see the ",
-               actionLink("link_about", "About")," tab.",
-               br(),br()
-        ))
+               br()
+        )
+      ),
+      # about the dashboard
+      fluidRow(style = "padding-left:30px;background-color:#29619d;min-width:fit-content",
+        column(
+          width = 9,style="color:white",
+          h1("About the Dashboard"),
+          h3("This dashboard provides information on how the 2023 BC Demographic Survey data links to other available data in the Data Innovation Program (DIP)"),
+          br(),br(),
+          hover_action_button("link_about",
+                              div(style ="font-size:18px",
+                                  "Read more about the data in the dashboard",
+                                  tags$i(class="fa-solid fa-arrow-right-long"),
+                                  hr(style= "border-top:2px solid;margin-top:10px")),
+                              style = "color:white;background-color:transparent;border:none;margin-left:-12px",
+                              button_animation = "grow"),
+          br(),br()
+        )
+        ),
+      # tabs info, as boxes
+      fluidRow(
+        style="padding-left:50px;padding-right:50px;min-width:fit-content",
+        br(),br(),br(),
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_overall",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-link'),
+                  "Overall Linkage Rates",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              button_animation = "grow"),
+            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey")
+          )),
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_summary",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-chart-bar'),
+                  "Linked Variables Summary",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              button_animation = "grow"),
+            h3("For more information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.")
+          )),
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_detailed",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-code-compare'),
+                  "Linked Individual Demographics",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              button_animation = "grow"),
+            h3("For a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.")
+          ))
+      )
     )
     ,
     # overall linkage rates ----
@@ -357,6 +416,7 @@ ui <- tagList(
       class = "bg-row",
       h1(style="padding-left:15px;margin-bottom:25px",
         "About the Dashboard"),
+      a("click on me", target= "_blank", href = "draft-technical-documentation.pdf"),
       div(style = "margin-left:20px;margin-right:20px",
          includeMarkdown("R/methodology.Rmd"),
          br(),

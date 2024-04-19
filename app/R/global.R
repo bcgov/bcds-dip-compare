@@ -21,6 +21,7 @@ library(janitor)    ## for cleaning data (includes rounding functions)
 library(lubridate)  ## for dates
 library(ggplot2)    ## for plots
 library(plotly)     ## for interactive plots
+library(hover)      ## for action button hover animation
 library(DT)         ## for tables
 
 
