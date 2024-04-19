@@ -49,11 +49,12 @@ ui <- tagList(
     ## title/header/footer ----
     title = "",
 
-    header = bcsapps::bcsHeaderUI(
-      id = 'header',
-      appname = "BC Demographic Survey: DIP Data Linkage Rates",
-      github = NULL # replace with github URL or NULL
-    ),
+    header = header,
+    # header = bcsapps::bcsHeaderUI(
+    #   id = 'header',
+    #   appname = "BC Demographic Survey: DIP Data Linkage Rates",
+    #   github = NULL # replace with github URL or NULL
+    # ),
 
     footer = fluidRow(
       style = "padding-top:15px;margin-top:-15px;min-width:-webkit-fill-available;",
@@ -371,8 +372,10 @@ ui <- tagList(
 server <- function(input, output, session) {
   
   # formatting ----
+  bcstatslinks::linkModServer('links')
+  output$links_yn <- shiny::renderUI(bcstatslinks::linkModUI('links'))
   ## Change links to false to remove the link list from the header
-  bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
+  # bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
   bcsapps::bcsFooterServer(id = 'footer')
   
   # tab links ----
