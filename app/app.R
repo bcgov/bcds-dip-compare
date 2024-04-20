@@ -449,6 +449,8 @@ ui <- tagList(
         h1("BC Demographic Survey Demographics")
       )
     ),
+    
+    
     fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       column(width=2, h2('Disability')),
       column(width=2, h2('Gender')),
@@ -462,7 +464,9 @@ ui <- tagList(
       column(
         width=12,
         "For more details on methodology and caveats, see the",
-        a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf")
+        a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf"),
+        br(), br(),
+        "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
         )
     )
   )
