@@ -465,6 +465,9 @@ ui <- tagList(
         width=12,
         "For more details on methodology and caveats, see the",
         a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf"),
+        br(),
+        "The data is available for download from the",
+        a("BC Data Catalogue.", href="https://catalogue.data.gov.bc.ca/"),
         br(), br(),
         "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
         )
