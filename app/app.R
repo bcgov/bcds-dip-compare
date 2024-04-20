@@ -415,13 +415,56 @@ ui <- tagList(
       style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       class = "bg-row",
       h1(style="padding-left:15px;margin-bottom:25px",
-        "About the Dashboard"),
-      a("click on me", target= "_blank", href = "draft-technical-documentation.pdf"),
-      div(style = "margin-left:20px;margin-right:20px",
-         includeMarkdown("R/methodology.Rmd"),
-         br(),
-         br()))
-    
+        "About the Dashboard")
+    ),
+    fluidRow(
+      style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      # about survey
+      column(
+        width = 6, style="color:white",
+        wellPanel(
+          style="padding:20px;border-radius: 25px; min-height:150px;background:#29619d; align-items:center; justify-text:center",
+          h3(
+            "In 2023, BC Stats conducted the",
+            a("BC Demographic Survey.", href='https://antiracism.gov.bc.ca/'),
+            "More than 200,000 people responded to the voluntary survey, providing information about many aspects of their identity  (such as race, ethnicity, ancestry, gender and many others)."
+            ),
+        )),
+      
+      # about dip
+      column(
+        width = 6, style="color:white",
+        wellPanel(
+          style="padding:20px;border-radius: 25px; min-height:150px;background:#29619d; align-items:center; justify-text:center",
+          h3(
+            "The",
+            a("Data Innovation Program (DIP)", href='https://www2.gov.bc.ca/gov/content/data/about-data-management/data-innovation-program/'),
+            "securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. This dashboard looks at how successfully DIP can be supplemented by the BC Demographic Survey."
+          ),
+        ))
+    ),
+    fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      column(
+        width= 12,
+        h1("BC Demographic Survey Demographics")
+      )
+    ),
+    fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      column(width=2, h2('Disability')),
+      column(width=2, h2('Gender')),
+      column(width=2, h2('Indigenous Identity')),
+      column(width=2, h2('Indigenous Identity (Distinctions Based)')),
+      column(width=2, h2('Race')),
+      column(width=2, h2('Date of Birth'))
+    ),
+    fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      br(),br(),
+      column(
+        width=12,
+        "For more details on methodology and caveats, see the",
+        a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf")
+        )
+    )
   )
   )
 )
