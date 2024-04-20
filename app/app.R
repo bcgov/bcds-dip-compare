@@ -450,7 +450,7 @@ ui <- tagList(
       )
     ),
     
-    
+    # NEED TO FIX ----
     fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       column(width=2, h2('Disability')),
       column(width=2, h2('Gender')),
