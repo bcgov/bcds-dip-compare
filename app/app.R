@@ -433,7 +433,7 @@ ui <- tagList(
               "BC Demographic Survey.", 
               href='https://antiracism.gov.bc.ca/',
               target="_blank",
-              style='color:white; text-decoration: underline;'
+              style='color:#ccffff; text-decoration: underline;'
               ),
             "More than 200,000 people responded to the voluntary survey, providing information about many aspects of their identity  (such as race, ethnicity, ancestry, gender and many others)."
             ),
