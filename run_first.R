@@ -183,6 +183,17 @@ saveRDS(combined_overview, "app/data/combined_overview.rds")
 overall_linkage_rates <- combined_overview %>% 
   select(-contains("rank"))
 
+# rename and order columns
+overall_linkage_rates <- overall_linkage_rates %>% 
+  select(any_of(names(dataset_info)),
+         "Survey Records"=in_demographic_str,
+         "DIP Resource Records"=in_dip_dataset_str,
+         "DIP Resource Records Linked to Survey Records"=in_both_str,
+         "Percent of Survey Covered" = pct_demo_in_dip_str, 
+         "Percent of DIP Resource Covered" = pct_dip_in_demo_str,
+         everything(),-Notes,Notes
+         )
+
 write_csv(
   overall_linkage_rates, 
   safepaths::use_network_path(
@@ -343,7 +354,7 @@ combined_summary <- combined_summary %>%
 
 # remove unused columns
 combined_summary <- combined_summary %>% 
-  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
+  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes,-unique_percent_survey_str)
 
 
 # Write the combined data to a new CSV file for review
@@ -358,8 +369,21 @@ write_csv(
 saveRDS(combined_summary, "app/data/combined_summary.rds")
 
 # write data for catalogue
+# remove app required columns
 linked_variables_summary <- combined_summary %>% 
   select(-highlights,-exists_in_dip,-mask_flag)
+
+# rename and order columns
+linked_variables_summary <- linked_variables_summary %>% 
+  select(any_of(names(dataset_info)),
+         "Survey Variable" = survey_var, 
+         "DIP Variable" = var_dip,
+         "Cross-Status"=cross_status,
+         "Unique IDs in DIP Resource" = unique_n_str, 
+         "Percent of Unique IDs" = unique_percent_str,
+         everything()
+  )
+
 
 write_csv(
   linked_variables_summary, 
@@ -549,8 +573,21 @@ write_csv(
 saveRDS(combined_detailed, "app/data/combined_detailed.rds")
 
 # write data for catalogue
+# rename and order columns
+linked_individual_demographics <- combined_detailed %>% 
+  select(any_of(names(dataset_info)),
+         "Survey Variable" = survey_var, 
+         "DIP Variable" = var_dip,
+         "Value in DIP" = dip_value,
+         "Value in Survey" = bcds_value,
+         "Unique IDs in DIP Resource" = unique_n_str,
+         "Percent of Unique IDs" = unique_percent_str,
+         "Percent of Survey Unique IDs" = unique_percent_survey_str,
+         everything()
+  )
+
 write_csv(
-  combined_detailed, 
+  linked_individual_demographics, 
   safepaths::use_network_path(
     "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_individual_demographics.csv"
   )
