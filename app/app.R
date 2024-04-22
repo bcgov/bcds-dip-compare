@@ -134,7 +134,7 @@ ui <- tagList(
                   tags$i(class='fa-solid fa-link'),
                   "Overall Linkage Rates",
                   hr(style= "border-top:2px solid;margin-top:10px")),
-              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent;max-width:100%",
               button_animation = "grow"),
             h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey")
           )),
