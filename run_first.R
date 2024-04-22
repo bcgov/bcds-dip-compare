@@ -343,7 +343,7 @@ combined_summary <- combined_summary %>%
 
 # remove unused columns
 combined_summary <- combined_summary %>% 
-  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-mask_flag,-Notes)
+  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
 
 
 # Write the combined data to a new CSV file for review
@@ -359,7 +359,7 @@ saveRDS(combined_summary, "app/data/combined_summary.rds")
 
 # write data for catalogue
 linked_variables_summary <- combined_summary %>% 
-  select(-highlights,-exists_in_dip)
+  select(-highlights,-exists_in_dip,-mask_flag)
 
 write_csv(
   linked_variables_summary, 
@@ -465,12 +465,7 @@ combined_detailed <- combined_detailed %>%
   # filter out age
   filter(var != 'age')
 
-combined_detailed 
-
-# remove 'Not in Survey' results from data - detailed to be linked data only
-combined_detailed <- combined_detailed %>% 
-  filter(bcds_value != "Not in Survey")
-
+combined_detailed
 
 # add survey column name
 combined_detailed <- combined_detailed %>% 
@@ -486,6 +481,57 @@ combined_detailed <- combined_detailed %>%
   left_join(dataset_info, by=c("SAE Resource Name (Short)")) %>% 
   mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
   select(-`SAE Resource Name (Short)`)
+
+# check for missing MASK (comparing to totals provided in summary)
+tmp <- combined_detailed %>% 
+  mutate(
+    dip_group = !(dip_value == 'no such variable' | is.na(dip_value)),
+    survey_group = !(bcds_value == 'Not in Survey'),
+    cross_status = 
+      case_when(
+        dip_group & survey_group ~ 'DIP and survey',
+        dip_group & !survey_group ~ 'DIP only',
+        !dip_group & survey_group ~ 'Survey only',
+        !dip_group & !survey_group ~ 'Neither source',
+        TRUE ~ 'MISSED ONE'
+      ),
+    masked = unique_n_str == 'MASK'
+  ) 
+
+not_masked <-  tmp %>% 
+  group_by(Resource, survey_var, var_dip, cross_status) %>% 
+  summarize(n_masked = sum(masked)) %>% 
+  filter(n_masked == 1) %>% 
+  filter(cross_status != 'DIP only') %>% 
+  ungroup()
+
+not_masked <- not_masked %>% 
+  left_join(combined_summary, by=c('Resource','survey_var', 'var_dip', 'cross_status')) %>% 
+  filter(!mask_flag) %>% 
+  left_join(tmp, by=c('Resource','survey_var', 'var_dip', 'cross_status')) %>% 
+  select(
+    Resource, survey_var, var_dip,dip_value, bcds_value, cross_status, n_masked, mask_flag, unique_n_summary = unique_n_str.x, unique_n_detailed = unique_n_str.y)
+
+not_masked_missing <- not_masked %>% 
+  filter(cross_status != "Neither source") %>% 
+  filter(unique_n_detailed != "MASK")
+
+# add additional MASK
+combined_detailed <- combined_detailed %>% 
+  mutate(missing_mask = ifelse((Resource %in% not_masked_missing$Resource &
+                                  survey_var %in% not_masked_missing$survey_var &
+                                  var_dip %in% not_masked_missing$var_dip &
+                                  dip_value %in% not_masked_missing$dip_value &
+                                  bcds_value %in% not_masked_missing$bcds_value),"MISSING","OK")) %>% 
+  mutate(unique_n_str = ifelse(missing_mask=="MISSING","MASK",unique_n_str)) %>% 
+  mutate(unique_percent_str = ifelse(missing_mask=="MISSING","MASK",unique_percent_str)) %>% 
+  mutate(unique_percent_survey_str = ifelse(missing_mask=="MISSING","MASK",unique_percent_survey_str)) %>% 
+  select(-missing_mask)
+  
+  
+# remove 'Not in Survey' results from data - detailed to be linked data only
+combined_detailed <- combined_detailed %>% 
+  filter(bcds_value != "Not in Survey")
 
 # remove unused columns
 combined_detailed <- combined_detailed %>% 
