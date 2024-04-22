@@ -459,7 +459,12 @@ ui <- tagList(
     fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       column(
         width= 12,
-        h1("BC Demographic Survey Demographics")
+        h1("BC Demographic Survey Demographics"),
+        br(),
+        "Six different demographic questions from the BC Demographic Survey were analyzed for comparable values within DIP datasets.",
+        "These demographics were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
+        "Hover over each of the options for more information about the demographic.",
+        br(), br()
       )
     ),
     
@@ -563,9 +568,7 @@ ui <- tagList(
           "link_dob",
           div(
             style ="font-size:18px",
-            "Date of Birth",
-            br(),
-            "(Status)"
+            "Date of Birth"
           ),
           style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
           button_animation = "grow"
