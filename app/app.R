@@ -477,7 +477,7 @@ ui <- tagList(
           div(style ="font-size:18px",
               "Disability"
               ),
-          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
           button_animation = "grow"
           ),
         bsTooltip(
@@ -494,7 +494,7 @@ ui <- tagList(
           div(style ="font-size:18px",
               "Gender"
               ),
-          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
           button_animation = "grow"
         ),
         bsTooltip(
@@ -512,7 +512,7 @@ ui <- tagList(
             style ="font-size:18px",
             "Indigenous Identity"
           ),
-          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
           button_animation = "grow"
         ),
         bsTooltip(
@@ -532,7 +532,7 @@ ui <- tagList(
             br(),
             "(Distinctions Based)"
           ),
-          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
           button_animation = "grow"
         ),
         bsTooltip(
@@ -550,7 +550,7 @@ ui <- tagList(
             style ="font-size:18px",
             "Racial Identity"
           ),
-          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
           button_animation = "grow"
         ),
         bsTooltip(
@@ -568,7 +568,7 @@ ui <- tagList(
             style ="font-size:18px",
             "Date of Birth"
           ),
-          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
           button_animation = "grow"
         ),
         bsTooltip(
