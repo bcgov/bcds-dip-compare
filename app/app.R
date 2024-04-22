@@ -13,7 +13,6 @@
 # limitations under the License.
 
 # Load necessary libraries
-library(shiny)
 library(DT)
 library(dplyr)
 library(scales)
@@ -21,6 +20,10 @@ library(bcsapps)
 library(plotly)
 library(shinyWidgets)
 library(shinydashboard)
+library(bslib)
+library(shiny)
+library(bsicons)
+library(shinyBS)
 
 # Define UI ----
 
@@ -426,7 +429,12 @@ ui <- tagList(
           style="padding:20px;border-radius: 25px; min-height:150px;background:#29619d; align-items:center; justify-text:center",
           h3(
             "In 2023, BC Stats conducted the",
-            a("BC Demographic Survey.", href='https://antiracism.gov.bc.ca/'),
+            a(
+              "BC Demographic Survey.", 
+              href='https://antiracism.gov.bc.ca/',
+              target="_blank",
+              style='color:white; text-decoration: underline;'
+              ),
             "More than 200,000 people responded to the voluntary survey, providing information about many aspects of their identity  (such as race, ethnicity, ancestry, gender and many others)."
             ),
         )),
@@ -438,7 +446,12 @@ ui <- tagList(
           style="padding:20px;border-radius: 25px; min-height:150px;background:#29619d; align-items:center; justify-text:center",
           h3(
             "The",
-            a("Data Innovation Program (DIP)", href='https://www2.gov.bc.ca/gov/content/data/about-data-management/data-innovation-program/'),
+            a(
+              "Data Innovation Program (DIP)", 
+              href='https://www2.gov.bc.ca/gov/content/data/about-data-management/data-innovation-program/',
+              target="_blank",
+              style='color:#ccffff; text-decoration: underline;'
+              ),
             "securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. This dashboard looks at how successfully DIP can be supplemented by the BC Demographic Survey."
           ),
         ))
@@ -451,13 +464,118 @@ ui <- tagList(
     ),
     
     # NEED TO FIX ----
-    fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
-      column(width=2, h2('Disability')),
-      column(width=2, h2('Gender')),
-      column(width=2, h2('Indigenous Identity')),
-      column(width=2, h2('Indigenous Identity (Distinctions Based)')),
-      column(width=2, h2('Race')),
-      column(width=2, h2('Date of Birth'))
+    fluidRow(
+      style = "padding-right:30px;padding-left:30px;background-color:white;min-width:100%",
+      #### disability ---- 
+      column(
+        width=2, 
+        hover_action_button(
+          "link_disability",
+          div(style ="font-size:18px",
+              "Disability"
+              ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+          ),
+        bsTooltip(
+          'link_disability',
+          "Identifies survey respondents who responded always, often, or sometimes has a disability.",
+          placement = "bottom"
+        )
+        ),
+      #### gender ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_gender",
+          div(style ="font-size:18px",
+              "Gender"
+              ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_gender',
+          "Identifies survey respondents who responded man/boy, woman/girl, or non-binary.",
+          placement = "bottom"
+        )
+      ),
+      #### indigenous identity ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_indigenous",
+          div(
+            style ="font-size:18px",
+            "Indigenous Identity"
+          ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_indigenous',
+          "Identifies survey respondents who responded with any Indigenous identity. While this is included to make more meaningful comparisons with DIP datasets, a distinctions based approach to Indigenous identity is recommended.",
+          placement = "bottom"
+        )
+      ),
+      #### indigenous identity, distinctions based ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_indigenous_db",
+          div(
+            style ="font-size:18px",
+            "Indigenous Identity",
+            br(),
+            "(Distinctions Based)"
+          ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_indigenous_db',
+          "Identifies survey respondents who responded First Nations, Métis or Inuk (Inuit).",
+          placement = "bottom"
+        )
+      ),
+      #### race ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_race",
+          div(
+            style ="font-size:18px",
+            "Racial Identity"
+          ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_race',
+          "Identifies survey respondents who provided one or more racial identities.",
+          placement = "bottom"
+        )
+      ),
+      ### dob ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_dob",
+          div(
+            style ="font-size:18px",
+            "Date of Birth",
+            br(),
+            "(Status)"
+          ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:100%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_dob',
+          "Identifies if a record has a valid date of birth (or associated birth year, month, etc.), but does not dive deeper into the specific values.",
+          placement = "bottom"
+        )
+      ),
     ),
     fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       br(),br(),
