@@ -190,147 +190,6 @@ write_csv(
   )
 )
 
-#*******************************
-# DETAILED VAR LINKAGE RATES ----
-#*******************************
-
-# first get the detailed .csvs
-directory <- safepaths::use_network_path(
-  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/linkage_by_var_detailed"
-  )
-
-# Get a list of all CSV files in the directory
-file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE, recursive=TRUE)
-file_list
-
-# Read all CSV files, add a column for the filename, and combine them into one data frame
-combined_detailed <- map_dfr(file_list, ~ {
-  name <- basename(.x)
-  data_group <- basename(dirname(.x))
-  data <- read_csv(.x, na=c("","NA", "MASK"))
-  data <- mutate(
-    data, 
-    name = name,
-    file_name = str_split(name, "_primary_variable|_ind_variable|_missed_variable")[[1]][1],
-    data_group = data_group
-    )
-  return(data)
-})
-
-# fix typo from health files
-multi_file_groups <- combined_detailed %>% 
-  distinct(name,file_name) %>% 
-  group_by(file_name) %>%
-  summarise(
-    name_combo = paste(name, collapse=", ")) %>% 
-  filter(grepl(",",name_combo)) %>% 
-  pull(file_name)
-
-combined_detailed <- combined_detailed %>% 
-  mutate(var = case_when((file_name %in% multi_file_groups & grepl("_primary",name) & var=="indigenous") ~ "indigenous identity",
-                         TRUE ~ var)) %>% 
-  select(-name)
-
-# confirm numeric datatypes
-combined_detailed <- combined_detailed %>% 
-  mutate(
-    unique_n = as.numeric(unique_n),
-    unique_percent = as.numeric(unique_percent),
-    unique_percent_survey = as.numeric(unique_percent_survey),
-    # clean up a couple of issues with large percentages 
-    unique_percent_survey = if_else(unique_percent_survey > 100, NA_real_, unique_percent_survey)
-    ) %>% 
-  # fill in missing rows 
-  group_by(data_group, file_name, var) %>% 
-  complete(dip_value, bcds_value) %>% 
-  ungroup() %>% 
-  # get strings for %s and commas for Ns
-  mutate(
-    unique_n_str = format(unique_n, big.mark = ","),
-    unique_percent_str = sprintf("%.2f%%", unique_percent),
-    unique_percent_survey_str = sprintf("%.2f%%", unique_percent_survey)
-    ) %>% 
-  # clean up NAs
-  mutate(
-    unique_n_str = if_else(grepl('NA', unique_n_str), 'MASK', unique_n_str),
-    unique_percent_str = if_else(unique_percent_str == 'NA%', 'MASK', unique_percent_str),
-    unique_percent_survey_str = case_when(
-      is.na(unique_percent_survey) & is.na(unique_percent) ~ 'MASK', 
-      is.na(unique_percent_survey) & !is.na(unique_percent) ~ 'NA',
-      TRUE ~ unique_percent_survey_str),
-    bcds_value = if_else(is.na(bcds_value), 'Not in Survey', bcds_value)
-  ) %>% 
-  # remove total counts 
-  filter( var!= "TOTAL") %>% 
-  # fix typo
-  mutate(
-    var = case_when(
-      var == "dip_gdr" ~ "gender",
-      TRUE ~ var
-    )
-  ) %>% 
-  # fix some dip value issues
-  mutate(
-    dip_value = case_when(
-      dip_value=="assume F" ~ "no such variable",
-      (file_name=="ed_student_enrolment" & var=="difficulty") ~ "no such variable",
-      (file_name=="ed_course_mark" & var=="indigenous identity") ~ "no such variable",
-      TRUE ~ dip_value
-    )
-  ) %>% 
-  # remove no such variable indigenous duplicate for fmep_parent (FN income assist is the indigenous for this file)
-  filter(!(var == "indigenous" & file_name=="fmep_parent"))
-
-# filter out status variables now from the full detailed set, not useful 
-combined_detailed <- combined_detailed %>% 
-  filter(!var %in% c('gender status', 'dob status')) %>% 
-  # filter out age
-  filter(var != 'age')
-
-combined_detailed 
-
-# remove 'Not in Survey' results from data - detailed to be linked data only
-combined_detailed <- combined_detailed %>% 
-  filter(bcds_value != "Not in Survey")
-
-
-# add survey column name
-combined_detailed <- combined_detailed %>% 
-  left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
-
-# remove difficulty from data
-combined_detailed <- combined_detailed %>%
-  filter(survey_var!="difficulty")
-
-# add dataset information
-combined_detailed <- combined_detailed %>% 
-  rename(`SAE Resource Name (Short)`=file_name) %>% 
-  left_join(dataset_info, by=c("SAE Resource Name (Short)")) %>% 
-  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
-  select(-`SAE Resource Name (Short)`)
-
-# remove unused columns
-combined_detailed <- combined_detailed %>% 
-  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
-  
-# Write the combined data to a new CSV file for review
-write_csv(
-  combined_detailed, 
-  safepaths::use_network_path(
-    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_detailed.csv"
-    )
-)
-
-# write combined data to rds for use by app
-saveRDS(combined_detailed, "app/data/combined_detailed.rds")
-
-# write data for catalogue
-write_csv(
-  combined_detailed, 
-  safepaths::use_network_path(
-    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_individual_demographics.csv"
-  )
-)
 
 #*******************************
 # SUMMARY OF LINKAGE BY VAR ----
@@ -509,4 +368,145 @@ write_csv(
   )
 )
 
+#*******************************
+# DETAILED VAR LINKAGE RATES ----
+#*******************************
+
+# first get the detailed .csvs
+directory <- safepaths::use_network_path(
+  "2023 ARDA BCDS Data Evaluation/data_for_dashboard/linkage_by_var_detailed"
+)
+
+# Get a list of all CSV files in the directory
+file_list <- list.files(path = directory, pattern = "\\.csv$", full.names = TRUE, recursive=TRUE)
+file_list
+
+# Read all CSV files, add a column for the filename, and combine them into one data frame
+combined_detailed <- map_dfr(file_list, ~ {
+  name <- basename(.x)
+  data_group <- basename(dirname(.x))
+  data <- read_csv(.x, na=c("","NA", "MASK"))
+  data <- mutate(
+    data, 
+    name = name,
+    file_name = str_split(name, "_primary_variable|_ind_variable|_missed_variable")[[1]][1],
+    data_group = data_group
+  )
+  return(data)
+})
+
+# fix typo from health files
+multi_file_groups <- combined_detailed %>% 
+  distinct(name,file_name) %>% 
+  group_by(file_name) %>%
+  summarise(
+    name_combo = paste(name, collapse=", ")) %>% 
+  filter(grepl(",",name_combo)) %>% 
+  pull(file_name)
+
+combined_detailed <- combined_detailed %>% 
+  mutate(var = case_when((file_name %in% multi_file_groups & grepl("_primary",name) & var=="indigenous") ~ "indigenous identity",
+                         TRUE ~ var)) %>% 
+  select(-name)
+
+# confirm numeric datatypes
+combined_detailed <- combined_detailed %>% 
+  mutate(
+    unique_n = as.numeric(unique_n),
+    unique_percent = as.numeric(unique_percent),
+    unique_percent_survey = as.numeric(unique_percent_survey),
+    # clean up a couple of issues with large percentages 
+    unique_percent_survey = if_else(unique_percent_survey > 100, NA_real_, unique_percent_survey)
+  ) %>% 
+  # fill in missing rows 
+  group_by(data_group, file_name, var) %>% 
+  complete(dip_value, bcds_value) %>% 
+  ungroup() %>% 
+  # get strings for %s and commas for Ns
+  mutate(
+    unique_n_str = format(unique_n, big.mark = ","),
+    unique_percent_str = sprintf("%.2f%%", unique_percent),
+    unique_percent_survey_str = sprintf("%.2f%%", unique_percent_survey)
+  ) %>% 
+  # clean up NAs
+  mutate(
+    unique_n_str = if_else(grepl('NA', unique_n_str), 'MASK', unique_n_str),
+    unique_percent_str = if_else(unique_percent_str == 'NA%', 'MASK', unique_percent_str),
+    unique_percent_survey_str = case_when(
+      is.na(unique_percent_survey) & is.na(unique_percent) ~ 'MASK', 
+      is.na(unique_percent_survey) & !is.na(unique_percent) ~ 'NA',
+      TRUE ~ unique_percent_survey_str),
+    bcds_value = if_else(is.na(bcds_value), 'Not in Survey', bcds_value)
+  ) %>% 
+  # remove total counts 
+  filter( var!= "TOTAL") %>% 
+  # fix typo
+  mutate(
+    var = case_when(
+      var == "dip_gdr" ~ "gender",
+      TRUE ~ var
+    )
+  ) %>% 
+  # fix some dip value issues
+  mutate(
+    dip_value = case_when(
+      dip_value=="assume F" ~ "no such variable",
+      (file_name=="ed_student_enrolment" & var=="difficulty") ~ "no such variable",
+      (file_name=="ed_course_mark" & var=="indigenous identity") ~ "no such variable",
+      TRUE ~ dip_value
+    )
+  ) %>% 
+  # remove no such variable indigenous duplicate for fmep_parent (FN income assist is the indigenous for this file)
+  filter(!(var == "indigenous" & file_name=="fmep_parent"))
+
+# filter out status variables now from the full detailed set, not useful 
+combined_detailed <- combined_detailed %>% 
+  filter(!var %in% c('gender status', 'dob status')) %>% 
+  # filter out age
+  filter(var != 'age')
+
+combined_detailed 
+
+# remove 'Not in Survey' results from data - detailed to be linked data only
+combined_detailed <- combined_detailed %>% 
+  filter(bcds_value != "Not in Survey")
+
+
+# add survey column name
+combined_detailed <- combined_detailed %>% 
+  left_join(select(combined_list_vars,name,var_main,var_dip,survey_var),by=c("file_name"="name","var"="var_main"))
+
+# remove difficulty from data
+combined_detailed <- combined_detailed %>%
+  filter(survey_var!="difficulty")
+
+# add dataset information
+combined_detailed <- combined_detailed %>% 
+  rename(`SAE Resource Name (Short)`=file_name) %>% 
+  left_join(dataset_info, by=c("SAE Resource Name (Short)")) %>% 
+  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
+  select(-`SAE Resource Name (Short)`)
+
+# remove unused columns
+combined_detailed <- combined_detailed %>% 
+  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
+
+# Write the combined data to a new CSV file for review
+write_csv(
+  combined_detailed, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_detailed.csv"
+  )
+)
+
+# write combined data to rds for use by app
+saveRDS(combined_detailed, "app/data/combined_detailed.rds")
+
+# write data for catalogue
+write_csv(
+  combined_detailed, 
+  safepaths::use_network_path(
+    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_individual_demographics.csv"
+  )
+)
 
