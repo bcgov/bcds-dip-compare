@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # Load necessary libraries
+library(shiny)
 library(DT)
 library(dplyr)
 library(scales)
@@ -20,9 +21,6 @@ library(bcsapps)
 library(plotly)
 library(shinyWidgets)
 library(shinydashboard)
-library(bslib)
-library(shiny)
-library(bsicons)
 library(shinyBS)
 
 # Define UI ----
