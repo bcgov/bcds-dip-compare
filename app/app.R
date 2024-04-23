@@ -391,6 +391,18 @@ server <- function(input, output, session) {
   observeEvent(input$link_detailed, {
     updateTabsetPanel(session, "navbar", "detailed")
   })
+  
+  # nav bar ----
+  ## code to close navbar (when in collapsed form) once a tab has been selected
+  observeEvent(input$navbar, {
+    shinyjs::runjs('
+      var elem = document.getElementsByClassName("navbar-collapse")[0]
+      elem.setAttribute("aria-expanded", "false");
+      elem.setAttribute("class", "navbar-collapse collapse");
+    ')
+    
+    shinyjs::runjs("window.scrollTo(0,0)")
+  })
 
   # data_overview ----
   ## render table ----
