@@ -600,7 +600,7 @@ server <- function(input, output, session) {
         
         # return the info box
         infoBox(
-          title = HTML(paste0("<strong>", var_name, "</strong>")),
+          title = HTML(paste0("<p style='font-weight: bold; white-space: break-spaces;'>", var_name, "</p>")),
           value = HTML(paste0("<p style='font-size:14px; font-weight: normal;'>", info, "</p>")),
           icon = icon(icon),
           color = color,
