@@ -70,13 +70,6 @@ combined_list_vars <- tmp %>% group_by(name, var_main) %>%
   ) 
 
 combined_list_vars <- combined_list_vars %>% 
-  # fix typo
-  mutate(
-    var_main = case_when(
-      var_main == "disability: phsyical capacity" ~ "disability: physical capacity",
-      TRUE ~ var_main
-    )
-  ) %>% 
   # add "survey" variable
   mutate(
     survey_var = case_when(
@@ -264,9 +257,7 @@ combined_summary <- combined_summary %>%
       (file_name=="ed_student_enrolment" & var == "difficulty" & cross_status=="both known") ~ "added info",
       TRUE ~ cross_status
     )
-  )  %>% 
-  # remove no such variable indigenous duplicate for fmep_parent (FN income assist is the indigenous for this file)
-  filter(!(var == "indigenous" & file_name=="fmep_parent"))
+  )
 
 # confirm numeric datatypes
 combined_summary <- combined_summary %>% 
@@ -485,9 +476,7 @@ combined_detailed <- combined_detailed %>%
       (file_name=="ed_course_mark" & var=="indigenous identity") ~ "no such variable",
       TRUE ~ dip_value
     )
-  ) %>% 
-  # remove no such variable indigenous duplicate for fmep_parent (FN income assist is the indigenous for this file)
-  filter(!(var == "indigenous" & file_name=="fmep_parent"))
+  ) 
 
 # filter out status variables now from the full detailed set, not useful 
 combined_detailed <- combined_detailed %>% 
