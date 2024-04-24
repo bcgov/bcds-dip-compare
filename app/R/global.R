@@ -77,6 +77,7 @@ header <- htmltools::tagList(
          # Data Catalog
          htmltools::tags$a(
            href = "https://catalogue.data.gov.bc.ca/", 
+           target = "_blank",
            shiny::icon("table", "fa-lg"), 
            'Download the Data',
            style = "color:white; margin-left:10px"
@@ -85,6 +86,7 @@ header <- htmltools::tagList(
        # Github
        htmltools::tags$a(
          href = 'http://github.com', 
+         target = "_blank",
          shiny::icon("github", "fa-lg"), 
          'Source Code',
          style = "color:white; margin-left:10px"

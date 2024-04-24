@@ -66,18 +66,21 @@ ui <- tagList(
           "Questions for DIP?", 
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            target = "_blank",
             "Open a ticket here."),
           br(),
           
           "Questions about the Dashboard?",
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            target = "_blank",
             "Contact BC Stats."),
           br(),
           
           "Questions about the BC Demographic Survey?",
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            target = "_blank",
           "Contact them here.")),
       
           br(),br(),
@@ -466,7 +469,7 @@ ui <- tagList(
       )
     ),
     
-    # NEED TO FIX ----
+    # demographic tooltips ----
     fluidRow(
       style = "padding-right:30px;padding-left:30px;background-color:white;min-width:100%",
       #### disability ---- 
@@ -566,7 +569,7 @@ ui <- tagList(
         a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf"),
         br(),
         "The data is available for download from the",
-        a("BC Data Catalogue.", href="https://catalogue.data.gov.bc.ca/"),
+        a("BC Data Catalogue.", href="https://catalogue.data.gov.bc.ca/", target = "_blank"),
         br(), br(),
         "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
         )
