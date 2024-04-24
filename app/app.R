@@ -21,6 +21,7 @@ library(bcsapps)
 library(plotly)
 library(shinyWidgets)
 library(shinydashboard)
+library(shinyBS)
 
 # Define UI ----
 
@@ -49,11 +50,12 @@ ui <- tagList(
     ## title/header/footer ----
     title = "",
 
-    header = bcsapps::bcsHeaderUI(
-      id = 'header',
-      appname = "BC Demographic Survey: DIP Data Linkage Rates",
-      github = NULL # replace with github URL or NULL
-    ),
+    header = header,
+    # header = bcsapps::bcsHeaderUI(
+    #   id = 'header',
+    #   appname = "BC Demographic Survey: DIP Data Linkage Rates",
+    #   github = NULL # replace with github URL or NULL
+    # ),
 
     footer = fluidRow(
       style = "padding-top:15px;margin-top:-15px;min-width:-webkit-fill-available;",
@@ -64,18 +66,21 @@ ui <- tagList(
           "Questions for DIP?", 
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            target = "_blank",
             "Open a ticket here."),
           br(),
           
           "Questions about the Dashboard?",
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            target = "_blank",
             "Contact BC Stats."),
           br(),
           
           "Questions about the BC Demographic Survey?",
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            target = "_blank",
           "Contact them here.")),
       
           br(),br(),
@@ -90,26 +95,85 @@ ui <- tagList(
                   "Home"),
       value="home",
       style = "padding-top:160px",
+      # title
       fluidRow(style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
         column(width = 12,
                offset = 0,
                br(),
                h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
-               br(),
-               "This dashboard is for discovering how the recent BC Demographic Survey data links to existing data in the
-                              Data Innovation Program (DIP).",
-               br(),br(),
-               "See the ",actionLink("link_overall", "Overall Linkage Rates")," tab for information on the percentage of a dataset that has linked records in the BC Demographic Survey.",
-               br(),br(),
-               "See the ",actionLink("link_summary", "Linked Variables Summary")," tab for information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.",
-               br(),br(),
-               "See the ",actionLink("link_detailed", "Linked Individual Demographics")," tab for a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.",
-               br(),br(),
-               "This analysis was completed in early 2024, and the datasets analyzed from within DIP include records no later than November 29, 2023.",
-               "For more details on the data included in the dashboard and associated caveats, see the ",
-               actionLink("link_about", "About")," tab.",
-               br(),br()
-        ))
+               br()
+        )
+      ),
+      # about the dashboard
+      fluidRow(style = "padding-left:30px;background-color:#29619d;min-width:fit-content",
+        column(
+          width = 9,style="color:white",
+          h1("About the Dashboard"),
+          h3("This dashboard provides information on how the 2023 BC Demographic Survey data links to other available data in the Data Innovation Program (DIP)"),
+          br(),br(),
+          hover_action_button("link_about",
+                              div(style ="font-size:18px",
+                                  "Read more about the data in the dashboard",
+                                  tags$i(class="fa-solid fa-arrow-right-long"),
+                                  hr(style= "border-top:2px solid;margin-top:10px")),
+                              style = "color:white;background-color:transparent;border:none;margin-left:-12px",
+                              button_animation = "grow"),
+          br(),br()
+        )
+        ),
+      # tabs info, as boxes
+      fluidRow(
+        style="padding-left:50px;padding-right:50px;min-width:fit-content",
+        br(),br(),br(),
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_overall",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-link'),
+                  "Overall Linkage Rates",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent;max-width:100%",
+              button_animation = "grow"),
+            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey")
+          )),
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_summary",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-chart-bar'),
+                  "Linked Variables Summary",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              button_animation = "grow"),
+            h3("For more information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.")
+          )),
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_detailed",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-code-compare'),
+                  "Linked Individual Demographics",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              button_animation = "grow"),
+            h3("For a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.")
+          ))
+      )
     )
     ,
     # overall linkage rates ----
@@ -355,12 +419,161 @@ ui <- tagList(
       style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       class = "bg-row",
       h1(style="padding-left:15px;margin-bottom:25px",
-        "About the Dashboard"),
-      div(style = "margin-left:20px;margin-right:20px",
-         includeMarkdown("R/methodology.Rmd"),
-         br(),
-         br()))
+        "About the Dashboard")
+    ),
+    fluidRow(
+      style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      # about survey
+      column(
+        width = 6, style="color:white",
+        wellPanel(
+          style="padding:20px;border-radius: 25px; min-height:150px;background:#29619d; align-items:center; justify-text:center",
+          h3(
+            "In 2023, BC Stats conducted the",
+            a(
+              "BC Demographic Survey.", 
+              href='https://antiracism.gov.bc.ca/',
+              target="_blank",
+              style='color:#ccffff; text-decoration: underline;'
+              ),
+            "More than 200,000 people responded to the voluntary survey, providing information about many aspects of their identity  (such as race, ethnicity, ancestry, gender and many others)."
+            ),
+        )),
+      
+      # about dip
+      column(
+        width = 6, style="color:white",
+        wellPanel(
+          style="padding:20px;border-radius: 25px; min-height:150px;background:#29619d; align-items:center; justify-text:center",
+          h3(
+            "The",
+            a(
+              "Data Innovation Program (DIP)", 
+              href='https://www2.gov.bc.ca/gov/content/data/about-data-management/data-innovation-program/',
+              target="_blank",
+              style='color:#ccffff; text-decoration: underline;'
+              ),
+            "securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. This dashboard looks at how successfully DIP can be supplemented by the BC Demographic Survey."
+          ),
+        ))
+    ),
+    fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      column(
+        width= 12,
+        h1("BC Demographic Survey Demographics"),
+        br(),
+        "Six different demographic questions from the BC Demographic Survey were analyzed for comparable values within DIP datasets.",
+        "These demographics were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
+        "Hover over each of the options for more information about the demographic.",
+        br(), br()
+      )
+    ),
     
+    # demographic tooltips ----
+    fluidRow(
+      style = "padding-right:30px;padding-left:30px;background-color:white;min-width:100%",
+      #### disability ---- 
+      column(
+        width=2, 
+        hover_action_button(
+          "link_disability",
+          div(style ="font-size:18px",
+              "Disability"
+              ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+          ),
+        bsTooltip(
+          'link_disability',
+          "Identifies survey respondents who responded always, often, or sometimes has a disability.",
+          placement = "bottom"
+        )
+        ),
+      #### gender ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_gender",
+          div(style ="font-size:18px",
+              "Gender"
+              ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_gender',
+          "Identifies survey respondents who responded man/boy, woman/girl, or non-binary.",
+          placement = "bottom"
+        )
+      ),
+      #### indigenous identity----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_indigenous_db",
+          div(
+            style ="font-size:18px",
+            "Indigenous Identity"
+          ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_indigenous_db',
+          "Identifies survey respondents who responded First Nations, Métis or Inuk (Inuit).",
+          placement = "bottom"
+        )
+      ),
+      #### race ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_race",
+          div(
+            style ="font-size:18px",
+            "Racial Identity"
+          ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_race',
+          "Identifies survey respondents who provided one or more racial identities.",
+          placement = "bottom"
+        )
+      ),
+      ### dob ----
+      column(
+        width=2, 
+        hover_action_button(
+          "link_dob",
+          div(
+            style ="font-size:18px",
+            "Date of Birth"
+          ),
+          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
+          button_animation = "grow"
+        ),
+        bsTooltip(
+          'link_dob',
+          "Identifies if a record has a valid date of birth (or associated birth year, month, etc.), but does not dive deeper into the specific values.",
+          placement = "bottom"
+        )
+      ),
+    ),
+    fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+      br(),br(),
+      column(
+        width=12,
+        "For more details on methodology and caveats, see the",
+        a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf"),
+        br(),
+        "The data is available for download from the",
+        a("BC Data Catalogue.", href="https://catalogue.data.gov.bc.ca/", target = "_blank"),
+        br(), br(),
+        "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
+        )
+    )
   )
   )
 )
@@ -371,8 +584,10 @@ ui <- tagList(
 server <- function(input, output, session) {
   
   # formatting ----
+  bcstatslinks::linkModServer('links')
+  output$links_yn <- shiny::renderUI(bcstatslinks::linkModUI('links'))
   ## Change links to false to remove the link list from the header
-  bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
+  # bcsapps::bcsHeaderServer(id = 'header', links = TRUE)
   bcsapps::bcsFooterServer(id = 'footer')
   
   # tab links ----

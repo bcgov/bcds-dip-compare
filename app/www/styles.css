@@ -126,4 +126,10 @@ html, body, h1, h2, h3, h4, h5, h6 {
     }
 }
 
+/*hover wrap text*/
+.btn.btn-default.action-button.hvr-grow.shiny-bound-input {
+	white-space: normal;
+	word-wrap: break-word;
+}
+
 
