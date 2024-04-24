@@ -503,34 +503,14 @@ ui <- tagList(
           placement = "bottom"
         )
       ),
-      #### indigenous identity ----
-      column(
-        width=2, 
-        hover_action_button(
-          "link_indigenous",
-          div(
-            style ="font-size:18px",
-            "Indigenous Identity"
-          ),
-          style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
-          button_animation = "grow"
-        ),
-        bsTooltip(
-          'link_indigenous',
-          "Identifies survey respondents who responded with any Indigenous identity. While this is included to make more meaningful comparisons with DIP datasets, a distinctions based approach to Indigenous identity is recommended.",
-          placement = "bottom"
-        )
-      ),
-      #### indigenous identity, distinctions based ----
+      #### indigenous identity----
       column(
         width=2, 
         hover_action_button(
           "link_indigenous_db",
           div(
             style ="font-size:18px",
-            "Indigenous Identity",
-            br(),
-            "(Distinctions Based)"
+            "Indigenous Identity"
           ),
           style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
           button_animation = "grow"

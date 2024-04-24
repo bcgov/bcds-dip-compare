@@ -52,7 +52,7 @@ To compare the BC Demographic Survey to each individual DIP dataset, a list of u
 
 ## Survey Demographics
 
-After comparing to individual DIP datasets at a broad level, a deeper dive exploring DIP demographic data was completed as well. Six key demographic components from the survey were included for this dataset. These include:
+After comparing to individual DIP datasets at a broad level, a deeper dive exploring DIP demographic data was completed as well. Five key demographic components from the survey were included for this dataset. These include:
 
 * **Gender**
   * This was cleaned in the demographic survey to include: Man/Boy, Woman/Girl, Non-Binary Person, but also catered for those who preferred to remain unknown (with I don't know/I am unsure, or Prefer not to answer).  
@@ -61,13 +61,9 @@ After comparing to individual DIP datasets at a broad level, a deeper dive explo
   * This was cleaned in the demographic survey to include: the 14 non-Indigenous options made available on the survey, the two unknown options, as well as the option for someone to have reported multiple races. 
   * Note that the methodology used here does not align with the racialized population groups reported by Statistics Canada. See the Education/Health technical reports for more details [NEED TO LINK HERE]()
   
-* **(Distinctions Based) Indigenous Identity**
+* **Indigenous Identity**
   * This was cleaned in the demographic survey to include: First Nations, Inuk (Inuit), Métis, Not Indigenous, the two unknown options, as well as the option for someone to have reported multiple Indigenous identities. 
   * See the Health technical report for more details [NEED TO LINK HERE]()
-
-* **Indigenous Identity**
-  * Because current DIP datasets are limited in their capability to provide Indigenous demographics, we also rolled up the Distinctions based demography to a singular Indigenous/Non Indigenous option. 
-  * This was done to facilitate easier comparison with what is currently available in various DIP datasets, but it is still recommended that a distinctions based approach to using Indigenous data is followed wherever possible. 
   
 * **Disabilities**
   * This was cleaned in the demographic survey to include: has a condition that is always, often, or sometimes a disability, no condition that is a disability, as well as the two unknown options. 
