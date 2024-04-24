@@ -247,14 +247,11 @@ combined_summary <- combined_summary %>%
 combined_summary <- combined_summary %>% 
   mutate(
     cross_status = case_when(
+      # gender assumed for all IDs - revert to no DIP variable
       (file_name=="vital_events_stillbirths_id2_mom" & var %in% "gender" & cross_status=="lost info") ~ "both NA or invalid",
       (file_name=="vital_events_stillbirths_id2_mom" & var %in% "gender" & cross_status=="both known") ~ "added info",
       (file_name=="vital_events_births_id2_mom" & var %in% "gender" & cross_status=="lost info") ~ "both NA or invalid",
       (file_name=="vital_events_births_id2_mom" & var %in% "gender" & cross_status=="both known") ~ "added info",
-      (file_name=="ed_course_mark" & var =="indigenous identity" & cross_status=="lost info") ~ "both NA or invalid",
-      (file_name=="ed_course_mark" & var == "indigenous identity" & cross_status=="both known") ~ "added info",
-      (file_name=="ed_student_enrolment" & var =="difficulty" & cross_status=="lost info") ~ "both NA or invalid",
-      (file_name=="ed_student_enrolment" & var == "difficulty" & cross_status=="both known") ~ "added info",
       TRUE ~ cross_status
     )
   )
@@ -313,6 +310,10 @@ combined_summary <- combined_summary %>%
   filter(var != 'age')  
 
 combined_summary
+
+# remove datasets with 0 linkage
+combined_summary <- combined_summary %>% 
+  filter(file_name != "vital_events_stillbirths_id1_baby")
 
 # add survey column name
 combined_summary <- combined_summary %>% 
@@ -477,7 +478,6 @@ combined_detailed <- combined_detailed %>%
     dip_value = case_when(
       dip_value=="assume F" ~ "no such variable",
       (file_name=="ed_student_enrolment" & var=="difficulty") ~ "no such variable",
-      (file_name=="ed_course_mark" & var=="indigenous identity") ~ "no such variable",
       TRUE ~ dip_value
     )
   ) 
@@ -489,6 +489,10 @@ combined_detailed <- combined_detailed %>%
   filter(var != 'age')
 
 combined_detailed
+
+# remove datasets with 0 linkage
+combined_detailed <- combined_detailed %>% 
+  filter(file_name != "vital_events_stillbirths_id1_baby")
 
 # add survey column name
 combined_detailed <- combined_detailed %>% 
