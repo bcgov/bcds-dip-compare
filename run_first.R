@@ -218,11 +218,9 @@ file_list
 # Read all CSV files, add a column for the filename, and combine them into one data frame
 combined_summary <- map_dfr(file_list, ~ {
   name <- basename(.x)
-  data_group <- basename(dirname(.x))
   data <- read_csv(.x, na=c("","NA", "MASK"))
   data <- mutate(data, file_name = str_split(name, "_primary_variable|_ind_variable|_missed_variable")[[1]][1])
   data <- mutate(data, mask_flag = is.na(unique_n))
-  data <- mutate(data, data_group = data_group)
   data <- mutate(data, name = name)
 
   return(data)
@@ -269,7 +267,7 @@ combined_summary <- combined_summary %>%
   ) %>% 
   
   # fill in missing rows 
-  group_by(file_name, var, data_group) %>% 
+  group_by(file_name, var) %>% 
   complete(
     cross_status = unique(combined_summary$cross_status), 
     fill = list(unique_n = 0, unique_percent = 0, unique_percent_survey = 0, mask_flag = FALSE)
@@ -354,7 +352,7 @@ combined_summary <- combined_summary %>%
 
 # remove unused columns
 combined_summary <- combined_summary %>% 
-  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes,-unique_percent_survey_str)
+  select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes,-unique_percent_survey_str)
 
 
 # Write the combined data to a new CSV file for review
@@ -408,13 +406,11 @@ file_list
 # Read all CSV files, add a column for the filename, and combine them into one data frame
 combined_detailed <- map_dfr(file_list, ~ {
   name <- basename(.x)
-  data_group <- basename(dirname(.x))
   data <- read_csv(.x, na=c("","NA", "MASK"))
   data <- mutate(
     data, 
     name = name,
-    file_name = str_split(name, "_primary_variable|_ind_variable|_missed_variable")[[1]][1],
-    data_group = data_group
+    file_name = str_split(name, "_primary_variable|_ind_variable|_missed_variable")[[1]][1]
   )
   return(data)
 })
@@ -443,7 +439,7 @@ combined_detailed <- combined_detailed %>%
     unique_percent_survey = if_else(unique_percent_survey > 100, NA_real_, unique_percent_survey)
   ) %>% 
   # fill in missing rows 
-  group_by(data_group, file_name, var) %>% 
+  group_by(file_name, var) %>% 
   complete(dip_value, bcds_value) %>% 
   ungroup() %>% 
   # get strings for %s and commas for Ns
@@ -559,7 +555,7 @@ combined_detailed <- combined_detailed %>%
 
 # remove unused columns
 combined_detailed <- combined_detailed %>% 
-  select(-data_group,-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
+  select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
 
 # Write the combined data to a new CSV file for review
 write_csv(
