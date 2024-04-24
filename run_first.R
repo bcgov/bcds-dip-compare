@@ -77,15 +77,25 @@ combined_list_vars <- combined_list_vars %>%
       TRUE ~ var_main
     )
   ) %>% 
-  # add "survey" variable; manually fix non-matching default survey variables
+  # add "survey" variable
   mutate(
     survey_var = case_when(
-      var_main == "disability 2" ~ "disability",
+      # standardize regular vars
+      var_main == "disability" ~ "Disability",
+      var_main == "indigenous identity" ~ "Indigenous Identity",
+      var_main == "gender" ~ "Gender",
+      var_main == "race" ~ "Racial Identity",
+      var_main == "dob status" ~ "Date of Birth",
+      #manually fix non-matching default survey variables
+      var_main == "disability 2" ~ "Disability",
       var_main == "indigenous ever" ~ "indigenous",
       var_main == "indigenous ever backdated" ~ "indigenous",
-      var_main == "FN income assist" ~ "indigenous",
-      var_main == "dip_gdr" ~ "gender",
-      grepl("disability: ",var_main) ~ "disability",
+      var_main == "indigenous identity ever" ~ "Indigenous Identity",
+      var_main == "indigenous identity overall" ~ "Indigenous Identity",
+      var_main == "indigenous identity ever backdated" ~ "Indigenous Identity",
+      #var_main == "FN income assist" ~ "indigenous",
+      var_main == "dip_gdr" ~ "Gender",
+      grepl("disability: ",var_main) ~ "Disability",
       TRUE ~ var_main
     )
   )
