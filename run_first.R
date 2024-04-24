@@ -322,6 +322,10 @@ combined_summary <- combined_summary %>%
 combined_summary <- combined_summary %>%
   filter(survey_var!="difficulty")
 
+# remove indigenous from data (only keeping Indigenous Identity (distinctions based version))
+combined_summary <- combined_summary %>%
+  filter(survey_var!="indigenous")
+
 # add dataset information
 combined_summary <- combined_summary %>% 
   rename(`SAE Resource Name (Short)`=file_name) %>% 
@@ -493,6 +497,10 @@ combined_detailed <- combined_detailed %>%
 # remove difficulty from data
 combined_detailed <- combined_detailed %>%
   filter(survey_var!="difficulty")
+
+# remove indigenous from data (only keeping Indigenous Identity (distinctions based version))
+combined_detailed <- combined_detailed %>%
+  filter(survey_var!="indigenous")
 
 # add dataset information
 combined_detailed <- combined_detailed %>% 
