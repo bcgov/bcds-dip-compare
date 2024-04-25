@@ -298,7 +298,10 @@ ui <- tagList(
                            HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
                                 See metadata for the relevant dataset to determine the variable name.</small>"))
         ),
-        mainPanel(style = "padding-right:30px;padding-left:30px;background-color:white;min-height:750px",
+        mainPanel(
+          style = "padding-right:30px;padding-left:30px;background-color:white;min-height:750px",
+          # add information about data displayed
+          uiOutput("viewingSummary"),
           
           tabsetPanel(
             tabPanel(
@@ -379,10 +382,17 @@ ui <- tagList(
            "Choose DIP Variable:", 
            choices = NULL #unique(combined_detailed$var)
          ),
+         
+         # Note added to indicate multiple dip variables available
+         conditionalPanel(condition = 'output.multivarflag == true',
+                          textOutput("multivarnote"))
        ),
        
        mainPanel(
          style = "padding-right:30px;padding-left:30px;background-color:white;",
+         # add information about data displayed
+         uiOutput("viewingDetailed"),
+         
          tabsetPanel(
            
            ## table ----
@@ -606,6 +616,18 @@ server <- function(input, output, session) {
   observeEvent(input$link_detailed, {
     updateTabsetPanel(session, "navbar", "detailed")
   })
+  
+  # nav bar ----
+  ## code to close navbar (when in collapsed form) once a tab has been selected
+  observeEvent(input$navbar, {
+    shinyjs::runjs('
+      var elem = document.getElementsByClassName("navbar-collapse")[0]
+      elem.setAttribute("aria-expanded", "false");
+      elem.setAttribute("class", "navbar-collapse collapse");
+    ')
+    
+    shinyjs::runjs("window.scrollTo(0,0)")
+  })
 
   # data_overview ----
   ## render table ----
@@ -726,6 +748,14 @@ server <- function(input, output, session) {
   output$dobflag <- reactive("dip_dob_status" %in% filtered_data_summary()$"DIP Variable Name")
   outputOptions(output, "dobflag", suspendWhenHidden = FALSE)
   
+  # add note to top of tab for information on what provider/dataset/resource displayed
+  output$viewingSummary <- renderUI({
+    h2(HTML(paste0("Currently viewing data for: <br>",
+                   "Data Provider: ", unique(filtered_by_var_summary()$`Data Provider/Ministry`), "<br>",
+                   "Dataset: ", unique(filtered_by_var_summary()$Dataset), "<br>",
+                   "Resource: ", unique(filtered_by_var_summary()$Resource))))
+  })
+  
   ## summary info boxes ----
   summary_info <- reactive({
     
@@ -815,7 +845,7 @@ server <- function(input, output, session) {
         
         # return the info box
         infoBox(
-          title = HTML(paste0("<strong>", var_name, "</strong>")),
+          title = HTML(paste0("<p style='font-weight: bold; white-space: break-spaces;'>", var_name, "</p>")),
           value = HTML(paste0("<p style='font-size:14px; font-weight: normal;'>", info, "</p>")),
           icon = icon(icon),
           color = color,
@@ -920,6 +950,21 @@ server <- function(input, output, session) {
 
   })
   
+  # create multi var flag & note
+  output$multivarflag <- reactive(length(unique(filtered_by_var_detailed()$var_dip)) > 1)
+  outputOptions(output, "multivarflag", suspendWhenHidden = FALSE)
+  output$multivarnote <- renderText({
+    paste0("Multiple DIP Variable choices available for ",as.character(input$var_detailed))
+  })
+  
+  # add note to top of tab for information on what provider/dataset/resource displayed
+  output$viewingDetailed <- renderUI({
+    h2(HTML(paste0("Currently viewing data for: <br>",
+                   "Data Provider: ", unique(filtered_by_var_detailed()$`Data Provider/Ministry`), "<br>",
+                   "Dataset: ", unique(filtered_by_var_detailed()$Dataset), "<br>",
+                   "Resource: ", unique(filtered_by_var_detailed()$Resource))))
+  })
+
   ## render heatmap ----
   output$heatmap_detailed <- renderPlotly({
     
