@@ -234,7 +234,10 @@ ui <- tagList(
                            HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
                                 See metadata for the relevant dataset to determine the variable name.</small>"))
         ),
-        mainPanel(style = "padding-right:30px;padding-left:30px;background-color:white;min-height:750px",
+        mainPanel(
+          style = "padding-right:30px;padding-left:30px;background-color:white;min-height:750px",
+          # add information about data displayed
+          uiOutput("viewingSummary"),
           
           tabsetPanel(
             tabPanel(
@@ -323,6 +326,9 @@ ui <- tagList(
        
        mainPanel(
          style = "padding-right:30px;padding-left:30px;background-color:white;",
+         # add information about data displayed
+         uiOutput("viewingDetailed"),
+         
          tabsetPanel(
            
            ## table ----
@@ -527,6 +533,14 @@ server <- function(input, output, session) {
   output$dobflag <- reactive("dip_dob_status" %in% filtered_data_summary()$"DIP Variable Name")
   outputOptions(output, "dobflag", suspendWhenHidden = FALSE)
   
+  # add note to top of tab for information on what provider/dataset/resource displayed
+  output$viewingSummary <- renderUI({
+    h2(HTML(paste0("Currently viewing data for: <br>",
+                   "Data Provider: ", unique(filtered_by_var_summary()$`Data Provider/Ministry`), "<br>",
+                   "Dataset: ", unique(filtered_by_var_summary()$Dataset), "<br>",
+                   "Resource: ", unique(filtered_by_var_summary()$Resource))))
+  })
+  
   ## summary info boxes ----
   summary_info <- reactive({
     
@@ -726,6 +740,14 @@ server <- function(input, output, session) {
   outputOptions(output, "multivarflag", suspendWhenHidden = FALSE)
   output$multivarnote <- renderText({
     paste0("Multiple DIP Variable choices available for ",as.character(input$var_detailed))
+  })
+  
+  # add note to top of tab for information on what provider/dataset/resource displayed
+  output$viewingDetailed <- renderUI({
+    h2(HTML(paste0("Currently viewing data for: <br>",
+                   "Data Provider: ", unique(filtered_by_var_detailed()$`Data Provider/Ministry`), "<br>",
+                   "Dataset: ", unique(filtered_by_var_detailed()$Dataset), "<br>",
+                   "Resource: ", unique(filtered_by_var_detailed()$Resource))))
   })
 
   ## render heatmap ----
