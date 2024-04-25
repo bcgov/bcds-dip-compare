@@ -315,6 +315,10 @@ ui <- tagList(
            "Choose DIP Variable:", 
            choices = NULL #unique(combined_detailed$var)
          ),
+         
+         # Note added to indicate multiple dip variables available
+         conditionalPanel(condition = 'output.multivarflag == true',
+                          textOutput("multivarnote"))
        ),
        
        mainPanel(
@@ -717,6 +721,13 @@ server <- function(input, output, session) {
 
   })
   
+  # create multi var flag & note
+  output$multivarflag <- reactive(length(unique(filtered_by_var_detailed()$var_dip)) > 1)
+  outputOptions(output, "multivarflag", suspendWhenHidden = FALSE)
+  output$multivarnote <- renderText({
+    paste0("Multiple DIP Variable choices available for ",as.character(input$var_detailed))
+  })
+
   ## render heatmap ----
   output$heatmap_detailed <- renderPlotly({
     
