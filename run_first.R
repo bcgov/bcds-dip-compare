@@ -145,8 +145,8 @@ combined_overview <- combined_overview %>%
     in_demographic_str = format(in_demographic, big.mark = ","),
     in_dip_dataset_str = format(in_dip_dataset, big.mark = ","),
     in_both_str = format(in_both, big.mark = ","),
-    pct_demo_in_dip_str = sprintf("%.2f%%", pct_demo_in_dip),
-    pct_dip_in_demo_str = sprintf("%.2f%%", pct_dip_in_demo)
+    pct_demo_in_dip_str = ifelse(is.na(pct_demo_in_dip),"NA",sprintf("%.2f%%", pct_demo_in_dip)),
+    pct_dip_in_demo_str = ifelse(is.na(pct_dip_in_demo),"NA",sprintf("%.2f%%", pct_dip_in_demo))
   )  
   # clean up NAs
 
@@ -187,7 +187,8 @@ overall_linkage_rates <- combined_overview %>%
   select(-contains("rank"))
 
 # rename and order columns
-overall_linkage_rates <- overall_linkage_rates %>% 
+overall_linkage_rates <- overall_linkage_rates %>%
+  mutate(Notes = ifelse(is.na(Notes),"",Notes)) %>% 
   select(any_of(names(dataset_info)),
          "Survey Records"=in_demographic_str,
          "DIP Resource Records"=in_dip_dataset_str,
