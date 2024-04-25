@@ -481,7 +481,14 @@ combined_detailed <- combined_detailed %>%
       (file_name=="ed_student_enrolment" & var=="difficulty") ~ "no such variable",
       TRUE ~ dip_value
     )
-  ) 
+  ) %>% 
+  # add accent to Metis in BCDS Values
+  mutate(
+    bcds_value = case_when(
+      bcds_value == "Metis" ~ "M\u00e9tis",
+      TRUE ~ bcds_value
+    )
+  )
 
 # filter out status variables now from the full detailed set, not useful 
 combined_detailed <- combined_detailed %>% 
@@ -570,7 +577,7 @@ combined_detailed <- combined_detailed %>%
   select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
 
 # Write the combined data to a new CSV file for review
-write_csv(
+write_excel_csv(
   combined_detailed, 
   safepaths::use_network_path(
     "2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_detailed.csv"
@@ -594,7 +601,7 @@ linked_individual_demographics <- combined_detailed %>%
          everything()
   )
 
-write_csv(
+write_excel_csv(
   linked_individual_demographics, 
   safepaths::use_network_path(
     "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_individual_demographics.csv"
