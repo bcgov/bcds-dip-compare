@@ -346,7 +346,7 @@ known_dip_mask_count <- combined_summary %>%
 combined_summary <- combined_summary %>% 
   left_join(known_dip_mask_count,by=c("Resource","survey_var","var_dip")) %>% 
   mutate(highlights_groups = case_when((cross_status == 'DIP only' | cross_status == 'DIP and survey') ~ "Known from DIP",
-                                       cross_status=="Survey only" ~ "Additional Coverage from Survey",
+                                       cross_status=="Survey only" ~ "Added from Survey",
                                        cross_status=="Neither source" ~ "Still Unknown")) %>% 
   group_by(Resource,survey_var,var_dip,highlights_groups) %>% 
   mutate(known_sum = ifelse(highlights_groups=="Known from DIP",sum(unique_percent),NA_real_)) %>% 
