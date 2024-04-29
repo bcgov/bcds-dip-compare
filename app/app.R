@@ -109,7 +109,7 @@ ui <- tagList(
         column(
           width = 9,style="color:white",
           h1("About the Dashboard"),
-          h3("This dashboard provides information on how the 2023 BC Demographic Survey data links to other available data in the Data Innovation Program (DIP)"),
+          h3("This dashboard provides information on how the 2023 BC Demographic Survey data links to other available data in the Data Innovation Program (DIP)."),
           br(),br(),
           hover_action_button("link_about",
                               div(style ="font-size:18px",
@@ -139,7 +139,7 @@ ui <- tagList(
                   hr(style= "border-top:2px solid;margin-top:10px")),
               style = "color:#29619d;border:none;margin-left:15px;background-color:transparent;max-width:100%",
               button_animation = "grow"),
-            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey")
+            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey.")
           )),
         column(
           width = 4,
@@ -167,11 +167,11 @@ ui <- tagList(
               "link_detailed",
               div(style ="font-size:18px",
                   tags$i(class='fa-solid fa-code-compare'),
-                  "Linked Individual Demographics",
+                  "Linked Variables Detail",
                   hr(style= "border-top:2px solid;margin-top:10px")),
               style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
               button_animation = "grow"),
-            h3("For a deeper dive into individual demographic variables, and how individual DIP record responses compare to individual BC Demographic Survey responses.")
+            h3("For a deeper dive into individual demographic variables, and how individual DIP record values compare to individual BC Demographic Survey values.")
           ))
       )
     )
@@ -322,7 +322,7 @@ ui <- tagList(
    tabPanel(
      div(style = "padding:9.5px 0",
          tags$i(class = 'fa-solid fa-code-compare'),
-         "Linked Individual Demographics"),
+         "Linked Variables Detail"),
      style = "padding-top:160px",
      value="detailed",
      sidebarLayout(
