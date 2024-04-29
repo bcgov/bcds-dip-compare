@@ -133,7 +133,7 @@ ui <- tagList(
                   hr(style= "border-top:2px solid;margin-top:10px")),
               style = "color:#29619d;border:none;margin-left:15px;background-color:transparent;max-width:100%",
               button_animation = "grow"),
-            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey")
+            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey.")
           )),
         column(
           width = 4,
@@ -464,7 +464,7 @@ ui <- tagList(
     fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       column(
         width= 12,
-        h1("BC Demographic Survey Demographics"),
+        h1("BC Demographic Survey Variables"),
         br(),
         "Five variables from the BC Demographic Survey were analyzed for linkage with DIP datasets.",
         "These variables were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
