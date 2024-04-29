@@ -280,17 +280,17 @@ ui <- tagList(
               HTML(
                 "<small>
                 <p><b>Survey only:</b> 
-                <p>These records contain no demographic information for the given variable within the DIP Dataset, but are supplemented by valid demographic information from the BC Demographic Survey.
+                <p>Demographic information for the given variable is not available within the DIP Resource, but is available from the BC Demographic Survey. <em>Relates to \"Added from Survey\" in the Highlights tab.</em>
                 <p><b>DIP only:</b>
-                <p>These records contain demographic information for the given variable within the DIP Dataset, and have no valid supplemental information from the BC Demographic Survey.
+                <p>Demographic information for the given variable is available within the DIP Resource, and is not available from the BC Demographic Survey. <em>Combined with 'DIP and survey' makes \"Known from DIP\" in the Highlights tab.</em>
                 <p><b>DIP and survey:</b>
-                <p>These records contain demographic information for the given variable within the DIP Dataset, and have valid supplemental information from the BC Demographic Survey. This information may or may not align.
+                <p>Demographic information for the given variable is available within the DIP Resource, and also from the BC Demographic Survey. Variable values may or may not align. <em>Combined with 'DIP only' makes \"Known from DIP\" in the Highlights tab.</em>
                 <p><b>Neither source:</b>
-                <p>These records contain no demographic information for the given variable within the DIP Dataset, and have no valid supplemental information from the BC Demographic Survey.
+                <p>Demographic information for the given variable is not available within the DIP Resource or from the BC Demographic Survey. <em>Relates to \"Still Unknown\" in the Highlights tab.</em>
                 <p>
                 </small>"
-                   )
               )
+            )
           ),
           
           # Information added about the dob variable name only when selected/exists (dobflag created in server)
