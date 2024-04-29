@@ -318,7 +318,7 @@ ui <- tagList(
       )
      ),
   
-   # linked individual demogs ----
+   # linked variables detail ----
    tabPanel(
      div(style = "padding:9.5px 0",
          tags$i(class = 'fa-solid fa-code-compare'),
@@ -372,7 +372,8 @@ ui <- tagList(
          selectInput(
            "var_detailed", 
            "Choose Survey Variable:", 
-           choices = NULL #unique(combined_detailed$var)
+           choices = NULL, #unique(combined_detailed$var)
+           selected = NULL
          ),
          
          # Filter for the 'dip var' variable
@@ -686,9 +687,9 @@ server <- function(input, output, session) {
       filter(Dataset %in% input$dataset_summary)
   }) 
   
-  # choose variables based on the dataset filters
+  # choose file based on the dataset filters
   observeEvent(filtered_by_dataset_summary(),{
-    choices <- unique(filtered_by_dataset_summary()$File)
+    choices <- sort(unique(filtered_by_dataset_summary()$File))
     updateSelectInput(inputId = 'file_summary', choices = choices)
   })
   
@@ -890,9 +891,9 @@ server <- function(input, output, session) {
       filter(Dataset %in% input$dataset_detailed)
   }) 
  
-  # choose variables based on the dataset filters
+  # choose file based on the dataset filters
   observeEvent(filtered_by_dataset_detailed(),{
-    choices <- unique(filtered_by_dataset_detailed()$File)
+    choices <- sort(unique(filtered_by_dataset_detailed()$File))
     updateSelectInput(inputId = 'file_detailed', choices = choices)
   })
   
@@ -905,7 +906,7 @@ server <- function(input, output, session) {
   # choose variables based on the file filters
   observeEvent(filtered_by_file_detailed(),{
     choices <- unique(filtered_by_file_detailed()$survey_var)
-    updateSelectInput(inputId = 'var_detailed', choices = choices)
+    updateSelectInput(inputId = 'var_detailed', choices = choices, selected = default_survey_var)
   })
   
   # filter by var
