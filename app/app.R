@@ -65,23 +65,17 @@ ui <- tagList(
           h3('This dashboard was produced in 2024. Linkage rates will change overtime.'),
           "Questions for DIP?", 
           a(style = "text-decoration:underline",
-            href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
+            href = "https://dpdd.atlassian.net/servicedesk/customer/portal/2",
             target = "_blank",
             "Open a ticket here."),
           br(),
           
-          "Questions about the Dashboard?",
+          "Questions about the Dashboard or BC Demographic Survey?",
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
             target = "_blank",
             "Contact BC Stats."),
-          br(),
-          
-          "Questions about the BC Demographic Survey?",
-          a(style = "text-decoration:underline",
-            href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
-            target = "_blank",
-          "Contact them here.")),
+          br()),
       
           br(),br(),
           bcsapps::bcsFooterUI(id = 'footer')
@@ -139,7 +133,7 @@ ui <- tagList(
                   hr(style= "border-top:2px solid;margin-top:10px")),
               style = "color:#29619d;border:none;margin-left:15px;background-color:transparent;max-width:100%",
               button_animation = "grow"),
-            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey")
+            h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey.")
           )),
         column(
           width = 4,
@@ -470,11 +464,11 @@ ui <- tagList(
     fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
       column(
         width= 12,
-        h1("BC Demographic Survey Demographics"),
+        h1("BC Demographic Survey Variables"),
         br(),
-        "Six different demographic questions from the BC Demographic Survey were analyzed for comparable values within DIP datasets.",
-        "These demographics were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
-        "Hover over each of the options for more information about the demographic.",
+        "Five variables from the BC Demographic Survey were analyzed for linkage with DIP datasets.",
+        "These variables were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
+        "Hover over each of the options for more information about the demographic variable.",
         br(), br()
       )
     ),
@@ -578,8 +572,10 @@ ui <- tagList(
         "For more details on methodology and caveats, see the",
         a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf"),
         br(),
-        "The data is available for download from the",
-        a("BC Data Catalogue.", href="https://catalogue.data.gov.bc.ca/", target = "_blank"),
+        "The data in this dashboard is available for download from the",
+        a("BC Data Catalogue", href="https://catalogue.data.gov.bc.ca/", target = "_blank"),
+        "under the",
+        a("Open Government Licence - British Columbia.", href="https://www2.gov.bc.ca/gov/content/data/open-data/open-government-licence-bc", target="_blank"),
         br(), br(),
         "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
         )

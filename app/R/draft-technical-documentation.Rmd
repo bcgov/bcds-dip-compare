@@ -55,10 +55,10 @@ To compare the BC Demographic Survey to each individual DIP dataset, a list of u
 After comparing to individual DIP datasets at a broad level, a deeper dive exploring DIP demographic data was completed as well. Five key demographic components from the survey were included for this dataset. These include:
 
 * **Gender**
-  * This was cleaned in the demographic survey to include: Man/Boy, Woman/Girl, Non-Binary Person, but also catered for those who preferred to remain unknown (with I don't know/I am unsure, or Prefer not to answer).  
+  * This was cleaned in the demographic survey to include: Man/Boy, Woman/Girl, Non-Binary Person, Indeterminate, but also catered for those who preferred to remain unknown (with I don't know/I am unsure, or Prefer not to answer).  
   
 * **Racial Identity**
-  * This was cleaned in the demographic survey to include: the 14 non-Indigenous options made available on the survey, the two unknown options, as well as the option for someone to have reported multiple races. 
+  * This was cleaned in the demographic survey to include: the 12 non-Indigenous options made available on the survey, Undefined, the two unknown options (I don't know/I am unsure and Prefer not to Answer), as well as the option for someone to have reported multiple races. 
   * Note that the methodology used here does not align with the racialized population groups reported by Statistics Canada. See the Education/Health technical reports for more details [NEED TO LINK HERE]()
   
 * **Indigenous Identity**
@@ -69,8 +69,8 @@ After comparing to individual DIP datasets at a broad level, a deeper dive explo
   * This was cleaned in the demographic survey to include: has a condition that is always, often, or sometimes a disability, no condition that is a disability, as well as the two unknown options. 
   
 * **Date of Birth (DOB) Status**
-  * This was cleaned both in the demographic survey and in DIP datasets to identify solely if there was a valid record or not, due to the inherent number of options that would be available otherwise.
-  * Individual demographic comparisons are not made available for this category, only summary level comparisons. 
+  * This was cleaned both in the demographic survey and in DIP datasets to identify solely if there was a non-blank record or not, due to the inherent number of options that would be available otherwise. No further checks were done to ensure that the data in the column was a valid date of birth record. 
+  * Detailed demographic comparisons are not made available for this category, only summary level comparisons. 
   
   
 While the BC Demographic Survey contains many more demographic details, we believe that this dashboard will provide sufficient information in order for researchers to make informed choices in producing high quality research questions. It is important to note that the survey variable names used in this dashboard were determined by the BC Stats analysts of this project specifically and may differ from published results related to the BC Demographic Survey elsewhere. 
@@ -85,20 +85,20 @@ Each dataset from DIP was evaluated separately for both overall linkage rates as
 * Every StudyID in the DIP dataset was then compared to those in the BC Demographic Survey, and sorted into one of four possible summary categories:
   * **Survey Only**: this person only has demographic information for this category available from the survey. This may be because the value recorded in the DIP dataset was **NULL**, or because the DIP dataset does not contain this particular demographic information. 
   * **DIP Only**: this person only has demographic information available from the DIP dataset. This may be because they did not respond to the survey, or they skipped the relevant associated questions on the survey.
-  * **DIP and Survey**: this person has demographic information from both sources. This does not guarantee that the information is matching in both sources, simply that it exists. The Linked Individual Demographics tab contains more information on the alignment of variables.
+  * **DIP and Survey**: this person has demographic information from both sources. This does not guarantee that the information is matching in both sources, simply that it exists. The Linked Variables Detail tab contains more information on the alignment of variables.
   * **Neither Source**: this person has a DIP dataset record, but it does not contain any viable demographic information, nor does the survey. 
 
 
-## Linked Individual Demographics 
+## Linked Variables Detail
 
 The analysis was then also done at the StudyID (person) level, where a cross-tabulation of what demographic category a person is associated with in the DIP dataset is compared to the demographic category the person self-identified with in the BC Demographic Survey. The result could be:
 
 * Additional information: the DIP dataset provided no information, but the survey does.
-  * Example: a health dataset indicates an unknown date of birth, while this is provided by the survey.
+  * Example: a health dataset contains no racial identity information, but the survey supplies this for all linked records.
 * Contradicting information: the DIP dataset indicates a different value than what is provided by the survey.
   * Example: an education dataset indicates the gender of a student as female, while the survey indicates the gender of the student is non-binary. 
 * Aligned information: the DIP dataset and the survey provide generally agreeable demographics.
-  * Example: a child in care is recorded in the MCFD dataset has non-Indigenous, which agrees with the value provided by the survey. 
+  * Example: a child in care is recorded in the MCFD dataset as non-Indigenous, which agrees with the value provided by the survey. 
 
 ## Caveats
 
@@ -106,12 +106,17 @@ The analysis was then also done at the StudyID (person) level, where a cross-tab
 
 Here we list some important distinctions to keep in mind when browsing the dashboard and related datasets:
 
-* Not every DIP dataset has a StudyID
-* Some DIP datasets contain multiple StudyIDs
-* Because DIP datasets were only manipulated to reduce every StudyID to a single demographic variable, some 'Known Dip' percentages may appear artificially high, as the variable may include 'Unknown' or 'Prefer not to Answer' responses. Determining the exact content of each demographic variable in each dataset was out of scope for the creation of this dashboard, and should be carefully examined by any DIP researcher. 
+* This dashboard was produced in 2024. Linkage rates will change overtime.
+* Not every DIP dataset has a StudyID.
+* Some DIP datasets contain multiple StudyIDs.
+* Because DIP datasets were only manipulated to reduce every StudyID to a single demographic variable, some 'Known Dip' percentages may appear artificially high, as the variable may include 'Unknown' or 'Prefer not to Answer' responses. Determining the exact content of each demographic variable in each dataset was out of scope for the creation of this dashboard, and should be carefully examined by any DIP researcher.
+  * One exception was made in the manipulation of DIP datasets. In cases where individual First Nations would be identified by the contents of a DIP variable, the nation name was replaced with 'First Nations' (or equivalent) to keep all outputs at a distinctions based level of analysis. 
 * BC Stats analysts used their discretion in determining comparable demographics between the DIP dataset and the associated BC Demographic Survey variable. Additionally, some demographics within a given DIP dataset may have been excluded from analysis without intending to do so.
 * Many DIP datasets include several years worth of data, and not just point-in-time information, therefore, even within a given dataset there could be contradicting information available for a single record. The result is seeing "multiple reported" within the 'Value in DIP'. 
+* Some DIP datasets have multiple variables that could be considered as related to a single survey variable. In these cases, all variables are considered separately.
 * All counts provided here are unweighted. DIP researchers are responsible for providing their own weights where necessary.
+* To mitigate the privacy risks of re-identification and residual disclosure, some small counts (and associated percentages) have been masked. 
+* Rounding has been performed on all percentages, leading to some inaccurate displays of 0 or 100%. 
 
 ## Software
 

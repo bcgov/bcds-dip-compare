@@ -90,9 +90,9 @@ header <- htmltools::tagList(
          shiny::icon("github", "fa-lg"), 
          'Source Code',
          style = "color:white; margin-left:10px"
-       ), 
+       )#, 
        # Link List
-       shiny::uiOutput('links_yn')
+       #shiny::uiOutput('links_yn')
       )
     )
   )
