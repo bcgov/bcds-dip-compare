@@ -167,6 +167,10 @@ combined_overview <- combined_overview %>%
   mutate(`SAE File Name`=str_replace(`SAE File Name`,"/"," / ")) %>% 
   select(-`SAE File Name (Short)`)
 
+# arrange alphabetically - data provider first, then Dataset, then File
+combined_overview <- combined_overview %>% 
+  dplyr::arrange(`Data Provider/Ministry`,Dataset,File)
+
 combined_overview
 
 # Write the combined data to a new CSV file for review
@@ -361,6 +365,9 @@ combined_summary <- combined_summary %>%
 combined_summary <- combined_summary %>% 
   select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes,-unique_percent_survey_str)
 
+# arrange alphabetically - data provider first, then Dataset, then File
+combined_summary <- combined_summary %>% 
+  dplyr::arrange(`Data Provider/Ministry`,Dataset,File,survey_var,var_dip)
 
 # Write the combined data to a new CSV file for review
 write_csv(
@@ -576,6 +583,10 @@ combined_detailed <- combined_detailed %>%
 combined_detailed <- combined_detailed %>% 
   select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
 
+# arrange alphabetically - data provider first, then Dataset, then File
+combined_detailed <- combined_detailed %>% 
+  dplyr::arrange(`Data Provider/Ministry`,Dataset,File,survey_var,var_dip)
+
 # Write the combined data to a new CSV file for review
 write_excel_csv(
   combined_detailed, 
@@ -604,7 +615,7 @@ linked_individual_demographics <- combined_detailed %>%
 write_excel_csv(
   linked_individual_demographics, 
   safepaths::use_network_path(
-    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_individual_demographics.csv"
+    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_variables_detail.csv"
   )
 )
 
