@@ -472,9 +472,9 @@ ui <- tagList(
         width= 12,
         h1("BC Demographic Survey Demographics"),
         br(),
-        "Six different demographic questions from the BC Demographic Survey were analyzed for comparable values within DIP datasets.",
-        "These demographics were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
-        "Hover over each of the options for more information about the demographic.",
+        "Five variables from the BC Demographic Survey were analyzed for linkage with DIP datasets.",
+        "These variables were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
+        "Hover over each of the options for more information about the demographic variable.",
         br(), br()
       )
     ),
@@ -578,7 +578,7 @@ ui <- tagList(
         "For more details on methodology and caveats, see the",
         a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf"),
         br(),
-        "The data is available for download from the",
+        "The data in this dashboard is available for download from the",
         a("BC Data Catalogue.", href="https://catalogue.data.gov.bc.ca/", target = "_blank"),
         br(), br(),
         "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
