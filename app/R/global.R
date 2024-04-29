@@ -40,6 +40,9 @@ combined_detailed <- readRDS("data/combined_detailed.rds")
 #combined_list_vars <- readRDS("data/combined_list.rds")
 combined_summary <- readRDS("data/combined_summary.rds")
 
+# set default selections
+#default_file <- "Medical Services Plan (MSP)"
+default_survey_var <- "Gender"
 
 # create a header
 header <- htmltools::tagList(
