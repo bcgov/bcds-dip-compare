@@ -583,6 +583,45 @@ combined_detailed <- combined_detailed %>%
   select(-missing_mask)
   
   
+# check masking is sufficient when there are multiple DIP variables for one survey variable
+not_masked <- combined_detailed %>% 
+  select(File, var_dip, survey_var, dip_value, bcds_value, unique_n_str) %>% 
+  group_by(File, var_dip, survey_var, bcds_value) %>% 
+  summarize(bcds_masked = sum(unique_n_str=='MASK'), n_possible = n()) %>% 
+  # look for instances of there being 1 mask along a bcds_value 
+  # and no masked along the same survey value, for a different var_dip
+  group_by(File, survey_var, bcds_value) %>% 
+  mutate(has_1_mask = any(bcds_masked==1), has_0_mask = any(bcds_masked==0)) %>% 
+  ungroup() %>% 
+  #filter(has_1_mask & has_0_mask) %>% 
+  mutate(problem_case = has_1_mask & has_0_mask)
+
+# how to add masking in: if bcds_masked == 1 and n_possible > 1, mask the next lowest
+#                        if bcds_masked ==1 and n_possible = 1, mask 1 in one of the other groups, then repeat
+
+combined_detailed <- combined_detailed %>% 
+  left_join(not_masked, by=c('File', 'var_dip', 'survey_var', 'bcds_value')) %>% 
+  mutate(
+    case_1 = bcds_masked==1 & n_possible>1,
+    case_2 = bcds_masked==0 & n_possible==1
+  ) %>% 
+  group_by(File, survey_var, var_dip, bcds_value) %>% 
+  arrange(File, survey_var, var_dip, bcds_value, unique_percent_str) %>% 
+  # only mask the top row of a variable that has a 1 mask, a 0 mask, and bcds_masked==1
+  mutate(row_number = row_number()) %>% 
+  mutate(
+    unique_n_str = if_else(problem_case & case_1 & row_number == 1, "MASK", unique_n_str),
+    unique_percent_str = if_else(problem_case & case_1 & row_number == 1, "MASK", unique_percent_str),
+    unique_percent_survey_str = if_else(problem_case & case_1 & row_number == 1, "MASK", unique_percent_survey_str)
+  ) %>% 
+  # for those with n_possible = 1, grab top row of the other groups 
+  mutate(
+    unique_n_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_n_str),
+    unique_percent_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_percent_str),
+    unique_percent_survey_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_percent_survey_str)
+  ) %>% 
+  ungroup()
+
 # remove 'Not in Survey' results from data - detailed to be linked data only
 combined_detailed <- combined_detailed %>% 
   filter(bcds_value != "Not in Survey")
