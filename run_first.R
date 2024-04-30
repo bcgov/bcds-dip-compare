@@ -332,6 +332,10 @@ combined_summary <- combined_summary %>%
 combined_summary <- combined_summary %>%
   filter(survey_var!="indigenous")
 
+# remove indigenous identity unused from data (e.g., nation-related data)
+combined_summary <- combined_summary %>%
+  filter(survey_var!="indigenous identity unused")
+
 # add dataset information
 combined_summary <- combined_summary %>% 
   rename(`SAE File Name (Short)`=file_name) %>% 
@@ -520,6 +524,10 @@ combined_detailed <- combined_detailed %>%
 # remove indigenous from data (only keeping Indigenous Identity (distinctions based version))
 combined_detailed <- combined_detailed %>%
   filter(survey_var!="indigenous")
+
+# remove indigenous identity unused from data (e.g., nation-related data)
+combined_detailed <- combined_detailed %>%
+  filter(survey_var!="indigenous identity unused")
 
 # add dataset information
 combined_detailed <- combined_detailed %>% 
