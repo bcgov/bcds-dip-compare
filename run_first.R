@@ -161,11 +161,15 @@ combined_overview <- combined_overview %>%
 
 # add dataset information
 combined_overview <- combined_overview %>% 
-  rename(`SAE Resource Name`=dataset,`SAE Resource Name (Short)`=file_name) %>% 
+  rename(`SAE File Name`=dataset,`SAE File Name (Short)`=file_name) %>% 
   select(-folder) %>% 
-  left_join(dataset_info, by=c("SAE Resource Name","SAE Resource Name (Short)")) %>% 
-  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
-  select(-`SAE Resource Name (Short)`)
+  left_join(dataset_info, by=c("SAE File Name","SAE File Name (Short)")) %>% 
+  mutate(`SAE File Name`=str_replace(`SAE File Name`,"/"," / ")) %>% 
+  select(-`SAE File Name (Short)`)
+
+# arrange alphabetically - data provider first, then Dataset, then File
+combined_overview <- combined_overview %>% 
+  dplyr::arrange(`Data Provider/Ministry`,Dataset,File)
 
 combined_overview
 
@@ -191,10 +195,10 @@ overall_linkage_rates <- overall_linkage_rates %>%
   mutate(Notes = ifelse(is.na(Notes),"",Notes)) %>% 
   select(any_of(names(dataset_info)),
          "Survey Records"=in_demographic_str,
-         "DIP Resource Records"=in_dip_dataset_str,
-         "DIP Resource Records Linked to Survey Records"=in_both_str,
+         "DIP File Records"=in_dip_dataset_str,
+         "DIP File Records Linked to Survey Records"=in_both_str,
          "Percent of Survey Covered" = pct_demo_in_dip_str, 
-         "Percent of DIP Resource Covered" = pct_dip_in_demo_str,
+         "Percent of DIP File Covered" = pct_dip_in_demo_str,
          everything(),-Notes,Notes
          )
 
@@ -328,27 +332,31 @@ combined_summary <- combined_summary %>%
 combined_summary <- combined_summary %>%
   filter(survey_var!="indigenous")
 
+# remove indigenous identity unused from data (e.g., nation-related data)
+combined_summary <- combined_summary %>%
+  filter(survey_var!="indigenous identity unused")
+
 # add dataset information
 combined_summary <- combined_summary %>% 
-  rename(`SAE Resource Name (Short)`=file_name) %>% 
-  left_join(dataset_info, by=c("SAE Resource Name (Short)")) %>% 
-  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
-  select(-`SAE Resource Name (Short)`)
+  rename(`SAE File Name (Short)`=file_name) %>% 
+  left_join(dataset_info, by=c("SAE File Name (Short)")) %>% 
+  mutate(`SAE File Name`=str_replace(`SAE File Name`,"/"," / ")) %>% 
+  select(-`SAE File Name (Short)`)
 
 # add highlights information
 known_dip_mask_count <- combined_summary %>% 
   filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
   filter(unique_percent_str=="MASK") %>% 
-  group_by(Resource,survey_var,var_dip) %>% 
+  group_by(File,survey_var,var_dip) %>% 
   tally()
 
 
 combined_summary <- combined_summary %>% 
-  left_join(known_dip_mask_count,by=c("Resource","survey_var","var_dip")) %>% 
+  left_join(known_dip_mask_count,by=c("File","survey_var","var_dip")) %>% 
   mutate(highlights_groups = case_when((cross_status == 'DIP only' | cross_status == 'DIP and survey') ~ "Known from DIP",
-                                       cross_status=="Survey only" ~ "Additional Coverage from Survey",
+                                       cross_status=="Survey only" ~ "Added from Survey",
                                        cross_status=="Neither source" ~ "Still Unknown")) %>% 
-  group_by(Resource,survey_var,var_dip,highlights_groups) %>% 
+  group_by(File,survey_var,var_dip,highlights_groups) %>% 
   mutate(known_sum = ifelse(highlights_groups=="Known from DIP",sum(unique_percent),NA_real_)) %>% 
   mutate(highlights = case_when(cross_status=="Survey only" ~ paste0(unique_percent_str," ",highlights_groups),
                                 cross_status=="Neither source" ~ paste0(unique_percent_str," ",highlights_groups),
@@ -361,6 +369,9 @@ combined_summary <- combined_summary %>%
 combined_summary <- combined_summary %>% 
   select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes,-unique_percent_survey_str)
 
+# arrange alphabetically - data provider first, then Dataset, then File
+combined_summary <- combined_summary %>% 
+  dplyr::arrange(`Data Provider/Ministry`,Dataset,File,survey_var,var_dip)
 
 # Write the combined data to a new CSV file for review
 write_csv(
@@ -384,7 +395,7 @@ linked_variables_summary <- linked_variables_summary %>%
          "Survey Variable" = survey_var, 
          "DIP Variable" = var_dip,
          "Cross-Status"=cross_status,
-         "Unique IDs in DIP Resource" = unique_n_str, 
+         "Unique IDs in DIP File" = unique_n_str, 
          "Percent of Unique IDs" = unique_percent_str,
          everything()
   )
@@ -514,12 +525,16 @@ combined_detailed <- combined_detailed %>%
 combined_detailed <- combined_detailed %>%
   filter(survey_var!="indigenous")
 
+# remove indigenous identity unused from data (e.g., nation-related data)
+combined_detailed <- combined_detailed %>%
+  filter(survey_var!="indigenous identity unused")
+
 # add dataset information
 combined_detailed <- combined_detailed %>% 
-  rename(`SAE Resource Name (Short)`=file_name) %>% 
-  left_join(dataset_info, by=c("SAE Resource Name (Short)")) %>% 
-  mutate(`SAE Resource Name`=str_replace(`SAE Resource Name`,"/"," / ")) %>% 
-  select(-`SAE Resource Name (Short)`)
+  rename(`SAE File Name (Short)`=file_name) %>% 
+  left_join(dataset_info, by=c("SAE File Name (Short)")) %>% 
+  mutate(`SAE File Name`=str_replace(`SAE File Name`,"/"," / ")) %>% 
+  select(-`SAE File Name (Short)`)
 
 # check for missing MASK (comparing to totals provided in summary)
 tmp <- combined_detailed %>% 
@@ -538,18 +553,18 @@ tmp <- combined_detailed %>%
   ) 
 
 not_masked <-  tmp %>% 
-  group_by(Resource, survey_var, var_dip, cross_status) %>% 
+  group_by(File, survey_var, var_dip, cross_status) %>% 
   summarize(n_masked = sum(masked)) %>% 
   filter(n_masked == 1) %>% 
   filter(cross_status != 'DIP only') %>% 
   ungroup()
 
 not_masked <- not_masked %>% 
-  left_join(combined_summary, by=c('Resource','survey_var', 'var_dip', 'cross_status')) %>% 
+  left_join(combined_summary, by=c('File','survey_var', 'var_dip', 'cross_status')) %>% 
   filter(!mask_flag) %>% 
-  left_join(tmp, by=c('Resource','survey_var', 'var_dip', 'cross_status')) %>% 
+  left_join(tmp, by=c('File','survey_var', 'var_dip', 'cross_status')) %>% 
   select(
-    Resource, survey_var, var_dip,dip_value, bcds_value, cross_status, n_masked, mask_flag, unique_n_summary = unique_n_str.x, unique_n_detailed = unique_n_str.y)
+    File, survey_var, var_dip,dip_value, bcds_value, cross_status, n_masked, mask_flag, unique_n_summary = unique_n_str.x, unique_n_detailed = unique_n_str.y)
 
 not_masked_missing <- not_masked %>% 
   filter(cross_status != "Neither source") %>% 
@@ -557,7 +572,7 @@ not_masked_missing <- not_masked %>%
 
 # add additional MASK
 combined_detailed <- combined_detailed %>% 
-  mutate(missing_mask = ifelse((Resource %in% not_masked_missing$Resource &
+  mutate(missing_mask = ifelse((File %in% not_masked_missing$File &
                                   survey_var %in% not_masked_missing$survey_var &
                                   var_dip %in% not_masked_missing$var_dip &
                                   dip_value %in% not_masked_missing$dip_value &
@@ -568,6 +583,45 @@ combined_detailed <- combined_detailed %>%
   select(-missing_mask)
   
   
+# check masking is sufficient when there are multiple DIP variables for one survey variable
+not_masked <- combined_detailed %>% 
+  select(File, var_dip, survey_var, dip_value, bcds_value, unique_n_str) %>% 
+  group_by(File, var_dip, survey_var, bcds_value) %>% 
+  summarize(bcds_masked = sum(unique_n_str=='MASK'), n_possible = n()) %>% 
+  # look for instances of there being 1 mask along a bcds_value 
+  # and no masked along the same survey value, for a different var_dip
+  group_by(File, survey_var, bcds_value) %>% 
+  mutate(has_1_mask = any(bcds_masked==1), has_0_mask = any(bcds_masked==0)) %>% 
+  ungroup() %>% 
+  #filter(has_1_mask & has_0_mask) %>% 
+  mutate(problem_case = has_1_mask & has_0_mask)
+
+# how to add masking in: if bcds_masked == 1 and n_possible > 1, mask the next lowest
+#                        if bcds_masked ==1 and n_possible = 1, mask 1 in one of the other groups, then repeat
+
+combined_detailed <- combined_detailed %>% 
+  left_join(not_masked, by=c('File', 'var_dip', 'survey_var', 'bcds_value')) %>% 
+  mutate(
+    case_1 = bcds_masked==1 & n_possible>1,
+    case_2 = bcds_masked==0 & n_possible==1
+  ) %>% 
+  group_by(File, survey_var, var_dip, bcds_value) %>% 
+  arrange(File, survey_var, var_dip, bcds_value, unique_percent_str) %>% 
+  # only mask the top row of a variable that has a 1 mask, a 0 mask, and bcds_masked==1
+  mutate(row_number = row_number()) %>% 
+  mutate(
+    unique_n_str = if_else(problem_case & case_1 & row_number == 1, "MASK", unique_n_str),
+    unique_percent_str = if_else(problem_case & case_1 & row_number == 1, "MASK", unique_percent_str),
+    unique_percent_survey_str = if_else(problem_case & case_1 & row_number == 1, "MASK", unique_percent_survey_str)
+  ) %>% 
+  # for those with n_possible = 1, grab top row of the other groups 
+  mutate(
+    unique_n_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_n_str),
+    unique_percent_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_percent_str),
+    unique_percent_survey_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_percent_survey_str)
+  ) %>% 
+  ungroup()
+
 # remove 'Not in Survey' results from data - detailed to be linked data only
 combined_detailed <- combined_detailed %>% 
   filter(bcds_value != "Not in Survey")
@@ -575,6 +629,10 @@ combined_detailed <- combined_detailed %>%
 # remove unused columns
 combined_detailed <- combined_detailed %>% 
   select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
+
+# arrange alphabetically - data provider first, then Dataset, then File
+combined_detailed <- combined_detailed %>% 
+  dplyr::arrange(`Data Provider/Ministry`,Dataset,File,survey_var,var_dip)
 
 # Write the combined data to a new CSV file for review
 write_excel_csv(
@@ -595,7 +653,7 @@ linked_individual_demographics <- combined_detailed %>%
          "DIP Variable" = var_dip,
          "Value in DIP" = dip_value,
          "Value in Survey" = bcds_value,
-         "Unique IDs in DIP Resource" = unique_n_str,
+         "Unique IDs in DIP File" = unique_n_str,
          "Percent of Unique IDs" = unique_percent_str,
          "Percent of Survey Unique IDs" = unique_percent_survey_str,
          everything()
@@ -604,7 +662,7 @@ linked_individual_demographics <- combined_detailed %>%
 write_excel_csv(
   linked_individual_demographics, 
   safepaths::use_network_path(
-    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_individual_demographics.csv"
+    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_variables_detail.csv"
   )
 )
 
