@@ -620,7 +620,9 @@ combined_detailed <- combined_detailed %>%
     unique_percent_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_percent_str),
     unique_percent_survey_str = if_else(problem_case & case_2 & row_number == 1, "MASK", unique_percent_survey_str)
   ) %>% 
-  ungroup()
+  ungroup() %>% 
+  select(-row_number,-bcds_masked,-n_possible,-has_1_mask,-has_0_mask,-problem_case,-case_1,-case_2)
+
 
 # remove 'Not in Survey' results from data - detailed to be linked data only
 combined_detailed <- combined_detailed %>% 
@@ -630,9 +632,9 @@ combined_detailed <- combined_detailed %>%
 combined_detailed <- combined_detailed %>% 
   select(-var,-unique_n,-unique_percent,-unique_percent_survey,-Notes)
 
-# arrange alphabetically - data provider first, then Dataset, then File
+# arrange alphabetically - data provider first, then Dataset, then File, then variables
 combined_detailed <- combined_detailed %>% 
-  dplyr::arrange(`Data Provider/Ministry`,Dataset,File,survey_var,var_dip)
+  dplyr::arrange(`Data Provider/Ministry`,Dataset,File,survey_var,var_dip,dip_value,bcds_value)
 
 # Write the combined data to a new CSV file for review
 write_excel_csv(
