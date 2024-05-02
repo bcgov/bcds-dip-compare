@@ -199,8 +199,8 @@ ui <- tagList(
           pickerInput(
             inputId = "data_group_summary",
             label = "Choose Data Provider:",
-            choices = unique(combined_detailed$`Data Provider/Ministry`),
-            selected = unique(combined_detailed$`Data Provider/Ministry`),
+            choices = unique(combined_summary$`Data Provider/Ministry`),
+            selected = unique(combined_summary$`Data Provider/Ministry`),
             options = pickerOptions(
               actionsBox = TRUE, 
               liveSearch = TRUE,
@@ -237,8 +237,8 @@ ui <- tagList(
           pickerInput(
             inputId = "var_summary", 
             label = "Choose Survey Variable(s):", 
-            choices = NULL,
-            selected = NULL,
+            choices = unique(combined_summary$survey_var),
+            selected = unique(combined_summary$survey_var),
             options = pickerOptions(
               actionsBox = TRUE, 
               liveSearch = TRUE,
@@ -666,6 +666,7 @@ server <- function(input, output, session) {
   # data_summary ----
   # Filter data based on user inputs
   
+  # data group reactive object 
   filtered_by_data_group_summary <- reactive({
     combined_summary %>% 
       filter(`Data Provider/Ministry` %in% input$data_group_summary)
@@ -677,6 +678,7 @@ server <- function(input, output, session) {
     updatePickerInput(inputId = 'dataset_summary', choices=choices,selected=choices)
   })
   
+  # dataset reactive object 
   filtered_by_dataset_summary <- reactive({
     req(input$dataset_summary)
     filtered_by_data_group_summary() %>% 
@@ -686,29 +688,35 @@ server <- function(input, output, session) {
   # choose file based on the dataset filters
   observeEvent(filtered_by_dataset_summary(),{
     choices <- sort(unique(filtered_by_dataset_summary()$File))
-    updateSelectInput(inputId = 'file_summary', choices = choices)
+    if (default_file %in% choices){
+      selected <- default_file
+    } else {
+      selected <- choices[[1]]
+    }
+    updateSelectInput(inputId = 'file_summary', choices = choices, selected = selected)
   })
   
+  # file reactive object 
   filtered_by_file_summary <- reactive({
     req(input$file_summary)
     filtered_by_dataset_summary() %>% 
       filter(File == input$file_summary)
   }) 
   
-  # choose variables based on the file filters
-  observeEvent(filtered_by_file_summary(),{
-    choices <- unique(filtered_by_file_summary()$survey_var)
-    updatePickerInput(inputId = 'var_summary', choices = choices, selected = choices)
-  })
+  # choose Survey variables based on the file filters
+  # observeEvent(filtered_by_file_summary(),{
+  #   choices <- unique(filtered_by_file_summary()$survey_var)
+  #   updatePickerInput(inputId = 'var_summary', choices = choices, selected = choices)
+  # })
   
-  # filter by var
+  # survey variables reactive object 
   filtered_by_var_summary <- reactive({
     req(input$var_summary)
     filtered_by_file_summary() %>% 
       filter(survey_var %in% input$var_summary)
   }) 
   
-  # choose variables based on the file filters
+  # choose DIP variables based on the survey variables filters
   observeEvent(filtered_by_var_summary(),{
     choices <- unique(filtered_by_var_summary()$var_dip)
     updatePickerInput(inputId = 'dip_var_summary', choices = choices, selected = choices)
@@ -890,7 +898,12 @@ server <- function(input, output, session) {
   # choose file based on the dataset filters
   observeEvent(filtered_by_dataset_detailed(),{
     choices <- sort(unique(filtered_by_dataset_detailed()$File))
-    updateSelectInput(inputId = 'file_detailed', choices = choices)
+    if (default_file %in% choices){
+      selected <- default_file
+    } else {
+      selected <- choices[[1]]
+    }
+    updateSelectInput(inputId = 'file_detailed', choices = choices, selected = selected)
   })
   
   filtered_by_file_detailed <- reactive({
