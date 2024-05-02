@@ -458,7 +458,7 @@ ui <- tagList(
               target="_blank",
               style='color:#ccffff; text-decoration: underline;'
               ),
-            "securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. This dashboard looks at how successfully DIP can be supplemented by the BC Demographic Survey."
+            "securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. This dashboard looks at how successfully DIP datasets can be supplemented by data available from the BC Demographic Survey."
           ),
         ))
     ),
