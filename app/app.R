@@ -233,7 +233,6 @@ ui <- tagList(
           ),
           
           # Filter for the 'survey var' variable
-          # depends on choice of File
           pickerInput(
             inputId = "var_summary", 
             label = "Choose Survey Variable(s):", 
@@ -362,12 +361,11 @@ ui <- tagList(
          ),
          
          # Filter for the 'survey var' variable
-         # depends on choice of file 
          selectInput(
            "var_detailed", 
            "Choose Survey Variable:", 
-           choices = NULL, #unique(combined_detailed$var)
-           selected = NULL
+           choices = unique(combined_detailed$survey_var),
+           selected = default_survey_var,
          ),
          
          # Filter for the 'dip var' variable
@@ -878,17 +876,19 @@ server <- function(input, output, session) {
   # data_detailed ----
   # Filter data based on user inputs
   
+  # data group reactive object
   filtered_by_data_group_detailed <- reactive({
     combined_detailed %>% 
       filter(`Data Provider/Ministry` %in% input$data_group_detailed)
   })
   
-  # choose variables based on data group filters 
+  # choose dataset based on data group filters 
   observeEvent(filtered_by_data_group_detailed(), {
     choices <- sort(unique(filtered_by_data_group_detailed()$Dataset))
     updatePickerInput(inputId = 'dataset_detailed', choices=choices,selected=choices)
   })
   
+  # dataset reactive object 
   filtered_by_dataset_detailed <- reactive({
     req(input$dataset_detailed)
     filtered_by_data_group_detailed() %>% 
@@ -906,26 +906,27 @@ server <- function(input, output, session) {
     updateSelectInput(inputId = 'file_detailed', choices = choices, selected = selected)
   })
   
+  # file reactive object
   filtered_by_file_detailed <- reactive({
     req(input$file_detailed)
     filtered_by_dataset_detailed() %>% 
       filter(File == input$file_detailed)
   }) 
   
-  # choose variables based on the file filters
-  observeEvent(filtered_by_file_detailed(),{
-    choices <- unique(filtered_by_file_detailed()$survey_var)
-    updateSelectInput(inputId = 'var_detailed', choices = choices, selected = default_survey_var)
-  })
+  # # choose survey variables based on the file filters
+  # observeEvent(filtered_by_file_detailed(),{
+  #   choices <- unique(filtered_by_file_detailed()$survey_var)
+  #   updateSelectInput(inputId = 'var_detailed', choices = choices, selected = default_survey_var)
+  # })
   
-  # filter by var
+  # survey var reactive object
   filtered_by_var_detailed <- reactive({
     req(input$var_detailed)
     filtered_by_file_detailed() %>% 
       filter(survey_var == input$var_detailed)
   }) 
   
-  # choose variables based on the survey var filters
+  # choose DIP variables based on the survey var filters
   observeEvent(filtered_by_var_detailed(),{
     choices <- unique(filtered_by_var_detailed()$var_dip)
     updateSelectInput(inputId = 'dip_var_detailed', choices = choices)
