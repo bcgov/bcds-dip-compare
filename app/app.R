@@ -342,8 +342,8 @@ ui <- tagList(
          pickerInput(
            "dataset_detailed",
            "Choose Dataset:",
-           choices = NULL,
-           selected = NULL,
+           choices = unique(combined_detailed$`Dataset`),
+           selected = unique(combined_detailed$`Dataset`),
            options = pickerOptions(
              actionsBox = TRUE, 
              liveSearch = TRUE,
@@ -357,7 +357,7 @@ ui <- tagList(
          selectInput(
            "file_detailed", 
            "Choose File:", 
-           choices = NULL #unique(combined_detailed$file_name)
+           choices = default_file
          ),
          
          # Filter for the 'survey var' variable
@@ -673,7 +673,7 @@ server <- function(input, output, session) {
   
   # dataset reactive object 
   filtered_by_dataset_summary <- reactive({
-    #req(input$dataset_summary) # breaks if this is included -- needs to evaluate regardless 
+    #req(input$dataset_summary) 
     filtered_by_data_group_summary() %>% 
       filter(Dataset %in% input$dataset_summary)
   }) 
@@ -704,6 +704,8 @@ server <- function(input, output, session) {
         "Percent of Unique IDs" = unique_percent_str
       )
   })
+  
+  ## filter triggers ----
   
   # choose datasets based on data group filters 
   # only choose from what's already in the options list 
@@ -967,55 +969,26 @@ server <- function(input, output, session) {
       filter(`Data Provider/Ministry` %in% input$data_group_detailed)
   })
   
-  # choose dataset based on data group filters 
-  observeEvent(filtered_by_data_group_detailed(), {
-    choices <- sort(unique(filtered_by_data_group_detailed()$Dataset))
-    updatePickerInput(inputId = 'dataset_detailed', choices=choices,selected=choices)
-  })
-  
   # dataset reactive object 
   filtered_by_dataset_detailed <- reactive({
-    req(input$dataset_detailed)
+    # req(input$dataset_detailed)
     filtered_by_data_group_detailed() %>% 
       filter(Dataset %in% input$dataset_detailed)
   }) 
- 
-  # choose file based on the dataset filters
-  observeEvent(filtered_by_dataset_detailed(),{
-    choices <- sort(unique(filtered_by_dataset_detailed()$File))
-    if (default_file %in% choices){
-      selected <- default_file
-    } else {
-      selected <- choices[[1]]
-    }
-    updateSelectInput(inputId = 'file_detailed', choices = choices, selected = selected)
-  })
   
   # file reactive object
   filtered_by_file_detailed <- reactive({
-    req(input$file_detailed)
+    # req(input$file_detailed)
     filtered_by_dataset_detailed() %>% 
       filter(File == input$file_detailed)
   }) 
   
-  # # choose survey variables based on the file filters
-  # observeEvent(filtered_by_file_detailed(),{
-  #   choices <- unique(filtered_by_file_detailed()$survey_var)
-  #   updateSelectInput(inputId = 'var_detailed', choices = choices, selected = default_survey_var)
-  # })
-  
   # survey var reactive object
   filtered_by_var_detailed <- reactive({
-    req(input$var_detailed)
+    # req(input$var_detailed)
     filtered_by_file_detailed() %>% 
       filter(survey_var == input$var_detailed)
   }) 
-  
-  # choose DIP variables based on the survey var filters
-  observeEvent(filtered_by_var_detailed(),{
-    choices <- unique(filtered_by_var_detailed()$var_dip)
-    updateSelectInput(inputId = 'dip_var_detailed', choices = choices)
-  })
   
   # create final filtered table
   filtered_data_detailed <- reactive({
@@ -1028,6 +1001,68 @@ server <- function(input, output, session) {
         "Percent of Unique IDs" = unique_percent_str,
         "Percent of Survey Unique IDs" = unique_percent_survey_str
       )
+  })
+  
+  ## filter triggers ----
+  
+  # choose datasets based on data group filters 
+  # only choose from what's already in the options list 
+  observeEvent(filtered_by_data_group_detailed(), {
+    
+    # get full list that should be shown as options 
+    choices_full <- sort(unique(filtered_by_data_group_detailed()$Dataset))
+    
+    # get the current list of choices
+    choices_selected <- sort(unique(filtered_by_dataset_detailed()$Dataset))
+    
+    # if some of those choices aren't in full list, drop them
+    choices <- choices_selected[choices_selected %in% choices_full]
+    
+    # if all choices weren't in full list, make NULL
+    if (length(choices)==0){
+      choices <- NULL
+    }
+    
+    # update picker with selected choices 
+    updatePickerInput(inputId = 'dataset_detailed', choices = choices_full, selected = choices)
+    
+  })
+ 
+  # choose file based on the dataset filters
+  # keep current file if it's in the allowed list of files 
+  observeEvent(filtered_by_dataset_detailed(),{
+    
+    # all possible files based on the dataset filters
+    choices <- sort(unique(filtered_by_dataset_detailed()$File))
+    
+    # most recent choice 
+    current_choice <- unique(filtered_by_file_detailed()$File)
+    
+    # choose most recent as first priority, followed by the default, followed by alphabetical
+    
+    # note that if current_choice is empty, doesn't return a nice boolean 
+    if (isTruthy(current_choice %in% choices)){
+      selected <- current_choice
+    } else if (default_file %in% choices){
+      selected <- default_file
+    } else {
+      selected <- choices
+    }
+    
+    # update filter with choices and current selection
+    updateSelectInput(inputId = 'file_detailed', choices = choices, selected = selected)
+  })
+  
+  # # choose survey variables based on the file filters
+  # observeEvent(filtered_by_file_detailed(),{
+  #   choices <- unique(filtered_by_file_detailed()$survey_var)
+  #   updateSelectInput(inputId = 'var_detailed', choices = choices, selected = default_survey_var)
+  # })
+  
+  # choose DIP variables based on the survey var filters
+  observeEvent(filtered_by_var_detailed(),{
+    choices <- unique(filtered_by_var_detailed()$var_dip)
+    updateSelectInput(inputId = 'dip_var_detailed', choices = choices)
   })
 
   ## render table ----
