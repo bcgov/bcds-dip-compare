@@ -666,35 +666,35 @@ server <- function(input, output, session) {
   
   # data group reactive object 
   filtered_by_data_group_summary <- reactive({
-    req(input$data_group_summary)
+    #req(input$data_group_summary) # breaks if this is included -- needs to evalutate regardless 
     combined_summary %>% 
       filter(`Data Provider/Ministry` %in% input$data_group_summary)
   })
   
   # dataset reactive object 
   filtered_by_dataset_summary <- reactive({
-    req(input$dataset_summary)
+    #req(input$dataset_summary) # breaks if this is included -- needs to evaluate regardless 
     filtered_by_data_group_summary() %>% 
       filter(Dataset %in% input$dataset_summary)
   }) 
   
   # file reactive object 
   filtered_by_file_summary <- reactive({
-    req(input$file_summary)
+    #req(input$file_summary)
     filtered_by_dataset_summary() %>% 
       filter(File == input$file_summary)
   }) 
   
   # survey variables reactive object 
   filtered_by_var_summary <- reactive({
-    req(input$var_summary)
+    #req(input$var_summary)
     filtered_by_file_summary() %>% 
       filter(survey_var %in% input$var_summary)
   }) 
   
   # create final filtered table
   filtered_data_summary <- reactive({
-    req(input$dip_var_summary)
+    #req(input$dip_var_summary)
     filter(filtered_by_var_summary(), var_dip %in% input$dip_var_summary) %>% 
       select(
         "Survey Variable" = survey_var, 
@@ -781,7 +781,7 @@ server <- function(input, output, session) {
   
   # # choose DIP variables based on the survey variables filters
   # only works with input, not the filtered table reactive var...
-  observeEvent(input$var_summary,{
+  observeEvent(filtered_by_var_summary(), {
 
     # get full list that should be shown as options
     choices_full <- sort(unique(filtered_by_var_summary()$var_dip))
