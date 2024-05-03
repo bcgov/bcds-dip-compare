@@ -214,8 +214,8 @@ ui <- tagList(
           pickerInput(
             "dataset_summary",
             "Choose Dataset:",
-            choices = NULL,
-            selected = NULL,
+            choices = unique(combined_summary$`Dataset`),
+            selected = unique(combined_summary$`Dataset`),
             options = pickerOptions(
               actionsBox = TRUE, 
               liveSearch = TRUE,
@@ -229,7 +229,7 @@ ui <- tagList(
           selectInput(
             "file_summary", 
             "Choose File:", 
-            choices = NULL #unique(combined_summary$file_name)
+            choices = default_file 
           ),
           
           # Filter for the 'survey var' variable
@@ -666,14 +666,9 @@ server <- function(input, output, session) {
   
   # data group reactive object 
   filtered_by_data_group_summary <- reactive({
+    req(input$data_group_summary)
     combined_summary %>% 
       filter(`Data Provider/Ministry` %in% input$data_group_summary)
-  })
-  
-  # choose variables based on data group filters 
-  observeEvent(filtered_by_data_group_summary(), {
-    choices <- sort(unique(filtered_by_data_group_summary()$Dataset))
-    updatePickerInput(inputId = 'dataset_summary', choices=choices,selected=choices)
   })
   
   # dataset reactive object 
@@ -683,17 +678,6 @@ server <- function(input, output, session) {
       filter(Dataset %in% input$dataset_summary)
   }) 
   
-  # choose file based on the dataset filters
-  observeEvent(filtered_by_dataset_summary(),{
-    choices <- sort(unique(filtered_by_dataset_summary()$File))
-    if (default_file %in% choices){
-      selected <- default_file
-    } else {
-      selected <- choices[[1]]
-    }
-    updateSelectInput(inputId = 'file_summary', choices = choices, selected = selected)
-  })
-  
   # file reactive object 
   filtered_by_file_summary <- reactive({
     req(input$file_summary)
@@ -701,24 +685,12 @@ server <- function(input, output, session) {
       filter(File == input$file_summary)
   }) 
   
-  # choose Survey variables based on the file filters
-  # observeEvent(filtered_by_file_summary(),{
-  #   choices <- unique(filtered_by_file_summary()$survey_var)
-  #   updatePickerInput(inputId = 'var_summary', choices = choices, selected = choices)
-  # })
-  
   # survey variables reactive object 
   filtered_by_var_summary <- reactive({
     req(input$var_summary)
     filtered_by_file_summary() %>% 
       filter(survey_var %in% input$var_summary)
   }) 
-  
-  # choose DIP variables based on the survey variables filters
-  observeEvent(filtered_by_var_summary(),{
-    choices <- unique(filtered_by_var_summary()$var_dip)
-    updatePickerInput(inputId = 'dip_var_summary', choices = choices, selected = choices)
-  })
   
   # create final filtered table
   filtered_data_summary <- reactive({
@@ -731,6 +703,113 @@ server <- function(input, output, session) {
         "Unique IDs in DIP File" = unique_n_str, 
         "Percent of Unique IDs" = unique_percent_str
       )
+  })
+  
+  # choose datasets based on data group filters 
+  # only choose from what's already in the options list 
+  observeEvent(filtered_by_data_group_summary(), {
+    
+    # get full list that should be shown as options 
+    choices_full <- sort(unique(filtered_by_data_group_summary()$Dataset))
+    
+    # get the current list of choices
+    choices_selected <- sort(unique(filtered_by_dataset_summary()$Dataset))
+    
+    # if some of those choices aren't in full list, drop them
+    choices <- choices_selected[choices_selected %in% choices_full]
+    
+    # if all choices weren't in full list, make NULL
+    if (length(choices)==0){
+      choices <- NULL
+    }
+    
+    # update picker with selected choices 
+    updatePickerInput(inputId = 'dataset_summary', choices = choices_full, selected = choices)
+    
+  })
+  
+  # choose file based on the dataset filters
+  # keep current file if it's in the allowed list of files 
+  observeEvent(filtered_by_dataset_summary(),{
+
+    # all possible files based on the dataset filters
+    choices <- sort(unique(filtered_by_dataset_summary()$File))
+    
+    # most recent choice 
+    current_choice <- unique(filtered_by_file_summary()$File)
+
+    # choose most recent as first priority, followed by the default, followed by alphabetical
+    
+    # note that if current_choice is empty, doesn't return a nice boolean 
+    if (isTruthy(current_choice %in% choices)){
+      selected <- current_choice
+    } else if (default_file %in% choices){
+      selected <- default_file
+    } else {
+      selected <- choices
+    }
+    
+    # update filter with choices and current selection
+    updateSelectInput(inputId = 'file_summary', choices = choices, selected = selected)
+  })
+  
+  # choose Survey variables based on the file filters
+  # no longer needed, as survey variables should be a fixed list of 5 for every dataset 
+  # observeEvent(filtered_by_file_summary(),{
+  #   choices <- unique(filtered_by_file_summary()$survey_var)
+  #   updatePickerInput(inputId = 'var_summary', choices = choices, selected = choices)
+  # })
+  
+  # triggers to make the dip vars work
+  triggers <- reactiveValues()
+  triggers$update_current <- 0
+  # keeps a list of the current survey vars to compare to the update
+  observeEvent(
+    triggers$update_current,{
+      out <- unique(filtered_by_var_summary()$var_dip)
+      triggers$current_survey_vars <- out
+    })
+  
+  # reset DIP variables if the File is changed - choose all 
+  observeEvent(filtered_by_file_summary(), priority=0, {
+    choices <- sort(unique(filtered_by_var_summary()$var_dip))
+    updatePickerInput(inputId = 'dip_var_summary', choices = choices, selected = choices)
+    
+    # update current vars list 
+    triggers$update_current  <- triggers$update_current + 1
+  })
+  
+  # # choose DIP variables based on the survey variables filters
+  # only works with input, not the filtered table reactive var...
+  observeEvent(input$var_summary,{
+
+    # get full list that should be shown as options
+    choices_full <- sort(unique(filtered_by_var_summary()$var_dip))
+
+    # get the current list of choices
+    choices_selected <- sort(unique(filtered_data_summary()$`DIP Variable Name`))
+
+    # if some of the full list choices weren't previously options, but now are, add them in
+    # ex gender had been unclicked, adding it back to survey vars should add its dip vars back in too
+    new_choices <- choices_full[!choices_full %in% triggers$current_survey_vars]
+    if (length(new_choices)>0){
+      choices_selected <- c(choices_selected, new_choices)
+    }
+    
+    # if some of those choices aren't in full list, drop them
+    choices <- choices_selected[choices_selected %in% choices_full]
+
+    # if all choices weren't in full list, make NULL
+    if (length(choices)==0){
+     choices <- NULL
+    }
+
+    # get current list of DIP vars being shown
+    updatePickerInput(inputId = 'dip_var_summary', choices = choices_full, selected = choices)
+    
+    # update current vars list 
+    triggers$update_current  <- triggers$update_current + 1
+    
   })
   
   ## render table ----
@@ -778,84 +857,90 @@ server <- function(input, output, session) {
     
     temp <- combined_summary %>% 
       filter(File == input$file_summary)
-    
-    info <- lapply(
-      1:length(list1), function(index){
-        
-        dip_var_name = list1[index]
-        var_name = list2[index]
-        
-        # get info about the variable 
-        t1 <- temp %>% 
-          filter(survey_var==var_name, var_dip == dip_var_name)
-        
-        # check if it exists in DIP
-        in_dip <- t1 %>% 
-          distinct(exists_in_dip) %>% pull()
-        
-        extra_coverage <- t1 %>% 
-          filter(cross_status == 'Survey only') %>% 
-          pull(highlights)
-        
-        already_covered <- t1 %>% 
-          filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
-          distinct(str_replace(highlights,"Greater than or equal to ","&GreaterEqual;")) %>% pull()
-        
-        # find count of MASK
-        # already_covered_mask <- t1 %>% 
-        #   filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
-        #   filter(unique_percent_str=="MASK")
-        # 
-        # # treat already covered % differently, depending on MASK result
-        # if(nrow(already_covered_mask) == 2) {
-        #   already_covered <- "MASK"
-        # } else if(nrow(already_covered_mask)==1) {
-        #   already_covered <- paste0("&GreaterEqual;",sprintf("%.2f%%", already_covered))
-        # } else {
-        #   already_covered <- sprintf("%.2f%%", already_covered)
-        # }
-        
-        unknown_amount <- t1 %>% 
-          filter(cross_status == 'Neither source') %>% 
-          pull(highlights)
-        
-        # create info box material 
-        if (in_dip) {
-          icon <-  'check'
-          color <- 'green'
-          info <- paste0(
-            ' Variable Name in DIP: ','<strong>',dip_var_name, '</strong>',
-            '<br>',
-            already_covered, 
-            '<br>',
-            extra_coverage,
-            '<br>',
-            unknown_amount
+      
+    # because using input not reactive table, get weird error message if I don't include this... 
+    if (length(list1)==0){
+      info <- ''
+    } else {
+      
+      info <- lapply(
+        1:length(list1), function(index){
+          
+          dip_var_name = list1[index]
+          var_name = list2[index]
+          
+          # get info about the variable 
+          t1 <- temp %>% 
+            filter(survey_var==var_name, var_dip == dip_var_name)
+          
+          # check if it exists in DIP
+          in_dip <- t1 %>% 
+            distinct(exists_in_dip) %>% pull()
+          
+          extra_coverage <- t1 %>% 
+            filter(cross_status == 'Survey only') %>% 
+            pull(highlights)
+          
+          already_covered <- t1 %>% 
+            filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
+            distinct(str_replace(highlights,"Greater than or equal to ","&GreaterEqual;")) %>% pull()
+          
+          # find count of MASK
+          # already_covered_mask <- t1 %>% 
+          #   filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>% 
+          #   filter(unique_percent_str=="MASK")
+          # 
+          # # treat already covered % differently, depending on MASK result
+          # if(nrow(already_covered_mask) == 2) {
+          #   already_covered <- "MASK"
+          # } else if(nrow(already_covered_mask)==1) {
+          #   already_covered <- paste0("&GreaterEqual;",sprintf("%.2f%%", already_covered))
+          # } else {
+          #   already_covered <- sprintf("%.2f%%", already_covered)
+          # }
+          
+          unknown_amount <- t1 %>% 
+            filter(cross_status == 'Neither source') %>% 
+            pull(highlights)
+          
+          # create info box material 
+          if (in_dip) {
+            icon <-  'check'
+            color <- 'green'
+            info <- paste0(
+              ' Variable Name in DIP: ','<strong>',dip_var_name, '</strong>',
+              '<br>',
+              already_covered, 
+              '<br>',
+              extra_coverage,
+              '<br>',
+              unknown_amount
+            )
+          } else {
+            icon <-  'x'
+            color <- 'red'
+            info <- paste0(
+              'No DIP Variable',
+              '<br>',
+              already_covered, 
+              '<br>',
+              extra_coverage,
+              '<br>',
+              unknown_amount
+            )
+          }
+          
+          # return the info box
+          infoBox(
+            title = HTML(paste0("<p style='font-weight: bold; white-space: break-spaces;'>", var_name, "</p>")),
+            value = HTML(paste0("<p style='font-size:14px; font-weight: normal;'>", info, "</p>")),
+            icon = icon(icon),
+            color = color,
+            width = 6
           )
-        } else {
-          icon <-  'x'
-          color <- 'red'
-          info <- paste0(
-            'No DIP Variable',
-            '<br>',
-            already_covered, 
-            '<br>',
-            extra_coverage,
-            '<br>',
-            unknown_amount
-          )
-        }
-        
-        # return the info box
-        infoBox(
-          title = HTML(paste0("<p style='font-weight: bold; white-space: break-spaces;'>", var_name, "</p>")),
-          value = HTML(paste0("<p style='font-size:14px; font-weight: normal;'>", info, "</p>")),
-          icon = icon(icon),
-          color = color,
-          width = 6
-        )
-        
-      })
+          
+        })
+    }
     
     info
   })

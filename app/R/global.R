@@ -28,17 +28,15 @@ library(DT)         ## for tables
 ## Add code that you want to run before your app launches
 
 ### e.g., reading in data
-## no longer reading in csvs - formatting lost
-# combined_overview <- read_csv(safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_overview.csv"))
-# combined_detailed <- read_csv(safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_detailed.csv"))
-# combined_list_vars <- read_csv(safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_list.csv"))
-# combined_summary <- read_csv(safepaths::use_network_path("2023 ARDA BCDS Data Evaluation/data_for_dashboard/combined/combined_summary.csv"))
-
 ## read in rds versions
 combined_overview <- readRDS("data/combined_overview.rds")
 combined_detailed <- readRDS("data/combined_detailed.rds")
-#combined_list_vars <- readRDS("data/combined_list.rds")
 combined_summary <- readRDS("data/combined_summary.rds")
+
+## uncomment to just read into memory for de-bugging
+# combined_overview <- readRDS("app/data/combined_overview.rds")
+# combined_detailed <- readRDS("app/data/combined_detailed.rds")
+# combined_summary <- readRDS("app/data/combined_summary.rds")
 
 # set default selections
 default_file <- "Medical Services Plan (MSP)"
