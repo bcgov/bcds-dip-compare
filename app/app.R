@@ -1061,7 +1061,7 @@ server <- function(input, output, session) {
   
   # choose DIP variables based on the survey var filters
   observeEvent(filtered_by_var_detailed(),{
-    choices <- unique(filtered_by_var_detailed()$var_dip)
+    choices <- sort(unique(filtered_by_var_detailed()$var_dip))
     updateSelectInput(inputId = 'dip_var_detailed', choices = choices)
   })
 
