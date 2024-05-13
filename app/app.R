@@ -612,19 +612,33 @@ ui <- tagList(
     # ),
     
     fluidRow(style = "padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
-      br(),br(),
-      column(
-        width=12,
-        "For more details on methodology and caveats, see the",
-        a("technical documentation.", target = "_blank",href = "technical-documentation-simplified.pdf"),
-        br(),
-        "The data in this dashboard is available for download from the",
-        a("BC Data Catalogue", href="https://catalogue.data.gov.bc.ca/", target = "_blank"),
-        "under the",
-        a("Open Government Licence - British Columbia.", href="https://www2.gov.bc.ca/gov/content/data/open-data/open-government-licence-bc", target="_blank"),
-        br(), br(),
-        "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
-        )
+             br(),br(),
+             column(
+               width=10,
+               HTML(
+                 "<ul>
+                    <li> 
+                      The dashboard was developed as part of the <i>BC Demographic Survey Data Evaluation</i> project, commissioned by the Ministry of Citizens' Services, Province of British Columbia. 
+                    </li>
+                    <li>
+                      All inferences, opinions, and conclusions drawn in this dashboard are those of the authors, and do not reflect the opinions or policies of the Data Innovation Program or the Province of British Columbia.
+                    </li>
+                    <li>
+                      For more details on methodology and caveats, see the
+                      <a href='draft-technical-documentation.pdf' target='_blank'>technical documentation.</a>
+                    </li>
+                    <li>
+                      The data in this dashboard is available for download from the
+                      <a href='https://catalogue.data.gov.bc.ca/' target='_blank'>BC Data Catalogue</a>
+                      under the
+                      <a href='https://www2.gov.bc.ca/gov/content/data/open-data/open-government-licence-bc' target='_blank'>Open Government Licence - British Columbia.</a>
+                    </li>
+                  
+                  </ul>"
+               ),
+               br(), br(),
+               "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
+             )
     )
   )
   )
