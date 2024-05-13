@@ -29,6 +29,8 @@ Ministry of Citizens' Services
 
 # Purpose
 
+This dashboard and technical document was developed as part of the BC Demographic Survey Data Evaluation project, commissioned by the Ministry of Citizens' Services, Province of British Columbia.
+
 This document summarizes the analytical methods, caveats, and technical software used to generate the linkage summaries provided in the dashboard [BC Demographic Survey: DIP Data Linkage Rates](https://bcstats.shinyapps.io/bcds-dip-compare/) and made available on the [BC Data Catalog]()
 
 
@@ -100,7 +102,9 @@ The analysis was then also done at the StudyID (person) level, where a cross-tab
 * Aligned information: the DIP dataset and the survey provide generally agreeable demographics.
   * Example: a child in care is recorded in the MCFD dataset as non-Indigenous, which agrees with the value provided by the survey. 
 
-## Caveats
+## Caveats & Disclaimers
+
+All inferences, opinions, and conclusions drawn in this dashboard are those of the authors, and do not reflect the opinions or policies of the Data Innovation Program or the Province of British Columbia.
 
 **This dashboard and data source serves as a guide only. Researchers are ultimately responsible for determining the feasibility and reliability of the variables themselves prior to using the BC Demographic Survey variable information for their project.**
 
@@ -128,6 +132,35 @@ All code is stored under the [git version control](https://git-scm.com/) system 
 
 - Creation of Demographic Survey Variables: <https://projectsc.popdata.bc.ca/shares/arda-demographic-survey>
 - Creation of Linkage Statistics: <https://projectsc.popdata.bc.ca/shares/linkage-litmus-test>
+
+# Data Sources
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
+library(dplyr)
+library(readr)
+data <- read_csv(safepaths::use_network_path('2023 ARDA BCDS Data Evaluation\\data_for_dashboard\\combined\\data-sources-refs.csv'))
+
+data <- data %>% 
+  arrange(ministry, `dataset name`) %>% 
+  mutate(citation = paste0(
+    ministry,
+    '. [creator] ('
+    ,`publication year`,
+    '). ',
+    `dataset name`, 
+    '. ', 
+    `dataset edition`, 
+    '. Data Innovation Program, Province of British Columbia [publisher]. Data Extract. Approver Year (',
+    `approver year`,
+    ').')
+  )
+
+for (citation in data$citation){
+  cat(citation)
+  cat('\n')
+  cat('\n')
+}
+```
 
 # References
 
