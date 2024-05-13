@@ -120,7 +120,7 @@ Here we list some important distinctions to keep in mind when browsing the dashb
 
 ## Software
 
-This analysis is implemented in the R and python programming languages [@Rcore, @van1995python]. The code used to generate this analysis was reviewed by three data scientists. Key tools used to complete this work include the Apache Arrow project [@arrow], the tidyverse [@wickham] and the interal SAE package dippy [@dippy]. 
+This analysis is implemented in the R and python programming languages [@Rcore, @van1995python]. The code used to generate this analysis was reviewed by three data scientists. Key tools used to complete this work include the Apache Arrow project [@arrow], the tidyverse [@wickham] and the internal SAE package dippy [@dippy]. 
 
 ### GitLab
 
