@@ -616,7 +616,7 @@ ui <- tagList(
       column(
         width=12,
         "For more details on methodology and caveats, see the",
-        a("technical documentation.", target = "_blank",href = "draft-technical-documentation.pdf"),
+        a("technical documentation.", target = "_blank",href = "technical-documentation-simplified.pdf"),
         br(),
         "The data in this dashboard is available for download from the",
         a("BC Data Catalogue", href="https://catalogue.data.gov.bc.ca/", target = "_blank"),
