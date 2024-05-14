@@ -625,7 +625,7 @@ ui <- tagList(
                     </li>
                     <li>
                       For more details on methodology and caveats, see the
-                      <a href='draft-technical-documentation.pdf' target='_blank'>technical documentation.</a>
+                      <a href='technical-documentation-simplified.pdf' target='_blank'>technical documentation.</a>
                     </li>
                     <li>
                       The data in this dashboard is available for download from the
@@ -637,7 +637,14 @@ ui <- tagList(
                   </ul>"
                ),
                br(), br(),
-               "BC Stats would like to acknowledge with gratitude the ancestral territories of the lək̓ʷəŋən speaking peoples, today known as the Esquimalt and Songhees Nations, where this dashboard was produced."
+               "BC Stats recognizes the rights of Indigenous peoples to self-government and self-determination, which includes data sovereignty. 
+               Components of this dashboard have been developed with Indigenous groups to properly inform decision-making models for data about Indigenous peoples. 
+               Where appropriate, distinctions-based demographic data has been utilized in accordance with the ",
+               a(
+                 "Declaration Act Action Plan.", 
+                 href='https://www2.gov.bc.ca/gov/content/governments/indigenous-people/new-relationship/united-nations-declaration-on-the-rights-of-indigenous-peoples/implementation',
+                 target="_blank"
+               )
              )
     )
   )
@@ -702,8 +709,10 @@ server <- function(input, output, session) {
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
           pct_demo_in_dip_rank,
           "Percent of DIP File Covered" = pct_dip_in_demo_str,
-          pct_dip_in_demo_rank,
-          "Notes"=Notes
+          pct_dip_in_demo_rank
+          ## FOR SIMPLIFIED: remove notes column from overview page ----
+          #,
+          #"Notes"=Notes
           ), 
       #extensions = 'FixedHeader',
       options = list(pageLength = 100,
