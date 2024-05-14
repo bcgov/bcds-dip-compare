@@ -637,14 +637,23 @@ ui <- tagList(
                   </ul>"
                ),
                br(), br(),
-               "BC Stats recognizes the rights of Indigenous peoples to self-government and self-determination, which includes data sovereignty. 
-               Components of this dashboard have been developed with Indigenous groups to properly inform decision-making models for data about Indigenous peoples. 
-               Where appropriate, distinctions-based demographic data has been utilized in accordance with the ",
+               "The Province recognizes the rights of Indigenous peoples to self-government and self-determination, which includes data sovereignty.",
+               ## FOR SIMPLIFIED: remove wording on working with Indigenous groups until ready ----
+               #"The BC Data Service (BCDS) in the Ministry of Citizens’ Services is working with Indigenous groups to develop decision-making models for data about Indigenous peoples.",
+               "Under the ",
                a(
-                 "Declaration Act Action Plan.", 
+                 "Declaration Act Action Plan",
                  href='https://www2.gov.bc.ca/gov/content/governments/indigenous-people/new-relationship/united-nations-declaration-on-the-rights-of-indigenous-peoples/implementation',
-                 target="_blank"
-               )
+                 target="_blank",
+                 ),
+               ", BCDS is committed to advancing the distinctions-based collection and use of disaggregated demographic data 
+               and supporting the establishment of a First Nations-governed and mandated regional data governance centre 
+               in alignment with the ",
+               a(
+                 "First Nations Data Governance Strategy.",
+                 href='https://fnigc.ca/news/introducing-a-first-nations-data-governance-strategy/',
+                 target="_blank",
+                 )
              )
     )
   )
