@@ -31,7 +31,7 @@ Ministry of Citizens' Services
 
 This dashboard and technical document was developed as part of the BC Demographic Survey Data Evaluation project, commissioned by the Ministry of Citizens' Services, Province of British Columbia.
 
-This document summarizes the analytical methods, caveats, and technical software used to generate the linkage summaries provided in the dashboard [BC Demographic Survey: DIP Data Linkage Rates](https://bcstats.shinyapps.io/bcds-dip-compare/) and made available on the [BC Data Catalog](https://catalogue.data.gov.bc.ca/)
+This document summarizes the analytical methods, caveats, and technical software used to generate the linkage summaries provided in the dashboard [BC Demographic Survey: DIP Data Linkage Rates](https://bcstats.shinyapps.io/bcds-dip-compare/) and made available on the [BC Data Catalogue.](https://catalogue.data.gov.bc.ca/)
 
 
 # Project Overview
