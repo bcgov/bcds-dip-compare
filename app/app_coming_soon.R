@@ -120,8 +120,7 @@ ui <- tagList(
         style="padding-left:50px;padding-right:50px;min-width:fit-content",
         br(),br(),br(),
         column(
-          ## FOR MVP: change width from 4 to 10
-          width = 10, #4,
+          width = 4,
           wellPanel(
             style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
             hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
@@ -136,43 +135,42 @@ ui <- tagList(
               button_animation = "grow"),
             h3("For more information on the percentage of a dataset that has linked records in the BC Demographic Survey.")
           )),
-        ### FOR MVP: remove tabs 2/3 ----
-        # column(
-        #   width = 4,
-        #   wellPanel(
-        #     style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
-        #     hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
-        #     br(),
-        #     hover_action_button(
-        #       "link_summary",
-        #       div(style ="font-size:18px",
-        #           tags$i(class='fa-solid fa-chart-bar'),
-        #           "Linked Variables Summary",
-        #           hr(style= "border-top:2px solid;margin-top:10px")),
-        #       style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
-        #       button_animation = "grow"),
-        #     h3("For more information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing."),
-        #     ### FOR SIMPLIFIED: coming soon text ----
-        #     h2("Coming Soon!", style="color:red")
-        #   )),
-        # column(
-        #   width = 4,
-        #   wellPanel(
-        #     style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
-        #     hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
-        #     br(),
-        #     hover_action_button(
-        #       "link_detailed",
-        #       div(style ="font-size:18px",
-        #           tags$i(class='fa-solid fa-code-compare'),
-        #           "Linked Variables Detail",
-        #           hr(style= "border-top:2px solid;margin-top:10px")),
-        #       style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
-        #       button_animation = "grow"),
-        #     h3("For a deeper dive into individual demographic variables, and how individual DIP record values compare to individual BC Demographic Survey values."),
-        #     ### FOR SIMPLIFIED: coming soon text ----
-        #     h2("Coming Soon!", style="color:red")
-        #   ))
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_summary",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-chart-bar'),
+                  "Linked Variables Summary",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              button_animation = "grow"),
+            h3("For more information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing."),
+            ### FOR SIMPLIFIED: coming soon text ----
+            h2("Coming Soon!", style="color:red")
+          )),
+        column(
+          width = 4,
+          wellPanel(
+            style="padding:20px;border-radius: 25px; min-height:300px;background:white; align-items:center; justify-text:center",
+            hr(style= "border-top: 5px solid #f6b900;margin-top:0px"),
+            br(),
+            hover_action_button(
+              "link_detailed",
+              div(style ="font-size:18px",
+                  tags$i(class='fa-solid fa-code-compare'),
+                  "Linked Variables Detail",
+                  hr(style= "border-top:2px solid;margin-top:10px")),
+              style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
+              button_animation = "grow"),
+            h3("For a deeper dive into individual demographic variables, and how individual DIP record values compare to individual BC Demographic Survey values."),
+            ### FOR SIMPLIFIED: coming soon text ----
+            h2("Coming Soon!", style="color:red")
+          ))
       )
     )
     ,
@@ -189,275 +187,273 @@ ui <- tagList(
      )
     )
   ,
+  # linked summary (SHORT) ----
+  tabPanel(
+    title = div(style = "padding:9.5px 0",
+                tags$i(class = 'fa-solid fa-chart-bar'),
+                "Linked Variables Summary"),
+    value="summary",
+    style = "padding-top:160px",
+    fluidRow(style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+             column(width = 10,
+                    offset = 0,
+                    br(),
+                    h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
+                    br(),
+                    h2("Coming Soon!", style="color:red"),
+                    br(),
+                    h3("For more information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.")
+             )
+    ),
+  ),
+     
+   # # linked summary (FULL) ----
+   # tabPanel(
+   #   title = div(style = "padding:9.5px 0",
+   #               tags$i(class = 'fa-solid fa-chart-bar'),
+   #               "Linked Variables Summary"),
+   #   value="summary",
+   #   style = "padding-top:160px",
+   #    sidebarLayout(
+   #      sidebarPanel(
+   #        style = "padding-right:30px;padding-left:30px;min-height:750px",
+   #        
+   #        # filter for the data provider variable
+   #        pickerInput(
+   #          inputId = "data_group_summary",
+   #          label = "Choose Data Provider:",
+   #          choices = unique(combined_summary$`Data Provider/Ministry`),
+   #          selected = unique(combined_summary$`Data Provider/Ministry`),
+   #          options = pickerOptions(
+   #            actionsBox = TRUE, 
+   #            liveSearch = TRUE,
+   #            selectedTextFormat = "count > 3",
+   #            size = 10
+   #          ),
+   #          multiple = TRUE
+   #        ),
+   #        
+   #        # filter for the dataset variable
+   #        pickerInput(
+   #          "dataset_summary",
+   #          "Choose Dataset:",
+   #          choices = unique(combined_summary$`Dataset`),
+   #          selected = unique(combined_summary$`Dataset`),
+   #          options = pickerOptions(
+   #            actionsBox = TRUE, 
+   #            liveSearch = TRUE,
+   #            selectedTextFormat = "count > 3",
+   #            size = 10
+   #          ),
+   #          multiple = TRUE
+   #        ),
+   #        
+   #        # Filter for the 'File' variable
+   #        selectInput(
+   #          "file_summary", 
+   #          "Choose File:", 
+   #          choices = default_file 
+   #        ),
+   #        
+   #        # Filter for the 'survey var' variable
+   #        pickerInput(
+   #          inputId = "var_summary", 
+   #          label = "Choose Survey Variable(s):", 
+   #          choices = unique(combined_summary$survey_var),
+   #          selected = unique(combined_summary$survey_var),
+   #          options = pickerOptions(
+   #            actionsBox = TRUE, 
+   #            liveSearch = TRUE,
+   #            selectedTextFormat = "count > 3",
+   #            size = 10
+   #          ), 
+   #          multiple = TRUE
+   #        ),
+   #        
+   #        # Filter for the 'dip var' variable
+   #        # depends on choice of survey var
+   #        pickerInput(
+   #          inputId = "dip_var_summary", 
+   #          label = "Choose DIP Variable(s):", 
+   #          choices = NULL,
+   #          selected = NULL,
+   #          options = pickerOptions(
+   #            actionsBox = TRUE, 
+   #            liveSearch = TRUE,
+   #            selectedTextFormat = "count > 3",
+   #            size = 10
+   #          ), 
+   #          multiple = TRUE
+   #        ),
+   #        
+   #        fluidRow(
+   #          box(
+   #            width = NULL,
+   #            solidHeader = TRUE,
+   #            collapsible = TRUE, 
+   #            collapsed = FALSE, 
+   #            title = HTML("<small><p><b>Cross-Status Table Definitions:</b></small>"),
+   #            HTML(
+   #              "<small>
+   #              <p><b>Survey only:</b> 
+   #              <p>Demographic information for the given variable is not available within the DIP File, but is available from the BC Demographic Survey. <em>Relates to \"Added from Survey\" in the Highlights tab.</em>
+   #              <p><b>DIP only:</b>
+   #              <p>Demographic information for the given variable is available within the DIP File, and is not available from the BC Demographic Survey. <em>Combined with 'DIP and survey' makes \"Known from DIP\" in the Highlights tab.</em>
+   #              <p><b>DIP and survey:</b>
+   #              <p>Demographic information for the given variable is available within the DIP File, and also from the BC Demographic Survey. Variable values may or may not align. <em>Combined with 'DIP only' makes \"Known from DIP\" in the Highlights tab.</em>
+   #              <p><b>Neither source:</b>
+   #              <p>Demographic information for the given variable is not available within the DIP File or from the BC Demographic Survey. <em>Relates to \"Still Unknown\" in the Highlights tab.</em>
+   #              <p>
+   #              </small>"
+   #            )
+   #          )
+   #        ),
+   #        
+   #        # Information added about the dob variable name only when selected/exists (dobflag created in server)
+   #        conditionalPanel(condition = 'output.dobflag == true',
+   #                         HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
+   #                              See metadata for the relevant dataset to determine the variable name.</small>"))
+   #      ),
+   #      mainPanel(
+   #        style = "padding-right:30px;padding-left:30px;background-color:white;min-height:750px",
+   #        # add information about data displayed
+   #        uiOutput("viewingSummary"),
+   #        
+   #        tabsetPanel(
+   #          tabPanel(
+   #            'Highlights',
+   #            uiOutput('summary_info'), ## summary highlights ----                
+   #          ),
+   #          
+   #          tabPanel(
+   #            'Table',
+   #            DTOutput("data_summary") ## data_summary ----
+   #          )
+   #        )
+   #      )
+   #    )
+   #   ),
   
-  ## FOR MVP: remove tabs 2/3
-  # # linked summary (SHORT) ----
-  # tabPanel(
-  #   title = div(style = "padding:9.5px 0",
-  #               tags$i(class = 'fa-solid fa-chart-bar'),
-  #               "Linked Variables Summary"),
-  #   value="summary",
-  #   style = "padding-top:160px",
-  #   fluidRow(style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
-  #            column(width = 10,
-  #                   offset = 0,
-  #                   br(),
-  #                   h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
-  #                   br(),
-  #                   h2("Coming Soon!", style="color:red"),
-  #                   br(),
-  #                   h3("For more information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing.")
-  #            )
-  #   ),
-  # ),
-  #    
-  #  # # linked summary (FULL) ----
-  #  # tabPanel(
-  #  #   title = div(style = "padding:9.5px 0",
-  #  #               tags$i(class = 'fa-solid fa-chart-bar'),
-  #  #               "Linked Variables Summary"),
-  #  #   value="summary",
-  #  #   style = "padding-top:160px",
-  #  #    sidebarLayout(
-  #  #      sidebarPanel(
-  #  #        style = "padding-right:30px;padding-left:30px;min-height:750px",
-  #  #        
-  #  #        # filter for the data provider variable
-  #  #        pickerInput(
-  #  #          inputId = "data_group_summary",
-  #  #          label = "Choose Data Provider:",
-  #  #          choices = unique(combined_summary$`Data Provider/Ministry`),
-  #  #          selected = unique(combined_summary$`Data Provider/Ministry`),
-  #  #          options = pickerOptions(
-  #  #            actionsBox = TRUE, 
-  #  #            liveSearch = TRUE,
-  #  #            selectedTextFormat = "count > 3",
-  #  #            size = 10
-  #  #          ),
-  #  #          multiple = TRUE
-  #  #        ),
-  #  #        
-  #  #        # filter for the dataset variable
-  #  #        pickerInput(
-  #  #          "dataset_summary",
-  #  #          "Choose Dataset:",
-  #  #          choices = unique(combined_summary$`Dataset`),
-  #  #          selected = unique(combined_summary$`Dataset`),
-  #  #          options = pickerOptions(
-  #  #            actionsBox = TRUE, 
-  #  #            liveSearch = TRUE,
-  #  #            selectedTextFormat = "count > 3",
-  #  #            size = 10
-  #  #          ),
-  #  #          multiple = TRUE
-  #  #        ),
-  #  #        
-  #  #        # Filter for the 'File' variable
-  #  #        selectInput(
-  #  #          "file_summary", 
-  #  #          "Choose File:", 
-  #  #          choices = default_file 
-  #  #        ),
-  #  #        
-  #  #        # Filter for the 'survey var' variable
-  #  #        pickerInput(
-  #  #          inputId = "var_summary", 
-  #  #          label = "Choose Survey Variable(s):", 
-  #  #          choices = unique(combined_summary$survey_var),
-  #  #          selected = unique(combined_summary$survey_var),
-  #  #          options = pickerOptions(
-  #  #            actionsBox = TRUE, 
-  #  #            liveSearch = TRUE,
-  #  #            selectedTextFormat = "count > 3",
-  #  #            size = 10
-  #  #          ), 
-  #  #          multiple = TRUE
-  #  #        ),
-  #  #        
-  #  #        # Filter for the 'dip var' variable
-  #  #        # depends on choice of survey var
-  #  #        pickerInput(
-  #  #          inputId = "dip_var_summary", 
-  #  #          label = "Choose DIP Variable(s):", 
-  #  #          choices = NULL,
-  #  #          selected = NULL,
-  #  #          options = pickerOptions(
-  #  #            actionsBox = TRUE, 
-  #  #            liveSearch = TRUE,
-  #  #            selectedTextFormat = "count > 3",
-  #  #            size = 10
-  #  #          ), 
-  #  #          multiple = TRUE
-  #  #        ),
-  #  #        
-  #  #        fluidRow(
-  #  #          box(
-  #  #            width = NULL,
-  #  #            solidHeader = TRUE,
-  #  #            collapsible = TRUE, 
-  #  #            collapsed = FALSE, 
-  #  #            title = HTML("<small><p><b>Cross-Status Table Definitions:</b></small>"),
-  #  #            HTML(
-  #  #              "<small>
-  #  #              <p><b>Survey only:</b> 
-  #  #              <p>Demographic information for the given variable is not available within the DIP File, but is available from the BC Demographic Survey. <em>Relates to \"Added from Survey\" in the Highlights tab.</em>
-  #  #              <p><b>DIP only:</b>
-  #  #              <p>Demographic information for the given variable is available within the DIP File, and is not available from the BC Demographic Survey. <em>Combined with 'DIP and survey' makes \"Known from DIP\" in the Highlights tab.</em>
-  #  #              <p><b>DIP and survey:</b>
-  #  #              <p>Demographic information for the given variable is available within the DIP File, and also from the BC Demographic Survey. Variable values may or may not align. <em>Combined with 'DIP only' makes \"Known from DIP\" in the Highlights tab.</em>
-  #  #              <p><b>Neither source:</b>
-  #  #              <p>Demographic information for the given variable is not available within the DIP File or from the BC Demographic Survey. <em>Relates to \"Still Unknown\" in the Highlights tab.</em>
-  #  #              <p>
-  #  #              </small>"
-  #  #            )
-  #  #          )
-  #  #        ),
-  #  #        
-  #  #        # Information added about the dob variable name only when selected/exists (dobflag created in server)
-  #  #        conditionalPanel(condition = 'output.dobflag == true',
-  #  #                         HTML("<small>* Note: dip_dob_status is a replacement for the actual date of birth variable.
-  #  #                              See metadata for the relevant dataset to determine the variable name.</small>"))
-  #  #      ),
-  #  #      mainPanel(
-  #  #        style = "padding-right:30px;padding-left:30px;background-color:white;min-height:750px",
-  #  #        # add information about data displayed
-  #  #        uiOutput("viewingSummary"),
-  #  #        
-  #  #        tabsetPanel(
-  #  #          tabPanel(
-  #  #            'Highlights',
-  #  #            uiOutput('summary_info'), ## summary highlights ----                
-  #  #          ),
-  #  #          
-  #  #          tabPanel(
-  #  #            'Table',
-  #  #            DTOutput("data_summary") ## data_summary ----
-  #  #          )
-  #  #        )
-  #  #      )
-  #  #    )
-  #  #   ),
-  # 
-  # # linked variables detail (SHORT) ----
-  # tabPanel(
-  #   title = div(style = "padding:9.5px 0",
-  #               tags$i(class = 'fa-solid fa-code-compare'),
-  #               "Linked Variables Detail"),
-  #   value="summary",
-  #   style = "padding-top:160px",
-  #   fluidRow(style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
-  #            column(width = 10,
-  #                   offset = 0,
-  #                   br(),
-  #                   h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
-  #                   br(),
-  #                   h2("Coming Soon!", style="color:red"),
-  #                   br(),
-  #                   h3("For a deeper dive into individual demographic variables, and how individual DIP record values compare to individual BC Demographic Survey values.")
-  #            )
-  #   ),
-  # ),
-  # 
-  #  # # linked variables detail (FULL) ----
-  #  # tabPanel(
-  #  #   div(style = "padding:9.5px 0",
-  #  #       tags$i(class = 'fa-solid fa-code-compare'),
-  #  #       "Linked Variables Detail"),
-  #  #   style = "padding-top:160px",
-  #  #   value="detailed",
-  #  #   sidebarLayout(
-  #  #     
-  #  #     sidebarPanel(
-  #  #       style = "padding-right:30px;padding-left:30px;",
-  #  #       
-  #  #       # filter for the data provider variable
-  #  #       pickerInput(
-  #  #         "data_group_detailed",
-  #  #         "Choose Data Provider:",
-  #  #         choices = unique(combined_detailed$`Data Provider/Ministry`),
-  #  #         selected = unique(combined_detailed$`Data Provider/Ministry`),
-  #  #         options = pickerOptions(
-  #  #           actionsBox = TRUE, 
-  #  #           liveSearch = TRUE,
-  #  #           selectedTextFormat = "count > 3",
-  #  #           size = 10
-  #  #         ),
-  #  #         multiple = TRUE
-  #  #       ),
-  #  #       
-  #  #       # filter for the dataset variable
-  #  #       pickerInput(
-  #  #         "dataset_detailed",
-  #  #         "Choose Dataset:",
-  #  #         choices = unique(combined_detailed$`Dataset`),
-  #  #         selected = unique(combined_detailed$`Dataset`),
-  #  #         options = pickerOptions(
-  #  #           actionsBox = TRUE, 
-  #  #           liveSearch = TRUE,
-  #  #           selectedTextFormat = "count > 3",
-  #  #           size = 10
-  #  #         ),
-  #  #         multiple = TRUE
-  #  #       ),
-  #  #       
-  #  #       # Filter for the file variable
-  #  #       selectInput(
-  #  #         "file_detailed", 
-  #  #         "Choose File:", 
-  #  #         choices = default_file
-  #  #       ),
-  #  #       
-  #  #       # Filter for the 'survey var' variable
-  #  #       selectInput(
-  #  #         "var_detailed", 
-  #  #         "Choose Survey Variable:", 
-  #  #         choices = unique(combined_detailed$survey_var),
-  #  #         selected = default_survey_var,
-  #  #       ),
-  #  #       
-  #  #       # Filter for the 'dip var' variable
-  #  #       # depends on choice of survey var 
-  #  #       selectInput(
-  #  #         "dip_var_detailed", 
-  #  #         "Choose DIP Variable:", 
-  #  #         choices = NULL #unique(combined_detailed$var)
-  #  #       ),
-  #  #       
-  #  #       # Note added to indicate multiple dip variables available
-  #  #       conditionalPanel(condition = 'output.multivarflag == true',
-  #  #                        textOutput("multivarnote"))
-  #  #     ),
-  #  #     
-  #  #     mainPanel(
-  #  #       style = "padding-right:30px;padding-left:30px;background-color:white;",
-  #  #       # add information about data displayed
-  #  #       uiOutput("viewingDetailed"),
-  #  #       
-  #  #       tabsetPanel(
-  #  #         
-  #  #         ## table ----
-  #  #         tabPanel(
-  #  #           "Table",
-  #  #           DTOutput("data_detailed") ### data_detailed ----
-  #  #         ),
-  #  #         
-  #  #         ## heatmap ----
-  #  #         tabPanel(
-  #  #           "Heatmap",
-  #  #            radioButtons(
-  #  #              "detail_plot_option", "Plot heatmap based on:",
-  #  #              c(
-  #  #                'Percent of BC Demographic Survey' = 'bcds', 
-  #  #                'Percent of DIP File' = 'dip'
-  #  #                ),
-  #  #              inline=TRUE
-  #  #              ),
-  #  #           plotlyOutput("heatmap_detailed", height="800px") ### heatmap_detailed ----
-  #  #          )
-  #  #       )
-  #  #     )
-  #  #   )
-  #  # ),
+  # linked variables detail (SHORT) ----
+  tabPanel(
+    title = div(style = "padding:9.5px 0",
+                tags$i(class = 'fa-solid fa-code-compare'),
+                "Linked Variables Detail"),
+    value="summary",
+    style = "padding-top:160px",
+    fluidRow(style="padding-right:30px;padding-left:30px;background-color:white;min-width:fit-content",
+             column(width = 10,
+                    offset = 0,
+                    br(),
+                    h1("BC Demographic Survey: DIP Data Linkage Rates", style="color:#29619d"),
+                    br(),
+                    h2("Coming Soon!", style="color:red"),
+                    br(),
+                    h3("For a deeper dive into individual demographic variables, and how individual DIP record values compare to individual BC Demographic Survey values.")
+             )
+    ),
+  ),
+  
+   # # linked variables detail (FULL) ----
+   # tabPanel(
+   #   div(style = "padding:9.5px 0",
+   #       tags$i(class = 'fa-solid fa-code-compare'),
+   #       "Linked Variables Detail"),
+   #   style = "padding-top:160px",
+   #   value="detailed",
+   #   sidebarLayout(
+   #     
+   #     sidebarPanel(
+   #       style = "padding-right:30px;padding-left:30px;",
+   #       
+   #       # filter for the data provider variable
+   #       pickerInput(
+   #         "data_group_detailed",
+   #         "Choose Data Provider:",
+   #         choices = unique(combined_detailed$`Data Provider/Ministry`),
+   #         selected = unique(combined_detailed$`Data Provider/Ministry`),
+   #         options = pickerOptions(
+   #           actionsBox = TRUE, 
+   #           liveSearch = TRUE,
+   #           selectedTextFormat = "count > 3",
+   #           size = 10
+   #         ),
+   #         multiple = TRUE
+   #       ),
+   #       
+   #       # filter for the dataset variable
+   #       pickerInput(
+   #         "dataset_detailed",
+   #         "Choose Dataset:",
+   #         choices = unique(combined_detailed$`Dataset`),
+   #         selected = unique(combined_detailed$`Dataset`),
+   #         options = pickerOptions(
+   #           actionsBox = TRUE, 
+   #           liveSearch = TRUE,
+   #           selectedTextFormat = "count > 3",
+   #           size = 10
+   #         ),
+   #         multiple = TRUE
+   #       ),
+   #       
+   #       # Filter for the file variable
+   #       selectInput(
+   #         "file_detailed", 
+   #         "Choose File:", 
+   #         choices = default_file
+   #       ),
+   #       
+   #       # Filter for the 'survey var' variable
+   #       selectInput(
+   #         "var_detailed", 
+   #         "Choose Survey Variable:", 
+   #         choices = unique(combined_detailed$survey_var),
+   #         selected = default_survey_var,
+   #       ),
+   #       
+   #       # Filter for the 'dip var' variable
+   #       # depends on choice of survey var 
+   #       selectInput(
+   #         "dip_var_detailed", 
+   #         "Choose DIP Variable:", 
+   #         choices = NULL #unique(combined_detailed$var)
+   #       ),
+   #       
+   #       # Note added to indicate multiple dip variables available
+   #       conditionalPanel(condition = 'output.multivarflag == true',
+   #                        textOutput("multivarnote"))
+   #     ),
+   #     
+   #     mainPanel(
+   #       style = "padding-right:30px;padding-left:30px;background-color:white;",
+   #       # add information about data displayed
+   #       uiOutput("viewingDetailed"),
+   #       
+   #       tabsetPanel(
+   #         
+   #         ## table ----
+   #         tabPanel(
+   #           "Table",
+   #           DTOutput("data_detailed") ### data_detailed ----
+   #         ),
+   #         
+   #         ## heatmap ----
+   #         tabPanel(
+   #           "Heatmap",
+   #            radioButtons(
+   #              "detail_plot_option", "Plot heatmap based on:",
+   #              c(
+   #                'Percent of BC Demographic Survey' = 'bcds', 
+   #                'Percent of DIP File' = 'dip'
+   #                ),
+   #              inline=TRUE
+   #              ),
+   #           plotlyOutput("heatmap_detailed", height="800px") ### heatmap_detailed ----
+   #          )
+   #       )
+   #     )
+   #   )
+   # ),
   
   # about ----
   tabPanel(
