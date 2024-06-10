@@ -29,7 +29,7 @@ Ministry of Citizens' Services
 
 # Purpose
 
-This dashboard and technical document was developed as part of the BC Demographic Survey Data Evaluation project, commissioned by the Ministry of Citizens' Services, Province of British Columbia.
+This dataset, dashboard and technical document was developed as part of the BC Demographic Survey Data Evaluation project, commissioned by the Ministry of Citizens' Services, Province of British Columbia.
 
 This document summarizes the analytical methods, caveats, and technical software used to generate the linkage summaries provided in the dashboard [BC Demographic Survey: DIP Data Linkage Rates](https://bcstats.shinyapps.io/bcds-dip-compare/) and made available on the [BC Data Catalogue.]()
 
@@ -40,7 +40,7 @@ In 2023, BC Stats conducted the <a href="https://antiracism.gov.bc.ca/"> BC Demo
 
 The <a href="https://www2.gov.bc.ca/gov/content/data/about-data-management/data-innovation-program/"> Data Innovation Program (DIP)</a> securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. Many DIP datasets also contain demographic related information. However, the number of datasets with demographic information is limited, and are only partially complete pictures. The BC Demographic Survey aims to improve our understanding of how people with varying backgrounds interact with public services by broadening the scope of available demographic information to each data (and therefore service) provider.
 
-The analysis presented in this dashboard used the secure platform to access available datasets from the DIP, and linked these datasets, where possible, to the data from the BC Demographic Survey. Overall linkage rates, as well as more specific demographic linkage rates were investigated. The methods, tools, and caveats associated with the dashboard are explored more fully below. 
+The analysis presented in this dataset and dashboard used the secure platform to access available datasets from the DIP, and linked these datasets, where possible, to the data from the BC Demographic Survey. Overall linkage rates, as well as more specific demographic linkage rates were investigated. The methods, tools, and caveats associated with the dashboard are explored more fully below. 
 
 
 # Methodology
@@ -104,13 +104,13 @@ The analysis was then also done at the StudyID (person) level, where a cross-tab
 
 ## Caveats & Disclaimers
 
-All inferences, opinions, and conclusions drawn in this dashboard are those of the authors, and do not reflect the opinions or policies of the Data Innovation Program or the Province of British Columbia.
+All inferences, opinions, and conclusions drawn in this datdaset and dashboard are those of the authors, and do not reflect the opinions or policies of the Data Innovation Program or the Province of British Columbia.
 
 **This dashboard and data source serves as a guide only. Researchers are ultimately responsible for determining the feasibility and reliability of the variables themselves prior to using the BC Demographic Survey variable information for their project.**
 
 Here we list some important distinctions to keep in mind when browsing the dashboard and related datasets:
 
-* This dashboard was produced in 2024. Linkage rates will change overtime.
+* This dashboard and dataset was produced in 2024. Linkage rates will change overtime.
 * Not every DIP dataset has a StudyID.
 * Some DIP datasets contain multiple StudyIDs.
 * Because DIP datasets were only manipulated to reduce every StudyID to a single demographic variable, some 'Known Dip' percentages may appear artificially high, as the variable may include 'Unknown' or 'Prefer not to Answer' responses. Determining the exact content of each demographic variable in each dataset was out of scope for the creation of this dashboard, and should be carefully examined by any DIP researcher.
