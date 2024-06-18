@@ -626,7 +626,7 @@ ui <- tagList(
                       <a href='technical-documentation-simplified.pdf' target='_blank'>technical documentation.</a>
                     </li>
                     <li>
-                      For more details on the approach to the BC Demographic survey, see the 
+                      For more details on the approach to the BC Demographic Survey, see the 
                       <a href='https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/multiculturalism-anti-racism/anti-racism/anti-racism-hub/anti-racism-stats-and-research/2024-research-release/bc-demographic-survey-report.pdf'
                         target='_blank'>2024 technical report.</a>
                     </li>
