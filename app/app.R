@@ -626,9 +626,9 @@ ui <- tagList(
                       <a href='technical-documentation-simplified.pdf' target='_blank'>technical documentation.</a>
                     </li>
                     <li>
-                      For more details on the BC Demographic survey, see the 
+                      For more details on the approach to the BC Demographic survey, see the 
                       <a href='https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/multiculturalism-anti-racism/anti-racism/anti-racism-hub/anti-racism-stats-and-research/2024-research-release/bc-demographic-survey-report.pdf'
-                        target='_blank'>2024 technical report</a> on the approach to the BC Demographic Survey.
+                        target='_blank'>2024 technical report.</a>
                     </li>
                     <li>
                       For other research that has been done using the survey, see the  
@@ -654,7 +654,7 @@ ui <- tagList(
                  href='https://www2.gov.bc.ca/gov/content/governments/indigenous-people/new-relationship/united-nations-declaration-on-the-rights-of-indigenous-peoples/implementation',
                  target="_blank",
                  ),
-               ", BCDS is committed to advancing the distinctions-based collection and use of disaggregated demographic data 
+               ", BC Data Services is committed to advancing the distinctions-based collection and use of disaggregated demographic data 
                and supporting the establishment of a First Nations-governed and mandated regional data governance centre 
                in alignment with the ",
                a(

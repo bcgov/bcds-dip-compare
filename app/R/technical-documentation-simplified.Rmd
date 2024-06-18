@@ -19,8 +19,7 @@ knitr::opts_chunk$set(echo = FALSE)
 **PREPARED BY:**  
 Amelia Lowery, Julie Hawkins & Lindsay Fredrick  
 Data Science Partnerships Program  
-BC Stats
-BC Data Services  
+BC Stats - BC Data Services  
 Ministry of Citizens' Services  
   
 **DATE:** `r Sys.Date()`  
