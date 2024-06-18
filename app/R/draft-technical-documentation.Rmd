@@ -110,7 +110,7 @@ All inferences, opinions, and conclusions drawn in this datdaset and dashboard a
 
 Here we list some important distinctions to keep in mind when browsing the dashboard and related datasets:
 
-* This dashboard and dataset was produced in 2024. Linkage rates will change overtime.
+* This dashboard and dataset was produced in 2024. Linkage rates will change over time.
 * Not every DIP dataset has a StudyID.
 * Some DIP datasets contain multiple StudyIDs.
 * Because DIP datasets were only manipulated to reduce every StudyID to a single demographic variable, some 'Known Dip' percentages may appear artificially high, as the variable may include 'Unknown' or 'Prefer not to Answer' responses. Determining the exact content of each demographic variable in each dataset was out of scope for the creation of this dashboard, and should be carefully examined by any DIP researcher.
