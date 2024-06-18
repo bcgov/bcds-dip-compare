@@ -621,15 +621,19 @@ ui <- tagList(
                width=10,
                HTML(
                  "<ul>
-                    <li> 
-                      The dashboard was developed as part of the <i>BC Demographic Survey Data Evaluation</i> project, commissioned by the Ministry of Citizens' Services, Province of British Columbia. 
-                    </li>
-                    <li>
-                      All inferences, opinions, and conclusions drawn in this dashboard are those of the authors, and do not reflect the opinions or policies of the Data Innovation Program or the Province of British Columbia.
-                    </li>
                     <li>
                       For more details on methodology and caveats, see the
                       <a href='technical-documentation-simplified.pdf' target='_blank'>technical documentation.</a>
+                    </li>
+                    <li>
+                      For more details on the BC Demographic survey, see the 
+                      <a href='https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/multiculturalism-anti-racism/anti-racism/anti-racism-hub/anti-racism-stats-and-research/2024-research-release/bc-demographic-survey-report.pdf'
+                        target='_blank'>2024 report</a> on the approach to the BC Demographic Survey.
+                    </li>
+                    <li>
+                      For other research that has been done using the survey, see the  
+                        <a href='https://antiracism.gov.bc.ca/?page_id=34752'
+                        target='_blank'>anti-racism website.</a>
                     </li>
                     <li>
                       The data in this dashboard is available for download from the
