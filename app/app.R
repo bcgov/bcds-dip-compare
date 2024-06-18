@@ -62,7 +62,7 @@ ui <- tagList(
       br(),br(),
       div(style = "padding-left:45px;margin-top:-50px;",
           br(),br(),
-          h3('This dashboard was produced in 2024. Linkage rates will change overtime.'),
+          h3('Linkage rates reflect data as of 2024.'),
           "Questions for DIP?", 
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/2",
