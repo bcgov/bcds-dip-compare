@@ -628,7 +628,7 @@ ui <- tagList(
                     <li>
                       For more details on the BC Demographic survey, see the 
                       <a href='https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/multiculturalism-anti-racism/anti-racism/anti-racism-hub/anti-racism-stats-and-research/2024-research-release/bc-demographic-survey-report.pdf'
-                        target='_blank'>2024 report</a> on the approach to the BC Demographic Survey.
+                        target='_blank'>2024 technical report</a> on the approach to the BC Demographic Survey.
                     </li>
                     <li>
                       For other research that has been done using the survey, see the  
