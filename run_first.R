@@ -192,13 +192,14 @@ overall_linkage_rates <- combined_overview %>%
 
 # rename and order columns
 overall_linkage_rates <- overall_linkage_rates %>%
+  janitor::clean_names() %>% 
   mutate(Notes = ifelse(is.na(Notes),"",Notes)) %>% 
   select(any_of(names(dataset_info)),
-         "Survey Records"=in_demographic_str,
-         "DIP File Records"=in_dip_dataset_str,
-         "DIP File Records Linked to Survey Records"=in_both_str,
-         "Percent of Survey Covered" = pct_demo_in_dip_str, 
-         "Percent of DIP File Covered" = pct_dip_in_demo_str,
+         "survey_records"=in_demographic_str,
+         "dip_file_records"=in_dip_dataset_str,
+         "dip_file_records_linked_to_survey_records"=in_both_str,
+         "percent_of_survey_covered" = pct_demo_in_dip_str, 
+         "percent_of_dip_file_covered" = pct_dip_in_demo_str,
          everything(),-Notes,Notes
          )
 
