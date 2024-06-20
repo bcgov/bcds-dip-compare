@@ -207,7 +207,7 @@ overall_linkage_rates <- overall_linkage_rates %>%
 write_csv(
   overall_linkage_rates, 
   safepaths::use_network_path(
-    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/overall_linkage_rates.csv"
+    "2023 ARDA BCDS Data Evaluation/data_for_catalogue/bcds-dip-linkage-rates-data-overall.csv"
   )
 )
 
