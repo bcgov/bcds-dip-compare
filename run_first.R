@@ -142,9 +142,9 @@ combined_overview <- combined_overview %>%
   ) %>% 
   # get strings for %s and commas for Ns
   mutate(
-    in_demographic_str = format(in_demographic, big.mark = ","),
-    in_dip_dataset_str = format(in_dip_dataset, big.mark = ","),
-    in_both_str = format(in_both, big.mark = ","),
+    in_demographic_str = format(in_demographic, big.mark = ",", trim = TRUE),
+    in_dip_dataset_str = format(in_dip_dataset, big.mark = ",", trim = TRUE),
+    in_both_str = format(in_both, big.mark = ",", trim = TRUE),
     pct_demo_in_dip_str = ifelse(is.na(pct_demo_in_dip),"NA",sprintf("%.2f%%", pct_demo_in_dip)),
     pct_dip_in_demo_str = ifelse(is.na(pct_dip_in_demo),"NA",sprintf("%.2f%%", pct_dip_in_demo))
   )  
