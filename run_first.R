@@ -194,7 +194,7 @@ overall_linkage_rates <- combined_overview %>%
 overall_linkage_rates <- overall_linkage_rates %>%
   janitor::clean_names() %>% 
   #mutate(notes = ifelse(is.na(notes),"",notes)) %>% # not showing Notes column in linkage-only dashboard
-  select(any_of(names(dataset_info)),
+  select(any_of(names(janitor::clean_names(dataset_info))),
          "survey_records"=in_demographic_str,
          "dip_file_records"=in_dip_dataset_str,
          "dip_file_records_linked_to_survey_records"=in_both_str,
