@@ -623,7 +623,7 @@ ui <- tagList(
                  "<ul>
                     <li>
                       For more details on methodology and caveats, see the
-                      <a href='technical-documentation-simplified.pdf' target='_blank'>technical documentation.</a>
+                      <a href='bcds-dip-linkage-rates-technical-document.pdf' target='_blank'>technical documentation.</a>
                     </li>
                     <li>
                       For more details on the approach to the BC Demographic Survey, see the 
