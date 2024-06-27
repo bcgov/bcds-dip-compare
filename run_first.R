@@ -164,7 +164,8 @@ combined_overview <- combined_overview %>%
   rename(`SAE File Name`=dataset,`SAE File Name (Short)`=file_name) %>% 
   select(-folder) %>% 
   left_join(dataset_info, by=c("SAE File Name","SAE File Name (Short)")) %>% 
-  mutate(`SAE File Name`=str_replace(`SAE File Name`,"/"," / ")) %>% 
+  # add spaces for better layout on dashboard
+  mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>%
   select(-`SAE File Name (Short)`)
 
 # arrange alphabetically - data provider first, then Dataset, then File
@@ -192,6 +193,8 @@ overall_linkage_rates <- combined_overview %>%
 
 # rename and order columns
 overall_linkage_rates <- overall_linkage_rates %>%
+  # remove extra spacing for catalogue
+  mutate(`SAE File Name`=str_replace_all(`SAE File Name`," / ","/")) %>% 
   janitor::clean_names() %>% 
   #mutate(notes = ifelse(is.na(notes),"",notes)) %>% # not showing Notes column in linkage-only dashboard
   select(any_of(names(janitor::clean_names(dataset_info))),
