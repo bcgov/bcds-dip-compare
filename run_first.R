@@ -404,13 +404,16 @@ write_csv(
 #   select(-highlights,-exists_in_dip,-mask_flag)
 # 
 # # rename and order columns
-# linked_variables_summary <- linked_variables_summary %>% 
-#   select(any_of(names(dataset_info)),
-#          "Survey Variable" = survey_var, 
-#          "DIP Variable" = var_dip,
-#          "Cross-Status"=cross_status,
-#          "Unique IDs in DIP File" = unique_n_str, 
-#          "Percent of Unique IDs" = unique_percent_str,
+# linked_variables_summary <- linked_variables_summary %>%
+# # remove extra spacing for catalogue
+#   mutate(`SAE File Name`=str_replace_all(`SAE File Name`," / ","/")) %>%
+#   janitor::clean_names() %>%
+#   select(any_of(names(janitor::clean_names(dataset_info))),
+#          "survey_variable" = survey_var,
+#          "dip_variable" = var_dip,
+#          "cross_status"=cross_status,
+#          "unique_ids_in_dip_file" = unique_n_str,
+#          "percent_of_unique_ids" = unique_percent_str,
 #          everything()
 #   )
 # 
@@ -418,7 +421,7 @@ write_csv(
 # write_csv(
 #   linked_variables_summary, 
 #   safepaths::use_network_path(
-#     "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_variables_summary.csv"
+#     "2023 ARDA BCDS Data Evaluation/data_for_catalogue/bcds-dip-linkage-rates-data-summary.csv"
 #   )
 # )
 
