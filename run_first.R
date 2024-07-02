@@ -345,7 +345,7 @@ write_csv(
 # combined_summary <- combined_summary %>% 
 #   rename(`SAE File Name (Short)`=file_name) %>% 
 #   left_join(dataset_info, by=c("SAE File Name (Short)")) %>% 
-#   mutate(`SAE File Name`=str_replace(`SAE File Name`,"/"," / ")) %>% 
+#   mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>% 
 #   select(-`SAE File Name (Short)`)
 # 
 # # add highlights information
@@ -538,7 +538,7 @@ write_csv(
 # combined_detailed <- combined_detailed %>% 
 #   rename(`SAE File Name (Short)`=file_name) %>% 
 #   left_join(dataset_info, by=c("SAE File Name (Short)")) %>% 
-#   mutate(`SAE File Name`=str_replace(`SAE File Name`,"/"," / ")) %>% 
+#   mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>% 
 #   select(-`SAE File Name (Short)`)
 # 
 # # check for missing MASK (comparing to totals provided in summary)
