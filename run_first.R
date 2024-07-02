@@ -284,7 +284,7 @@ write_csv(
 #   
 #   # get strings for %s and commas for Ns
 #   mutate(
-#     unique_n_str = format(unique_n, big.mark = ","),
+#     unique_n_str = format(unique_n, big.mark = ",", trim = TRUE),
 #     unique_percent_str = sprintf("%.2f%%", unique_percent),
 #     unique_percent_survey_str = sprintf("%.2f%%", unique_percent_survey)
 #   ) %>% 
@@ -467,7 +467,7 @@ write_csv(
 #   ungroup() %>% 
 #   # get strings for %s and commas for Ns
 #   mutate(
-#     unique_n_str = format(unique_n, big.mark = ","),
+#     unique_n_str = format(unique_n, big.mark = ",", trim = TRUE),
 #     unique_percent_str = sprintf("%.2f%%", unique_percent),
 #     unique_percent_survey_str = sprintf("%.2f%%", unique_percent_survey)
 #   ) %>% 
