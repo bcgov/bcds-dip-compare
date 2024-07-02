@@ -670,22 +670,25 @@ write_csv(
 # 
 # # write data for catalogue
 # # rename and order columns
-# linked_individual_demographics <- combined_detailed %>% 
-#   select(any_of(names(dataset_info)),
-#          "Survey Variable" = survey_var, 
-#          "DIP Variable" = var_dip,
-#          "Value in DIP" = dip_value,
-#          "Value in Survey" = bcds_value,
-#          "Unique IDs in DIP File" = unique_n_str,
-#          "Percent of Unique IDs" = unique_percent_str,
-#          "Percent of Survey Unique IDs" = unique_percent_survey_str,
+# linked_individual_demographics <- combined_detailed %>%
+#   # remove extra spacing for catalogue
+#   mutate(`SAE File Name`=str_replace_all(`SAE File Name`," / ","/")) %>% 
+#   janitor::clean_names() %>% 
+#   select(any_of(names(janitor::clean_names(dataset_info))),
+#          "survey_variable" = survey_var,
+#          "dip_variable" = var_dip,
+#          "value_in_dip" = dip_value,
+#          "value_in_survey" = bcds_value,
+#          "unique_ids_in_dip_file" = unique_n_str,
+#          "percent_of_unique_ids" = unique_percent_str,
+#          "percent_of_survey_unique_ids" = unique_percent_survey_str,
 #          everything()
 #   )
 # 
 # write_excel_csv(
 #   linked_individual_demographics, 
 #   safepaths::use_network_path(
-#     "2023 ARDA BCDS Data Evaluation/data_for_catalogue/linked_variables_detail.csv"
+#     "2023 ARDA BCDS Data Evaluation/data_for_catalogue/bcds-dip-linkage-rates-data-detailed.csv"
 #   )
 # )
 # 
