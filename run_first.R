@@ -345,6 +345,10 @@ write_csv(
 # # remove indigenous identity unused from data (e.g., nation-related data)
 # combined_summary <- combined_summary %>%
 #   filter(survey_var!="indigenous identity unused")
+#
+# # remove indigenous identity overall when doesn't exist in DIP
+# combined_summary <- combined_summary %>%
+#   filter(!(var=="indigenous identity overall" & exists_in_dip==FALSE))
 # 
 # # add dataset information
 # combined_summary <- combined_summary %>% 
@@ -538,6 +542,10 @@ write_csv(
 # # remove indigenous identity unused from data (e.g., nation-related data)
 # combined_detailed <- combined_detailed %>%
 #   filter(survey_var!="indigenous identity unused")
+# 
+# # remove indigenous identity overall when doesn't exist in DIP
+# combined_detailed <- combined_detailed %>%
+#   filter(!(var=="indigenous identity overall" & var_dip=="no such variable"))
 # 
 # # add dataset information
 # combined_detailed <- combined_detailed %>% 
