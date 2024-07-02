@@ -80,6 +80,11 @@ dataset_info <- read_csv(dataset_info_path)
 #       var_main == "race" ~ "Racial Identity",
 #       var_main == "dob status" ~ "Date of Birth",
 #       #manually fix non-matching default survey variables
+#       var_main == "gender boy" ~ "Gender",
+#       var_main == "gender girl" ~ "Gender",
+#       var_main == "gender old method" ~ "Gender",
+#       var_main == "gender other" ~ "Gender",
+#       var_main == "gender unknown" ~ "Gender",
 #       var_main == "disability 2" ~ "Disability",
 #       var_main == "indigenous ever" ~ "indigenous",
 #       var_main == "indigenous ever backdated" ~ "indigenous",
