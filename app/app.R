@@ -732,7 +732,7 @@ server <- function(input, output, session) {
           #"Notes"=Notes
           ), 
       #extensions = 'FixedHeader',
-      options = list(pageLength = 100,
+      options = list(pageLength = 150,
                      # use numeric columns (not visible) to properly sort string versions of columns (shown in app)
                      # columnDefs = list(list(targets = 2, orderData = 3),list(targets = 4, orderData = 5),
                      #                   list(targets = 6, orderData = 7),list(targets = 8, orderData = 9),
