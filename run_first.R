@@ -627,7 +627,49 @@ write_csv(
 #   mutate(unique_percent_str = ifelse(missing_mask=="MISSING","MASK",unique_percent_str)) %>% 
 #   mutate(unique_percent_survey_str = ifelse(missing_mask=="MISSING","MASK",unique_percent_survey_str)) %>% 
 #   select(-missing_mask)
-#   
+#
+# 
+# # check to see if the sum of masked cells is > 10 compared to summary file
+# tmp_summ <- combined_summary %>% 
+#   mutate(summary_n = as.numeric(if_else(unique_n_str=='MASK', '0', str_replace_all(unique_n_str,',','')))) %>% 
+#   select(cross_status,File, var_dip, survey_var, summary_n) 
+# 
+# tmp_diff <- tmp %>% 
+#   select(dip_value, bcds_value, unique_n_str, var_dip, survey_var, File, cross_status, masked ) %>% 
+#   mutate(detailed_n = as.numeric(if_else(masked, '0', str_replace_all(unique_n_str,',','')))) %>% 
+#   group_by(var_dip, survey_var, File, cross_status) %>% 
+#   mutate(detailed_total = sum(detailed_n)) %>% 
+#   ungroup() %>% 
+#   select(-c(masked, unique_n_str)) %>% 
+#   left_join(tmp_summ) %>% 
+#   mutate(difference = summary_n - detailed_total) 
+# 
+# small_diffs <- tmp_diff %>% 
+#   filter(difference > 0 & difference < 10) %>% 
+#   distinct(File, cross_status, survey_var,var_dip) %>% 
+#   filter(cross_status != 'DIP only') %>% 
+#   mutate(small_diffs_flag = "1")
+# 
+# # select next smallest by group to add masking
+# next_smallest_mask <- tmp %>%
+#   left_join(small_diffs,by =c("File","survey_var","var_dip","cross_status")) %>% 
+#   filter(small_diffs_flag == "1") %>% 
+#   filter(masked!=TRUE) %>% 
+#   arrange(unique_n) %>% 
+#   group_by(File,survey_var,var_dip,cross_status) %>% 
+#   filter(row_number()==1) %>% 
+#   mutate(add_mask_flag = "ADD MASK") %>% 
+#   ungroup() %>% 
+#   select(File,survey_var,var_dip,dip_value,bcds_value,add_mask_flag)
+# 
+# # add additional MASK
+# combined_detailed <- combined_detailed %>%
+#   left_join(next_smallest_mask, by =c("File","survey_var","var_dip","dip_value","bcds_value")) %>% 
+#   mutate(unique_n_str = ifelse(is.na(add_mask_flag),unique_n_str,"MASK")) %>%
+#   mutate(unique_percent_str = ifelse(is.na(add_mask_flag),unique_percent_str,"MASK")) %>%
+#   mutate(unique_percent_survey_str = ifelse(is.na(add_mask_flag),unique_percent_survey_str,"MASK")) %>%
+#   select(-add_mask_flag)
+#
 #   
 # # check masking is sufficient when there are multiple DIP variables for one survey variable
 # not_masked <- combined_detailed %>% 
