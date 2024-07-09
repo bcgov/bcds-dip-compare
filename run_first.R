@@ -563,6 +563,25 @@ write_csv(
 # combined_detailed <- combined_detailed %>%
 #   filter(!File %in% no_linkage_datasets)
 # 
+# # from earlier complete, some NAs are filled in, when they do not actually exist - remove them from data
+# survey_only_zeros <- combined_summary %>% 
+#   filter(cross_status=='Survey only') %>% 
+#   filter(exists_in_dip==TRUE) %>% 
+#   filter(unique_n_str=="0") %>% 
+#   select(File, survey_var,var_dip) %>% 
+#   mutate(no_survey_only_flag="1")
+# 
+# to_fix <- combined_detailed %>% 
+#   left_join(survey_only_zeros,by=c("File","survey_var","var_dip")) %>% 
+#   filter(no_survey_only_flag=="1") %>% 
+#   filter(is.na(dip_value)) %>% 
+#   filter(bcds_value!="Not in Survey") %>% 
+#   select(File, survey_var,var_dip,dip_value,bcds_value,no_survey_only_flag)
+# 
+# combined_detailed <- combined_detailed %>% 
+#   left_join(to_fix,by=c("File","survey_var","var_dip","dip_value","bcds_value")) %>% 
+#   filter(is.na(no_survey_only_flag)) %>% select(-no_survey_only_flag)
+# 
 # # check for missing MASK (comparing to totals provided in summary)
 # tmp <- combined_detailed %>% 
 #   mutate(
