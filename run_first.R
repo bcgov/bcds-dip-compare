@@ -612,20 +612,18 @@ write_csv(
 #   select(
 #     File, survey_var, var_dip,dip_value, bcds_value, cross_status, n_masked, mask_flag, unique_n_summary = unique_n_str.x, unique_n_detailed = unique_n_str.y)
 # 
-# not_masked_missing <- not_masked %>% 
-#   filter(cross_status != "Neither source") %>% 
-#   filter(unique_n_detailed != "MASK")
+# not_masked_missing <- not_masked %>%
+#   filter(cross_status != "Neither source") %>%
+#   filter(unique_n_detailed != "MASK") %>% 
+#   mutate(missing_mask = "MISSING") %>% 
+#   select(File,survey_var,var_dip,dip_value,bcds_value,missing_mask)
 # 
 # # add additional MASK
-# combined_detailed <- combined_detailed %>% 
-#   mutate(missing_mask = ifelse((File %in% not_masked_missing$File &
-#                                   survey_var %in% not_masked_missing$survey_var &
-#                                   var_dip %in% not_masked_missing$var_dip &
-#                                   dip_value %in% not_masked_missing$dip_value &
-#                                   bcds_value %in% not_masked_missing$bcds_value),"MISSING","OK")) %>% 
-#   mutate(unique_n_str = ifelse(missing_mask=="MISSING","MASK",unique_n_str)) %>% 
-#   mutate(unique_percent_str = ifelse(missing_mask=="MISSING","MASK",unique_percent_str)) %>% 
-#   mutate(unique_percent_survey_str = ifelse(missing_mask=="MISSING","MASK",unique_percent_survey_str)) %>% 
+# combined_detailed <- combined_detailed %>%
+#   left_join(not_masked_missing,by=c("File","survey_var","var_dip","dip_value","bcds_value")) %>% 
+#   mutate(unique_n_str = ifelse(is.na(missing_mask),unique_n_str,"MASK")) %>%
+#   mutate(unique_percent_str = ifelse(is.na(missing_mask),unique_percent_str,"MASK")) %>%
+#   mutate(unique_percent_survey_str = ifelse(is.na(missing_mask),unique_percent_survey_str,"MASK")) %>%
 #   select(-missing_mask)
 #
 # 
