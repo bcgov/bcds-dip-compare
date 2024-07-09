@@ -326,9 +326,6 @@ write_csv(
 # 
 # combined_summary
 # 
-# # remove datasets with 0 linkage
-# combined_summary <- combined_summary %>% 
-#   filter(file_name != "vital_events_stillbirths_id1_baby")
 # 
 # # add survey column name
 # combined_summary <- combined_summary %>% 
@@ -356,6 +353,12 @@ write_csv(
 #   left_join(dataset_info, by=c("SAE File Name (Short)")) %>% 
 #   mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>% 
 #   select(-`SAE File Name (Short)`)
+#
+# # remove datasets with 0 linkage
+# no_linkage_datasets <- combined_overview %>% filter(in_both_str=="0") %>% pull(File)
+# 
+# combined_summary <- combined_summary %>%
+#   filter(!File %in% no_linkage_datasets)
 # 
 # # add highlights information
 # known_dip_mask_count <- combined_summary %>% 
@@ -526,9 +529,6 @@ write_csv(
 # 
 # combined_detailed
 # 
-# # remove datasets with 0 linkage
-# combined_detailed <- combined_detailed %>% 
-#   filter(file_name != "vital_events_stillbirths_id1_baby")
 # 
 # # add survey column name
 # combined_detailed <- combined_detailed %>% 
@@ -556,6 +556,12 @@ write_csv(
 #   left_join(dataset_info, by=c("SAE File Name (Short)")) %>% 
 #   mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>% 
 #   select(-`SAE File Name (Short)`)
+# 
+# # remove datasets with 0 linkage
+# no_linkage_datasets <- combined_overview %>% filter(in_both_str=="0") %>% pull(File)
+# 
+# combined_detailed <- combined_detailed %>%
+#   filter(!File %in% no_linkage_datasets)
 # 
 # # check for missing MASK (comparing to totals provided in summary)
 # tmp <- combined_detailed %>% 
