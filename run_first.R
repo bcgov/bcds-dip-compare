@@ -709,6 +709,51 @@ write_csv(
 #   ungroup() %>% 
 #   select(-row_number,-bcds_masked,-n_possible,-has_1_mask,-has_0_mask,-problem_case,-case_1,-case_2)
 # 
+#
+# # check no masking amount by bcds variable < 10 when multiple dip variables
+# # get updated mask count
+# tmp <- combined_detailed %>%
+#   mutate(masked = unique_n_str == 'MASK')
+# 
+# not_masked <- combined_detailed %>%
+#   mutate(unique_n_updated_numeric=ifelse(unique_n_str=="MASK",0,unique_n)) %>% 
+#   select(File, var_dip, survey_var, dip_value, bcds_value, unique_n_str,unique_n_updated_numeric) %>%
+#   group_by(File, var_dip, survey_var,bcds_value) %>%
+#   summarize(bcds_masked = sum(unique_n_str=='MASK'), sum = sum(unique_n_updated_numeric)) %>% 
+#   group_by(File, survey_var, bcds_value) %>%
+#   mutate(has_any_mask = any(bcds_masked>0), has_0_mask = any(bcds_masked==0)) %>%
+#   ungroup() %>%
+#   mutate(problem_case = has_any_mask & has_0_mask) %>% 
+#   filter(problem_case) %>% 
+#   mutate(non_masked_grp = bcds_masked==0) %>% 
+#   select(-has_any_mask,-has_0_mask,-problem_case)
+# 
+# small_diffs <- not_masked %>% 
+#   group_by(File, survey_var,bcds_value) %>% 
+#   distinct() %>%
+#   mutate(diff = ifelse(non_masked_grp,NA,(sum[non_masked_grp]-sum[!non_masked_grp]))) %>% 
+#   filter(diff < 10) %>% 
+#   mutate(small_diffs_flag = "1")
+# 
+# # select next smallest by group to add masking
+# next_smallest_mask <- tmp %>%
+#   left_join(small_diffs,by =c("File","survey_var","var_dip","bcds_value")) %>%
+#   filter(small_diffs_flag == "1") %>%
+#   filter(masked!=TRUE) %>%
+#   arrange(unique_n) %>%
+#   group_by(File,survey_var,var_dip,bcds_value) %>%
+#   filter(row_number()==1) %>%
+#   mutate(add_mask_flag = "ADD MASK") %>%
+#   ungroup() %>%
+#   select(File,survey_var,var_dip,dip_value,bcds_value,add_mask_flag)
+# 
+# # add additional MASK
+# combined_detailed <- combined_detailed %>%
+#   left_join(next_smallest_mask, by =c("File","survey_var","var_dip","dip_value","bcds_value")) %>%
+#   mutate(unique_n_str = ifelse(is.na(add_mask_flag),unique_n_str,"MASK")) %>%
+#   mutate(unique_percent_str = ifelse(is.na(add_mask_flag),unique_percent_str,"MASK")) %>%
+#   mutate(unique_percent_survey_str = ifelse(is.na(add_mask_flag),unique_percent_survey_str,"MASK")) %>%
+#   select(-add_mask_flag)
 # 
 # # remove 'Not in Survey' results from data - detailed to be linked data only
 # combined_detailed <- combined_detailed %>% 
