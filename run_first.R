@@ -689,7 +689,7 @@ write_csv(
 #   left_join(not_masked, by=c('File', 'var_dip', 'survey_var', 'bcds_value')) %>% 
 #   mutate(
 #     case_1 = bcds_masked==1 & n_possible>1,
-#     case_2 = bcds_masked==0 & n_possible==1
+#     case_2 = bcds_masked==1 & n_possible==1
 #   ) %>% 
 #   group_by(File, survey_var, var_dip, bcds_value) %>% 
 #   arrange(File, survey_var, var_dip, bcds_value, unique_percent_str) %>% 
