@@ -670,6 +670,12 @@ write_csv(
 #
 #   
 # # check masking is sufficient when there are multiple DIP variables for one survey variable
+# # review list of cases with multiple DIP variables
+# multi_dip_vars_list <- combined_detailed %>% 
+#   distinct(File,survey_var,var_dip) %>% 
+#   group_by(File,survey_var) %>% 
+#   summarize(n = n()) %>% filter(n>1)
+# 
 # not_masked <- combined_detailed %>% 
 #   select(File, var_dip, survey_var, dip_value, bcds_value, unique_n_str) %>% 
 #   group_by(File, var_dip, survey_var, bcds_value) %>% 
