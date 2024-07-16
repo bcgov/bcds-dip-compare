@@ -637,7 +637,7 @@ ui <- tagList(
                     </li>
                     <li>
                       The data in this dashboard is available for download from the
-                      <a href='https://catalogue.data.gov.bc.ca/' target='_blank'>BC Data Catalogue</a>
+                      <a href='https://catalogue.data.gov.bc.ca/dataset/bc-demographic-survey-dip-data-linkage-rates' target='_blank'>BC Data Catalogue</a>
                       under the
                       <a href='https://www2.gov.bc.ca/gov/content/data/open-data/open-government-licence-bc' target='_blank'>Open Government Licence - British Columbia.</a>
                     </li>
