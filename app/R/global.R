@@ -77,7 +77,7 @@ header <- htmltools::tagList(
          class = "source_links",
          # Data Catalog
          htmltools::tags$a(
-           href = "https://catalogue.data.gov.bc.ca/", 
+           href = "https://catalogue.data.gov.bc.ca/dataset/bc-demographic-survey-dip-data-linkage-rates", 
            target = "_blank",
            shiny::icon("table", "fa-lg"), 
            'Download the Data',
