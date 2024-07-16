@@ -500,7 +500,7 @@ ui <- tagList(
             "The",
             a(
               "Data Innovation Program (DIP)", 
-              href='https://www2.gov.bc.ca/gov/content/data/about-data-management/data-innovation-program/',
+              href='https://www2.gov.bc.ca/gov/content?id=2F6E3BF426034EDBA62F3F016EE2313D',
               target="_blank",
               style='color:#ccffff; text-decoration: underline;'
               ),
