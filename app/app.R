@@ -49,6 +49,7 @@ ui <- tagList(
     
     ## title/header/footer ----
     title = "",
+    windowTitle = "BC Demographic Survey: DIP Data Linkage Rates",
 
     header = header,
     # header = bcsapps::bcsHeaderUI(
