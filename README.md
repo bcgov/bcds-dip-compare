@@ -1,33 +1,45 @@
-<!-- 
-Add a project state badge
-
-See <https://github.com/BCDevExchange/Our-Project-Docs/blob/master/discussion/projectstates.md> 
-If you have bcgovr installed and you use RStudio, click the 'Insert BCDevex Badge' Addin.
--->
+[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 BCDS-DIP Comparison Dashboard
 ============================
 
-### Overview
+## Overview
 
 This code supports a dashboard that researchers can use to determine the coverage of the BC Demographic Survey overall as well as specific demographic variables compared to DIP datasets.
 
-### Project Status
+## Usage
 
-### Getting Help or Reporting an Issue
+* To produce a dashboard:
+    * TODO
 
-[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](<Redirect-URL>)
-The project is in a reliable state and major changes are unlikely to happen.
+## Structure
 
-To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/sb-bc/issues/).
+Code for this project is structured as follows:
 
-### How to Contribute
+* TODO
+
+## Requirements
+
+* This project is built in R, and utilizes the following base packages:
+
+    * TODO (include mention of safepaths)
+    
+## Project Status
+
+The project is currently being upgraded to produce more dashboard pages, and will experience frequent changes. 
+
+## Getting Help or Reporting an Issue
+
+To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov-c/bcds-dip-compare/issues/).
+
+## How to Contribute
 
 If you would like to contribute, please see our [CONTRIBUTING](CONTRIBUTING.md) guidelines.
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
-### License
+## License
 
 ```
 Copyright 2023 Province of British Columbia
