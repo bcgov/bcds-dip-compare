@@ -113,7 +113,7 @@ write_csv(
 # OVERVIEW OF LINKAGE RATES ----
 #*******************************
 
-# first get the detailed .csvs
+# first get the overview .csvs
 directory <- safepaths::use_network_path(
   "2023 ARDA BCDS Data Evaluation/data_for_dashboard/linkage_by_table"
 )

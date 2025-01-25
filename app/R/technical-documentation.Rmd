@@ -53,18 +53,18 @@ To compare the BC Demographic Survey to each individual DIP dataset, a list of u
 
 ## Survey Demographics
 
-After comparing to individual DIP datasets at a broad level, a deeper dive exploring DIP demographic data was completed as well. Five key demographic components from the survey were included for this dataset. These include:
+After comparing to individual DIP datasets at a broad level, a deeper dive exploring DIP demographic data was completed as well. Four key demographic components from the survey were included for this dataset. These include:
 
 * **Gender**
   * This was cleaned in the demographic survey to include: Man/Boy, Woman/Girl, Non-Binary Person, Indeterminate, but also catered for those who preferred to remain unknown (with I don't know/I am unsure, or Prefer not to answer).  
   
 * **Racial Identity**
   * This was cleaned in the demographic survey to include: the 12 non-Indigenous options made available on the survey, Undefined, the two unknown options (I don't know/I am unsure and Prefer not to Answer), as well as the option for someone to have reported multiple races. 
-  * Note that the methodology used here does not align with the racialized population groups reported by Statistics Canada. See the Education/Health technical reports for more details [NEED TO LINK HERE]()
+  * Note that the methodology used here does not align with the racialized population groups reported by Statistics Canada. See the [2024 release of statistics](https://antiracism.gov.bc.ca/research/) technical reports for more details.
   
-* **Indigenous Identity**
-  * This was cleaned in the demographic survey to include: First Nations, Inuk (Inuit), Métis, Not Indigenous, the two unknown options, as well as the option for someone to have reported multiple Indigenous identities. 
-  * See the Health technical report for more details [NEED TO LINK HERE]()
+<!-- * **Indigenous Identity** -->
+<!--   * This was cleaned in the demographic survey to include: First Nations, Inuk (Inuit), Métis, Not Indigenous, the two unknown options, as well as the option for someone to have reported multiple Indigenous identities.  -->
+<!--   * See the Health technical report for more details [NEED TO LINK HERE]() -->
   
 * **Disabilities**
   * This was cleaned in the demographic survey to include: has a condition that is always, often, or sometimes a disability, no condition that is a disability, as well as the two unknown options. 
@@ -99,7 +99,7 @@ The analysis was then also done at the StudyID (person) level, where a cross-tab
 * Contradicting information: the DIP dataset indicates a different value than what is provided by the survey.
   * Example: an education dataset indicates the gender of a student as female, while the survey indicates the gender of the student is non-binary. 
 * Aligned information: the DIP dataset and the survey provide generally agreeable demographics.
-  * Example: a child in care is recorded in the MCFD dataset as non-Indigenous, which agrees with the value provided by the survey. 
+  * Example: a child in care is recorded in the MCFD dataset as male, which agrees with the value provided by the survey. 
 
 ## Caveats & Disclaimers
 
@@ -119,7 +119,8 @@ Here we list some important distinctions to keep in mind when browsing the dashb
 * Some DIP datasets have multiple variables that could be considered as related to a single survey variable. In these cases, all variables are considered separately.
 * All counts provided here are unweighted. DIP researchers are responsible for providing their own weights where necessary.
 * To mitigate the privacy risks of re-identification and residual disclosure, some small counts (and associated percentages) have been masked. 
-* Rounding has been performed on all percentages, leading to some inaccurate displays of 0 or 100%. 
+* Rounding has been performed on all percentages, leading to some inaccurate displays of 0 or 100%.
+* In cases where multiple datasets are reporting on the same population of individuals, only a single dataset was further analysed for demographic details. 
 
 ## Software
 

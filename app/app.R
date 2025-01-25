@@ -467,7 +467,7 @@ ui <- tagList(
         width= 12,
         h1("BC Demographic Survey Variables"),
         br(),
-        "Five variables from the BC Demographic Survey were analyzed for linkage with DIP datasets.",
+        "Four variables from the BC Demographic Survey were analyzed for linkage with DIP datasets.",
         "These variables were chosen either for priority use or because they feature more commonly in DIP datasets and will give meaningful comparisons.",
         "Hover over each of the options for more information about the demographic variable.",
         br(), br()
