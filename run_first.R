@@ -180,6 +180,8 @@ combined_overview <- combined_overview %>%
 combined_overview
 
 # Write the combined data to a new CSV file for review
+# note that this still has the notes column, but we won't include that in the actual dashboard
+# keep notes for internal use
 write_csv(
   combined_overview, 
   safepaths::use_network_path(
@@ -187,9 +189,10 @@ write_csv(
   )
 )
 
-# write combined data to rds for use by app
+# write combined data to rds for use by app 
+# and remove notes from data
 if(!dir.exists("app/data")) {dir.create("app/data") } # create data folder if doesn't exist
-saveRDS(combined_overview, "app/data/combined_overview.rds")
+saveRDS(combined_overview %>% select(-Notes), "app/data/combined_overview.rds")
 
 # write data for catalogue
 # remove rank columns
@@ -243,6 +246,13 @@ combined_summary <- map_dfr(file_list, ~ {
 
   return(data)
 })
+
+# fix incorrect gender/sex variable name in perinatal
+combined_summary <- combined_summary %>% 
+  mutate(var = case_when(
+    var == 'sex' ~ 'gender',
+    TRUE ~ var
+  ))
 
 # fix typo from health files
 multi_file_groups <- combined_summary %>%
@@ -456,6 +466,13 @@ combined_detailed <- map_dfr(file_list, ~ {
   )
   return(data)
 })
+
+# fix incorrect gender/sex variable name in perinatal
+combined_detailed <- combined_detailed %>% 
+  mutate(var = case_when(
+    var == 'sex' ~ 'gender',
+    TRUE ~ var
+  ))
 
 # fix typo from health files
 multi_file_groups <- combined_detailed %>%
