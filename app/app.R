@@ -678,8 +678,8 @@ server <- function(input, output, session) {
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
           pct_demo_in_dip_rank,
           "Percent of DIP File Covered" = pct_dip_in_demo_str,
-          pct_dip_in_demo_rank,
-          "Notes"=Notes
+          pct_dip_in_demo_rank
+          #,"Notes"=Notes # not including the notes column in the dashboard
           ), 
       #extensions = 'FixedHeader',
       options = list(pageLength = 150,
