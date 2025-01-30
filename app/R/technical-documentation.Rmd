@@ -113,9 +113,6 @@ Here we list some important distinctions to keep in mind when browsing the dashb
 * Not every DIP dataset has a StudyID.
 * Some DIP datasets contain multiple StudyIDs.
 * Because DIP datasets were only manipulated to reduce every StudyID to a single demographic variable, some 'Known Dip' percentages may appear artificially high, as the variable may include 'Unknown' or 'Prefer not to Answer' responses. Determining the exact content of each demographic variable in each dataset was out of scope for the creation of this dashboard, and should be carefully examined by any DIP researcher.
-
-  <!-- * One exception was made in the manipulation of DIP datasets. In cases where individual First Nations would be identified by the contents of a DIP variable, the nation name was replaced with 'First Nations' (or equivalent) to keep all outputs at a distinctions based level of analysis.  -->
-  
 * BC Stats analysts used their discretion in determining comparable demographics between the DIP dataset and the associated BC Demographic Survey variable. Additionally, some demographics within a given DIP dataset may have been excluded from analysis without intending to do so.
 * Many DIP datasets include several years worth of data, and not just point-in-time information, therefore, even within a given dataset there could be contradicting information available for a single record. The result is seeing "multiple reported" within the 'Value in DIP'. 
 * Some DIP datasets have multiple variables that could be considered as related to a single survey variable. In these cases, all variables are considered separately.
@@ -123,6 +120,8 @@ Here we list some important distinctions to keep in mind when browsing the dashb
 * To mitigate the privacy risks of re-identification and residual disclosure, some small counts (and associated percentages) have been masked. 
 * Rounding has been performed on all percentages, leading to some inaccurate displays of 0 or 100%.
 * In cases where multiple datasets are reporting on the same population of individuals, only a single dataset was further analysed for demographic details. 
+
+<!-- * One exception was made in the manipulation of DIP datasets. In cases where individual First Nations would be identified by the contents of a DIP variable, the nation name was replaced with 'First Nations' (or equivalent) to keep all outputs at a distinctions based level of analysis.  -->
 
 ## Software
 
