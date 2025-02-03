@@ -1184,6 +1184,11 @@ server <- function(input, output, session) {
     row_names = t1$dip_value
     t1 <- as.matrix(t1 %>% select(-dip_value))
     rownames(t1) = row_names
+    
+    ## don't display plot if all are masked
+    validate(
+      need(!all(is.na(t1)), 'No heatmap can be displayed because all values are masked.')
+    )
 
     fig <- plot_ly(
       x = lapply(colnames(t1), function(x) replace(x, is.na(x), 'NA')),
