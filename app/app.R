@@ -944,7 +944,7 @@ server <- function(input, output, session) {
           # create info box material
           if (in_dip) {
             icon <-  'check'
-            color <- 'green'
+            color <- 'aqua'
             info <- paste0(
               ' Variable Name in DIP: ','<strong>',dip_var_name, '</strong>',
               '<br>',
@@ -955,8 +955,8 @@ server <- function(input, output, session) {
               unknown_amount
             )
           } else {
-            icon <-  'x'
-            color <- 'red'
+            icon <-  'question'
+            color <- 'blue'
             info <- paste0(
               'No DIP Variable',
               '<br>',
