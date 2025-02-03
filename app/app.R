@@ -1137,7 +1137,8 @@ server <- function(input, output, session) {
 
     # add warning message in case none selected
     validate(
-      need(input$data_group_detailed, 'Select at least one data provider.')
+      need(input$data_group_detailed, 'Select at least one data provider.'),
+      need(input$dataset_detailed, 'Select at least one dataset.')
     )
 
     # choose which column to use for the heat map
