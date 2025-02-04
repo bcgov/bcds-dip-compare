@@ -321,9 +321,9 @@ combined_summary <- combined_summary %>%
   mutate(
     cross_status = case_when(
       cross_status == 'added info' ~ 'Survey only',
-      cross_status == 'lost info' ~ 'DIP only',
+      cross_status == 'lost info' ~ 'File only',
       cross_status == 'both NA or invalid' ~ 'Neither source',
-      cross_status == 'both known' ~ 'DIP and survey'
+      cross_status == 'both known' ~ 'File and survey'
     )
   ) %>%
   # filter out status variables now from the summary set, not useful
@@ -380,7 +380,7 @@ combined_summary <- combined_summary %>%
 
 # add highlights information
 known_dip_mask_count <- combined_summary %>%
-  filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>%
+  filter(cross_status == 'File only' | cross_status == 'File and survey') %>%
   filter(unique_percent_str=="MASK") %>%
   group_by(File,survey_var,var_dip) %>%
   tally()
@@ -388,16 +388,16 @@ known_dip_mask_count <- combined_summary %>%
 
 combined_summary <- combined_summary %>%
   left_join(known_dip_mask_count,by=c("File","survey_var","var_dip")) %>%
-  mutate(highlights_groups = case_when((cross_status == 'DIP only' | cross_status == 'DIP and survey') ~ "Known from DIP",
+  mutate(highlights_groups = case_when((cross_status == 'File only' | cross_status == 'File and survey') ~ "Known from File",
                                        cross_status=="Survey only" ~ "Added from Survey",
                                        cross_status=="Neither source" ~ "Still Unknown")) %>%
   group_by(File,survey_var,var_dip,highlights_groups) %>%
-  mutate(known_sum = ifelse(highlights_groups=="Known from DIP",sum(unique_percent),NA_real_)) %>%
+  mutate(known_sum = ifelse(highlights_groups=="Known from File",sum(unique_percent),NA_real_)) %>%
   mutate(highlights = case_when(cross_status=="Survey only" ~ paste0(unique_percent_str," ",highlights_groups),
                                 cross_status=="Neither source" ~ paste0(unique_percent_str," ",highlights_groups),
-                                (highlights_groups=="Known from DIP" & n==2) ~ paste0("MASK ",highlights_groups),
-                                (highlights_groups=="Known from DIP" & n==1) ~  paste0("Greater than or equal to ",sprintf("%.2f%%", known_sum)," ",highlights_groups),
-                                (highlights_groups=="Known from DIP") ~  paste0(sprintf("%.2f%%", known_sum)," ",highlights_groups))) %>%
+                                (highlights_groups=="Known from File" & n==2) ~ paste0("MASK ",highlights_groups),
+                                (highlights_groups=="Known from File" & n==1) ~  paste0("Greater than or equal to ",sprintf("%.2f%%", known_sum)," ",highlights_groups),
+                                (highlights_groups=="Known from File") ~  paste0(sprintf("%.2f%%", known_sum)," ",highlights_groups))) %>%
   ungroup() %>% select(-n,-known_sum,-highlights_groups)
 
 # remove unused columns
@@ -427,13 +427,13 @@ linked_variables_summary <- combined_summary %>%
 # rename and order columns
 linked_variables_summary <- linked_variables_summary %>%
 # remove extra spacing for catalogue
-  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program Name`," / ","/")) %>%
+  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program File Name`," / ","/")) %>%
   janitor::clean_names() %>%
   select(any_of(names(janitor::clean_names(dataset_info))),
          "survey_variable" = survey_var,
-         "dip_variable" = var_dip,
+         "file_variable" = var_dip,
          "cross_status"=cross_status,
-         "unique_ids_in_dip_file" = unique_n_str,
+         "unique_ids_in_file" = unique_n_str,
          "percent_of_unique_ids" = unique_percent_str,
          everything()
   )

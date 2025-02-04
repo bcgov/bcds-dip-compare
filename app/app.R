@@ -252,7 +252,7 @@ ui <- tagList(
           # depends on choice of survey var
           pickerInput(
             inputId = "dip_var_summary",
-            label = "Choose DIP Variable(s):",
+            label = "Choose File Variable(s):",
             choices = NULL,
             selected = NULL,
             options = pickerOptions(
@@ -274,13 +274,13 @@ ui <- tagList(
               HTML(
                 "<small>
                 <p><b>Survey only:</b>
-                <p>Demographic information for the given variable is not available within the DIP File, but is available from the BC Demographic Survey. <em>Relates to \"Added from Survey\" in the Highlights tab.</em>
-                <p><b>DIP only:</b>
-                <p>Demographic information for the given variable is available within the DIP File, and is not available from the BC Demographic Survey. <em>Combined with 'DIP and survey' makes \"Known from DIP\" in the Highlights tab.</em>
-                <p><b>DIP and survey:</b>
-                <p>Demographic information for the given variable is available within the DIP File, and also from the BC Demographic Survey. Variable values may or may not align. <em>Combined with 'DIP only' makes \"Known from DIP\" in the Highlights tab.</em>
+                <p>Demographic information for the given variable is not available within the file, but is available from the BC Demographic Survey. <em>Relates to \"Added from Survey\" in the Highlights tab.</em>
+                <p><b>File only:</b>
+                <p>Demographic information for the given variable is available within the file, and is not available from the BC Demographic Survey. <em>Combined with 'File and survey' makes \"Known from File\" in the Highlights tab.</em>
+                <p><b>File and survey:</b>
+                <p>Demographic information for the given variable is available within the file, and also from the BC Demographic Survey. Variable values may or may not align. <em>Combined with 'File only' makes \"Known from File\" in the Highlights tab.</em>
                 <p><b>Neither source:</b>
-                <p>Demographic information for the given variable is not available within the DIP File or from the BC Demographic Survey. <em>Relates to \"Still Unknown\" in the Highlights tab.</em>
+                <p>Demographic information for the given variable is not available within the file or from the BC Demographic Survey. <em>Relates to \"Still Unknown\" in the Highlights tab.</em>
                 <p>
                 </small>"
               )
@@ -733,9 +733,9 @@ server <- function(input, output, session) {
     filter(filtered_by_var_summary(), var_dip %in% input$dip_var_summary) %>%
       select(
         "Survey Variable" = survey_var,
-        "DIP Variable Name" = var_dip,
+        "File Variable Name" = var_dip,
         "Cross-Status" = cross_status,
-        "Unique IDs in DIP File" = unique_n_str,
+        "Unique IDs in File" = unique_n_str,
         "Percent of Unique IDs" = unique_percent_str
       )
   })
@@ -824,7 +824,7 @@ server <- function(input, output, session) {
     choices_full <- sort(unique(filtered_by_var_summary()$var_dip))
 
     # get the current list of choices
-    choices_selected <- sort(unique(filtered_data_summary()$`DIP Variable Name`))
+    choices_selected <- sort(unique(filtered_data_summary()$`File Variable Name`))
 
     # if some of the full list choices weren't previously options, but now are, add them in
     # ex gender had been unclicked, adding it back to survey vars should add its dip vars back in too
@@ -856,7 +856,7 @@ server <- function(input, output, session) {
       need(input$data_group_summary, 'Select at least one data provider.'),
       need(input$dataset_summary, 'Select at least one dataset.'),
       need(input$var_summary, 'Select at least one survey variable.'),
-      need(input$dip_var_summary, 'Select at least one DIP variable.')
+      need(input$dip_var_summary, 'Select at least one file variable.')
     )
 
     datatable(filtered_data_summary(), rownames=FALSE, options = list(pageLength = 50, scrollY = "600px"))
@@ -864,7 +864,7 @@ server <- function(input, output, session) {
   })
 
   # create dob status flag
-  output$dobflag <- reactive("dip_dob_status" %in% filtered_data_summary()$"DIP Variable Name")
+  output$dobflag <- reactive("dip_dob_status" %in% filtered_data_summary()$"File Variable Name")
   outputOptions(output, "dobflag", suspendWhenHidden = FALSE)
 
   # add note to top of tab for information on what provider/dataset/file displayed
@@ -919,7 +919,7 @@ server <- function(input, output, session) {
             pull(highlights)
 
           already_covered <- t1 %>%
-            filter(cross_status == 'DIP only' | cross_status == 'DIP and survey') %>%
+            filter(cross_status == 'File only' | cross_status == 'File and survey') %>%
             distinct(str_replace(highlights,"Greater than or equal to ","&GreaterEqual;")) %>% pull()
 
           # find count of MASK
@@ -945,7 +945,7 @@ server <- function(input, output, session) {
             icon <-  'check'
             color <- 'aqua'
             info <- paste0(
-              ' Variable Name in DIP: ','<strong>',dip_var_name, '</strong>',
+              ' Variable Name in File: ','<strong>',dip_var_name, '</strong>',
               '<br>',
               already_covered,
               '<br>',
@@ -957,7 +957,7 @@ server <- function(input, output, session) {
             icon <-  'question'
             color <- 'blue'
             info <- paste0(
-              'No DIP Variable',
+              'No Variable in File',
               '<br>',
               already_covered,
               '<br>',
@@ -989,7 +989,7 @@ server <- function(input, output, session) {
       need(input$data_group_summary, 'Select at least one data provider.'),
       need(input$dataset_summary, 'Select at least one dataset.'),
       need(input$var_summary, 'Select at least one survey variable.'),
-      need(input$dip_var_summary, 'Select at least one DIP variable.')
+      need(input$dip_var_summary, 'Select at least one file variable.')
     )
 
     summary_info()
