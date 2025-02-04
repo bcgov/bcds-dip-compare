@@ -669,7 +669,7 @@ server <- function(input, output, session) {
           "Data Provider/Ministry",
           "Dataset",
           "File",
-          "SAE File Name",
+          "Data Innovation Program File Name",
           "DIP File Records" = in_dip_dataset_str, 
           in_dip_dataset_rank,
           "DIP File Records Linked to Survey Records" = in_both_str,

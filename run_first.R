@@ -40,6 +40,10 @@ dataset_info_path <- safepaths::use_network_path(
 
 dataset_info <- read_csv(dataset_info_path) 
 
+# update header names
+dataset_info <- dataset_info %>% 
+  rename(`Data Innovation Program File Name` = `SAE File Name`)
+
 #*******************************
 # DETAILS ON COLUMN NAMES ----
 #*******************************
@@ -166,11 +170,11 @@ combined_overview <- combined_overview %>%
 
 # add dataset information
 combined_overview <- combined_overview %>% 
-  rename(`SAE File Name`=dataset,`SAE File Name (Short)`=file_name) %>% 
+  rename(`Data Innovation Program File Name`=dataset,`SAE File Name (Short)`=file_name) %>% 
   select(-folder) %>% 
-  left_join(dataset_info, by=c("SAE File Name","SAE File Name (Short)")) %>% 
+  left_join(dataset_info, by=c("Data Innovation Program File Name","SAE File Name (Short)")) %>% 
   # add spaces for better layout on dashboard
-  mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>%
+  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program File Name`,"/"," / ")) %>%
   select(-`SAE File Name (Short)`)
 
 # arrange alphabetically - data provider first, then Dataset, then File
@@ -202,7 +206,7 @@ overall_linkage_rates <- combined_overview %>%
 # rename and order columns
 overall_linkage_rates <- overall_linkage_rates %>%
   # remove extra spacing for catalogue
-  mutate(`SAE File Name`=str_replace_all(`SAE File Name`," / ","/")) %>% 
+  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program File Name`," / ","/")) %>% 
   janitor::clean_names() %>% 
   #mutate(notes = ifelse(is.na(notes),"",notes)) %>% # not showing Notes column in linkage-only dashboard
   select(any_of(names(janitor::clean_names(dataset_info))),
@@ -365,7 +369,7 @@ combined_summary <- combined_summary %>%
 combined_summary <- combined_summary %>%
   rename(`SAE File Name (Short)`=file_name) %>%
   left_join(dataset_info, by=c("SAE File Name (Short)")) %>%
-  mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>%
+  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program File Name`,"/"," / ")) %>%
   select(-`SAE File Name (Short)`)
 
 # remove datasets with 0 linkage
@@ -423,7 +427,7 @@ linked_variables_summary <- combined_summary %>%
 # rename and order columns
 linked_variables_summary <- linked_variables_summary %>%
 # remove extra spacing for catalogue
-  mutate(`SAE File Name`=str_replace_all(`SAE File Name`," / ","/")) %>%
+  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program Name`," / ","/")) %>%
   janitor::clean_names() %>%
   select(any_of(names(janitor::clean_names(dataset_info))),
          "survey_variable" = survey_var,
@@ -579,7 +583,7 @@ combined_detailed <- combined_detailed %>%
 combined_detailed <- combined_detailed %>%
   rename(`SAE File Name (Short)`=file_name) %>%
   left_join(dataset_info, by=c("SAE File Name (Short)")) %>%
-  mutate(`SAE File Name`=str_replace_all(`SAE File Name`,"/"," / ")) %>%
+  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program File Name`,"/"," / ")) %>%
   select(-`SAE File Name (Short)`)
 
 # remove datasets with 0 linkage
@@ -813,7 +817,7 @@ saveRDS(combined_detailed, "app/data/combined_detailed.rds")
 # rename and order columns
 linked_individual_demographics <- combined_detailed %>%
   # remove extra spacing for catalogue
-  mutate(`SAE File Name`=str_replace_all(`SAE File Name`," / ","/")) %>%
+  mutate(`Data Innovation Program File Name`=str_replace_all(`Data Innovation Program File Name`," / ","/")) %>%
   janitor::clean_names() %>%
   select(any_of(names(janitor::clean_names(dataset_info))),
          "survey_variable" = survey_var,
