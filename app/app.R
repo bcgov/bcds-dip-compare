@@ -869,10 +869,10 @@ server <- function(input, output, session) {
 
   # add note to top of tab for information on what provider/dataset/file displayed
   output$viewingSummary <- renderUI({
-    h2(HTML(paste0("Currently viewing data for: <br>",
-                   "Data Provider: ", unique(filtered_by_var_summary()$`Data Provider/Ministry`), "<br>",
-                   "Dataset: ", unique(filtered_by_var_summary()$Dataset), "<br>",
-                   "File: ", unique(filtered_by_var_summary()$File))))
+    (HTML(paste0(strong("Currently viewing data for:")," <br>",
+                 em("Data Provider: "), unique(filtered_by_var_summary()$`Data Provider/Ministry`), "<br>",
+                 em("Dataset: "), unique(filtered_by_var_summary()$Dataset), "<br>",
+                 em("File: "), unique(filtered_by_var_summary()$File))))
   })
 
   ## summary info boxes ----
@@ -1125,12 +1125,12 @@ server <- function(input, output, session) {
 
   # add note to top of tab for information on what provider/dataset/File displayed
   output$viewingDetailed <- renderUI({
-    h2(HTML(paste0("Currently viewing data for: <br>",
-                   "Data Provider: ", unique(filtered_by_var_detailed()$`Data Provider/Ministry`), "<br>",
-                   "Dataset: ", unique(filtered_by_var_detailed()$Dataset), "<br>",
-                   "File: ", unique(filtered_by_var_detailed()$File),"<br>",
-                   "Survey Variable: ", input$var_detailed, "<br>",
-                   "File Variable: ", input$dip_var_detailed)))
+    (HTML(paste0(strong("Currently viewing data for:"),"<br>",
+                 em("Data Provider: "), unique(filtered_by_var_detailed()$`Data Provider/Ministry`), "<br>",
+                 em("Dataset: "), unique(filtered_by_var_detailed()$Dataset), "<br>",
+                 em("File: "), unique(filtered_by_var_detailed()$File),"<br>",
+                 em("Survey Variable: "), input$var_detailed, "<br>",
+                 em("File Variable: "), input$dip_var_detailed)))
   })
 
   ## render heatmap ----
