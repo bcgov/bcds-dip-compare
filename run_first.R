@@ -211,10 +211,10 @@ overall_linkage_rates <- overall_linkage_rates %>%
   #mutate(notes = ifelse(is.na(notes),"",notes)) %>% # not showing Notes column in linkage-only dashboard
   select(any_of(names(janitor::clean_names(dataset_info))),
          "survey_records"=in_demographic_str,
-         "dip_file_records"=in_dip_dataset_str,
-         "dip_file_records_linked_to_survey_records"=in_both_str,
+         "file_records"=in_dip_dataset_str,
+         "file_records_linked_to_survey_records"=in_both_str,
          "percent_of_survey_covered" = pct_demo_in_dip_str, 
-         "percent_of_dip_file_covered" = pct_dip_in_demo_str,
+         "percent_of_file_covered" = pct_dip_in_demo_str,
          everything(),-notes
          #,notes # not showing notes in linkage-only dashboard
          )

@@ -670,13 +670,13 @@ server <- function(input, output, session) {
           "Dataset",
           "File",
           "Data Innovation Program File Name",
-          "DIP File Records" = in_dip_dataset_str, 
+          "File Records" = in_dip_dataset_str, 
           in_dip_dataset_rank,
-          "DIP File Records Linked to Survey Records" = in_both_str,
+          "File Records Linked to Survey Records" = in_both_str,
           in_both_rank,
           "Percent of Survey Covered" = pct_demo_in_dip_str, 
           pct_demo_in_dip_rank,
-          "Percent of DIP File Covered" = pct_dip_in_demo_str,
+          "Percent of File Covered" = pct_dip_in_demo_str,
           pct_dip_in_demo_rank
           #,"Notes"=Notes # not including the notes column in the dashboard
           ), 
