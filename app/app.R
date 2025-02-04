@@ -1143,10 +1143,12 @@ server <- function(input, output, session) {
     )
 
     # choose which column to use for the heat map
-    col_to_use <- if (input$detail_plot_option == 'bcds'){
-      col_to_use = 'unique_percent_survey'
+    if (input$detail_plot_option == 'bcds'){
+      col_to_use <- 'unique_percent_survey'
+      legend_title <- '% of BC Demographic Survey'
     } else {
-      col_to_use = 'unique_percent'
+      col_to_use <-  'unique_percent'
+      legend_title  <- '% of File'
     }
 
     temp <- combined_detailed %>%
@@ -1197,26 +1199,36 @@ server <- function(input, output, session) {
       z = t1,
       text = t2,
       type = 'heatmap',
-      hoverinfo = 'text'
+      hoverinfo = 'text',
+      colorbar = list(
+        title = paste0('<b>',legend_title,'</b>'),
+        ticksuffix = "%"
+      )
     ) %>%
       layout(
         xaxis = list(
-          title = "BC Demographic Survey",
+          title = list(
+            text = "<b>BC Demographic Survey</b>",
+            standoff = 50,
+            xref = 'paper',
+            yref = 'paper'
+          ),
           side="top",
           automargin = TRUE,
-          pad = list(t = 10)
+          showticklabels = TRUE,
+          ticks = ""
         ),
         yaxis = list(
-          title = "File",
+          title = list(
+            text = "<b>File</b>",
+            standoff = 50,
+            xref = 'paper',
+            yref = 'paper'
+          ),
           autorange = "reversed",
-          type = "category"
-        ),
-        margin = list(
-          l = 50,
-          r = 50,
-          b = 10,
-          t = 150,
-          pad = 0
+          type = "category",
+          showticklabels = TRUE,
+          ticks = ""
         )
       )
 
