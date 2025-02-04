@@ -64,14 +64,14 @@ ui <- tagList(
       div(style = "padding-left:45px;margin-top:-50px;",
           br(),br(),
           h3('Linkage rates reflect data as of 2024.'),
-          "Questions for DIP?", 
+          "Questions about the data platform?", 
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/2",
             target = "_blank",
-            "Open a ticket here."),
+            "Contact the Data Innovation Program."),
           br(),
           
-          "Questions about the Dashboard or BC Demographic Survey?",
+          "Questions about the dashboard or BC Demographic Survey?",
           a(style = "text-decoration:underline",
             href = "https://dpdd.atlassian.net/servicedesk/customer/portal/12",
             target = "_blank",
@@ -150,7 +150,7 @@ ui <- tagList(
                   hr(style= "border-top:2px solid;margin-top:10px")),
               style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
               button_animation = "grow"),
-            h3("For more information on which demographic variables had prior information present in the DIP dataset, and how much extra information the BC Demographic Survey is providing."),
+            h3("For more information on which demographic variables had prior information present in the dataset, and how much extra information the BC Demographic Survey is providing."),
           )),
         column(
           width = 4,
@@ -166,7 +166,7 @@ ui <- tagList(
                   hr(style= "border-top:2px solid;margin-top:10px")),
               style = "color:#29619d;border:none;margin-left:15px;background-color:transparent",
               button_animation = "grow"),
-            h3("For a deeper dive into individual demographic variables, and how individual DIP record values compare to individual BC Demographic Survey values."),
+            h3("For a deeper dive into individual demographic variables, and how individual file record values compare to individual BC Demographic Survey values."),
           ))
       )
     )
