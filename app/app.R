@@ -1145,7 +1145,7 @@ server <- function(input, output, session) {
     # choose which column to use for the heat map
     if (input$detail_plot_option == 'bcds'){
       col_to_use <- 'unique_percent_survey'
-      legend_title <- '% of BC Demographic Survey'
+      legend_title <- '% of Survey'
     } else {
       col_to_use <-  'unique_percent'
       legend_title  <- '% of File'
@@ -1173,19 +1173,19 @@ server <- function(input, output, session) {
         dip_value = factor(dip_value, levels=unique(.$dip_value), exclude=NULL),
         bcds_value = factor(bcds_value, levels=unique(.$bcds_value), exclude=NULL)
       )
-
+    
     t1 <- temp %>%
       select(-text) %>%
-      pivot_wider(names_from = bcds_value, values_from = percent)
-
+      pivot_wider(names_from = dip_value, values_from = percent)
+    
     t2 <- temp %>%
       select(-percent) %>%
-      pivot_wider(names_from = bcds_value, values_from = text) %>%
-      select(-dip_value) %>%
+      pivot_wider(names_from = dip_value, values_from = text) %>%
+      select(-bcds_value) %>%
       as.matrix()
-
-    row_names = t1$dip_value
-    t1 <- as.matrix(t1 %>% select(-dip_value))
+    
+    row_names = t1$bcds_value
+    t1 <- as.matrix(t1 %>% select(-bcds_value))
     rownames(t1) = row_names
     
     ## don't display plot if all are masked
@@ -1208,7 +1208,7 @@ server <- function(input, output, session) {
       layout(
         xaxis = list(
           title = list(
-            text = "<b>BC Demographic Survey</b>",
+            text = paste0("<b>File: ",input$file_detailed,"</b>"),
             standoff = 50,
             xref = 'paper',
             yref = 'paper'
@@ -1220,7 +1220,7 @@ server <- function(input, output, session) {
         ),
         yaxis = list(
           title = list(
-            text = "<b>File</b>",
+            text = "<b>BC Demographic Survey</b>",
             standoff = 50,
             xref = 'paper',
             yref = 'paper'
