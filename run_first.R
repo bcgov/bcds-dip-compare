@@ -618,8 +618,8 @@ tmp <- combined_detailed %>%
     survey_group = !(bcds_value == 'Not in Survey'),
     cross_status =
       case_when(
-        dip_group & survey_group ~ 'DIP and survey',
-        dip_group & !survey_group ~ 'DIP only',
+        dip_group & survey_group ~ 'File and survey',
+        dip_group & !survey_group ~ 'File only',
         !dip_group & survey_group ~ 'Survey only',
         !dip_group & !survey_group ~ 'Neither source',
         TRUE ~ 'MISSED ONE'
@@ -631,7 +631,7 @@ not_masked <-  tmp %>%
   group_by(File, survey_var, var_dip, cross_status) %>%
   summarize(n_masked = sum(masked)) %>%
   filter(n_masked == 1) %>%
-  filter(cross_status != 'DIP only') %>%
+  filter(cross_status != 'File only') %>%
   ungroup()
 
 not_masked <- not_masked %>%
@@ -674,7 +674,7 @@ tmp_diff <- tmp %>%
 small_diffs <- tmp_diff %>%
   filter(difference > 0 & difference < 10) %>%
   distinct(File, cross_status, survey_var,var_dip) %>%
-  filter(cross_status != 'DIP only') %>%
+  filter(cross_status != 'File only') %>%
   mutate(small_diffs_flag = "1")
 
 # select next smallest by group to add masking
@@ -821,10 +821,10 @@ linked_individual_demographics <- combined_detailed %>%
   janitor::clean_names() %>%
   select(any_of(names(janitor::clean_names(dataset_info))),
          "survey_variable" = survey_var,
-         "dip_variable" = var_dip,
-         "value_in_dip" = dip_value,
-         "value_in_survey" = bcds_value,
-         "unique_ids_in_dip_file" = unique_n_str,
+         "file_variable" = var_dip,
+         "value_in_file_variable" = dip_value,
+         "value_in_survey_variable" = bcds_value,
+         "unique_ids_in_file" = unique_n_str,
          "percent_of_unique_ids" = unique_percent_str,
          "percent_of_survey_unique_ids" = unique_percent_survey_str,
          everything()

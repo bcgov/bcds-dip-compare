@@ -373,7 +373,7 @@ ui <- tagList(
          # depends on choice of survey var
          selectInput(
            "dip_var_detailed",
-           "Choose DIP Variable:",
+           "Choose File Variable:",
            choices = NULL #unique(combined_detailed$var)
          ),
 
@@ -402,7 +402,7 @@ ui <- tagList(
                 "detail_plot_option", "Plot heatmap based on:",
                 c(
                   'Percent of BC Demographic Survey' = 'bcds',
-                  'Percent of DIP File' = 'dip'
+                  'Percent of File' = 'dip'
                   ),
                 inline=TRUE
                 ),
@@ -1030,9 +1030,9 @@ server <- function(input, output, session) {
     filtered_by_var_detailed() %>%
       filter(var_dip %in% input$dip_var_detailed) %>%
       select(
-        "Value in DIP" = dip_value,
-        "Value in Survey" = bcds_value,
-        "Unique IDs in DIP File" = unique_n_str,
+        "Value in File Variable" = dip_value,
+        "Value in Survey Variable" = bcds_value,
+        "Unique IDs in File" = unique_n_str,
         "Percent of Unique IDs" = unique_percent_str,
         "Percent of Survey Unique IDs" = unique_percent_survey_str
       )
@@ -1120,7 +1120,7 @@ server <- function(input, output, session) {
   output$multivarflag <- reactive(length(unique(filtered_by_var_detailed()$var_dip)) > 1)
   outputOptions(output, "multivarflag", suspendWhenHidden = FALSE)
   output$multivarnote <- renderText({
-    paste0("Multiple DIP Variable choices available for ",as.character(input$var_detailed))
+    paste0("Multiple file variable choices available for ",as.character(input$var_detailed))
   })
 
   # add note to top of tab for information on what provider/dataset/File displayed
@@ -1128,7 +1128,9 @@ server <- function(input, output, session) {
     h2(HTML(paste0("Currently viewing data for: <br>",
                    "Data Provider: ", unique(filtered_by_var_detailed()$`Data Provider/Ministry`), "<br>",
                    "Dataset: ", unique(filtered_by_var_detailed()$Dataset), "<br>",
-                   "File: ", unique(filtered_by_var_detailed()$File))))
+                   "File: ", unique(filtered_by_var_detailed()$File),"<br>",
+                   "Survey Variable: ", input$var_detailed, "<br>",
+                   "File Variable: ", input$dip_var_detailed)))
   })
 
   ## render heatmap ----
@@ -1157,10 +1159,10 @@ server <- function(input, output, session) {
       filter(var_dip == input$dip_var_detailed) %>%
       mutate(text = paste0(
         "BC Demographic Survey Value: ", bcds_value, "\n",
-        "DIP File Value: ", dip_value, "\n",
+        "File Value: ", dip_value, "\n",
         "Number of Records: ", unique_n_str, "\n",
         "Percent of BC Demographic Survey: ", unique_percent_survey_str, "\n",
-        "Percent of DIP File: ", unique_percent_str
+        "Percent of File: ", unique_percent_str
       )) %>%
       mutate(percent = get(col_to_use)) %>%
       select(dip_value, bcds_value, percent, text) %>%
@@ -1205,7 +1207,7 @@ server <- function(input, output, session) {
           pad = list(t = 10)
         ),
         yaxis = list(
-          title = "DIP File",
+          title = "File",
           autorange = "reversed",
           type = "category"
         ),
