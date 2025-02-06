@@ -37,7 +37,7 @@ This document summarizes the analytical methods, caveats, and technical software
 
 In 2023, BC Stats conducted the [BC Demographic Survey](https://antiracism.gov.bc.ca/). More than 200,000 people responded to the voluntary survey, providing information about many aspects of their identity  (such as race, ethnicity, ancestry, gender and many others). For more details on the survey itself, see the [technical report](https://www2.gov.bc.ca/assets/gov/british-columbians-our-governments/multiculturalism-anti-racism/anti-racism/anti-racism-hub/anti-racism-stats-and-research/2024-research-release/bc-demographic-survey-report.pdf) [@bcds].
 
-The [Data Innovation Program (DIP)](https://www2.gov.bc.ca/gov/content?id=2F6E3BF426034EDBA62F3F016EE2313D) securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. Many DIP datasets also contain demographic related information. However, the number of datasets with demographic information is limited, and are only partially complete pictures. The BC Demographic Survey aims to improve our understanding of how people with varying backgrounds interact with public services by broadening the scope of available demographic information to each data (and therefore service) provider.
+The [Data Innovation Program (DIP)](https://www2.gov.bc.ca/gov/content?id=2F6E3BF426034EDBA62F3F016EE2313D) securely links and de-identifies data from multiple ministries, organizations or agencies in a secure platform. Many DIP datasets^[The term 'DIP dataset' will be used throughout this document. This indicates the file of interest from the given dataset within the DIP chosen for analysis. Although the BC Demographic Survey is technically a DIP dataset, it will be distinctly referred to as the survey; and therefore is not included when discussing DIP datasets specifically.] also contain demographic related information. However, the number of datasets with demographic information is limited, and are only partially complete pictures. The BC Demographic Survey aims to improve our understanding of how people with varying backgrounds interact with public services by broadening the scope of available demographic information to each data (and therefore service) provider.
 
 The analysis presented in this dataset and dashboard used the secure platform to access available datasets from the DIP, and linked these datasets, where possible, to the data from the BC Demographic Survey. Overall linkage rates, as well as more specific demographic linkage rates were investigated. The methods, tools, and caveats associated with the dashboard are explored more fully below. 
 
@@ -79,14 +79,14 @@ While the BC Demographic Survey contains many more demographic details, we belie
 
 ## Linked Variables Summary
 
-Each dataset from DIP was evaluated separately for both overall linkage rates as well as more specific demographic linkage rates. This second process involved reviewing the demographics available from the BC Demographic Survey, then reviewing the specific dataset for any comparable demographics using associated metadata. If a given demographic within the DIP dataset was determined to be reasonably comparable, the comparison was done at a summary-level first. To make this comparison:
+Where deemed relevant, a dataset from DIP was evaluated separately for both overall linkage rates as well as more specific demographic linkage rates. This second process involved reviewing the demographics available from the BC Demographic Survey, then reviewing the specific dataset for any comparable demographics using associated metadata. If a given demographic within the DIP dataset was determined to be reasonably comparable, the comparison was done at a summary-level first. To make this comparison:
 
 * Data from DIP datasets were manipulated to reduce every StudyID to a single demographic variable per demographic category.
   * For example, someone with multiple DIP records that all indicate 'female' as their given gender would be reduced to a single record that indicates 'female'. If more than one type of demographic category was listed for a given ID, it would be recorded as 'multiple reported'.
 * Every StudyID in the DIP dataset was then compared to those in the BC Demographic Survey, and sorted into one of four possible summary categories:
-  * **Survey Only**: this person only has demographic information for this category available from the survey. This may be because the value recorded in the DIP dataset was **NULL**, or because the DIP dataset does not contain this particular demographic information. 
-  * **DIP Only**: this person only has demographic information available from the DIP dataset. This may be because they did not respond to the survey, or they skipped the relevant associated questions on the survey.
-  * **DIP and Survey**: this person has demographic information from both sources. This does not guarantee that the information is matching in both sources, simply that it exists. The Linked Variables Detail tab contains more information on the alignment of variables.
+  * **Survey Only**: this person only has demographic information for this category available from the survey. This may be because the value recorded in the DIP dataset file was **NULL**, or because the DIP dataset file does not contain this particular demographic information. 
+  * **File Only**: this person only has demographic information available from the DIP dataset. This may be because they did not respond to the survey, or they skipped the relevant associated questions on the survey.
+  * **File and Survey**: this person has demographic information from both sources. This does not guarantee that the information is matching in both sources, simply that it exists. The Linked Variables Detail tab contains more information on the alignment of variables.
   * **Neither Source**: this person has a DIP dataset record, but it does not contain any viable demographic information, nor does the survey. 
 
 
@@ -112,14 +112,14 @@ Here we list some important distinctions to keep in mind when browsing the dashb
 * This dashboard and dataset was produced in 2024. Linkage rates will change over time.
 * Not every DIP dataset has a StudyID.
 * Some DIP datasets contain multiple StudyIDs.
-* Because DIP datasets were only manipulated to reduce every StudyID to a single demographic variable, some 'Known Dip' percentages may appear artificially high, as the variable may include 'Unknown' or 'Prefer not to Answer' responses. Determining the exact content of each demographic variable in each dataset was out of scope for the creation of this dashboard, and should be carefully examined by any DIP researcher.
+* Because DIP datasets were only manipulated to reduce every StudyID to a single demographic variable, some 'Known from File' percentages may appear artificially high, as the variable may include 'Unknown' or 'Prefer not to Answer' responses. Determining the exact content of each demographic variable in each dataset was out of scope for the creation of this dashboard, and should be carefully examined by any DIP researcher.
 * BC Stats analysts used their discretion in determining comparable demographics between the DIP dataset and the associated BC Demographic Survey variable. Additionally, some demographics within a given DIP dataset may have been excluded from analysis without intending to do so.
-* Many DIP datasets include several years worth of data, and not just point-in-time information, therefore, even within a given dataset there could be contradicting information available for a single record. The result is seeing "multiple reported" within the 'Value in DIP'. 
+* Many DIP datasets include several years worth of data, and not just point-in-time information, therefore, even within a given dataset there could be contradicting information available for a single record. The result is seeing "multiple reported" within the 'Value in File Variable'. 
 * Some DIP datasets have multiple variables that could be considered as related to a single survey variable. In these cases, all variables are considered separately.
 * All counts provided here are unweighted. DIP researchers are responsible for providing their own weights where necessary.
 * To mitigate the privacy risks of re-identification and residual disclosure, some small counts (and associated percentages) have been masked. 
 * Rounding has been performed on all percentages, leading to some inaccurate displays of 0 or 100%.
-* In cases where multiple datasets are reporting on the same population of individuals, only a single dataset was further analysed for demographic details. 
+* In cases where multiple datasets are reporting on the same population of individuals, only a single dataset was further analysed. 
 
 <!-- * One exception was made in the manipulation of DIP datasets. In cases where individual First Nations would be identified by the contents of a DIP variable, the nation name was replaced with 'First Nations' (or equivalent) to keep all outputs at a distinctions based level of analysis.  -->
 
@@ -131,8 +131,8 @@ This analysis is implemented in the R and python programming languages [@Rcore, 
 
 All code is stored under the [git version control](https://git-scm.com/) system. Analysis done inside the secure environment is shared in these GitLab repos:
 
-- Creation of Demographic Survey Variables: <https://projectsc.popdata.bc.ca/shares/arda-demographic-survey>
-- Creation of Linkage Statistics: <https://projectsc.popdata.bc.ca/shares/linkage-litmus-test>
+- Creation of Demographic Survey Variables: <https://projectsc.popdata.bc.ca/shares/arda-demographic-survey-methods>
+- Creation of Linkage Statistics: <https://projectsc.popdata.bc.ca/shares/arda-linkage-litmus>
 
 While external code is hosted on GitHub:
 
