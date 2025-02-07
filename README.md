@@ -1,4 +1,4 @@
-[![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
+[![Lifecycle:Stable](https://img.shields.io/badge/Lifecycle-Stable-97ca00)](https://github.com/bcgov/repomountie/blob/master/doc/lifecycle-badges.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 BCDS-DIP Comparison Dashboard
@@ -11,23 +11,32 @@ This code supports a dashboard that researchers can use to determine the coverag
 ## Usage
 
 * To produce a dashboard:
-    * TODO
+    * Run the `run_first.R` script to produce the necessary data files in your local space. 
+    * Run `app/app.R` to produce the dashboard. Any updates to the dashboard should be made in this file. 
 
 ## Structure
 
 Code for this project is structured as follows:
 
-* TODO
+* Main folder: contains the stand-alone `run_first.R` script to produce data files.
+* `app`: contains the shiny R code to produce the actual dashboard.
+* `app/R`: contains extra functions called by `app.R`, as well as global variables 
+required for the app. Also contains the technical documentation support materials. 
+* `app/www`: contains any images, fonts, and extra materials used in the dashboard. 
 
 ## Requirements
 
-* This project is built in R, and utilizes the following base packages:
+* This project is built in R, and utilizes many standard R packages such as those found in the tidyverse and typical shiny products, as well as some BC specific packages:
 
-    * TODO (include mention of safepaths)
+    * `bcsapps` to produce BC Stats specific themes and layouts.
+    * `safepaths` to provide safe methods of linking to data stored in secure locations.
     
 ## Project Status
 
-The project is currently being upgraded to produce more dashboard pages, and will experience frequent changes. 
+The project is complete, no further changes are expected. 
+
+* Data powering this dashboard can be found on the [BC Data Catalogue](https://catalogue.data.gov.bc.ca/dataset/bc-demographic-survey-dip-data-linkage-rates)
+* The dashboard itself can be found [here](https://bcstats.shinyapps.io/bc-demographic-survey-dip-data-linkage-rates/). 
 
 ## Getting Help or Reporting an Issue
 
