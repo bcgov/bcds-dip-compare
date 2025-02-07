@@ -103,7 +103,7 @@ The analysis was then also done at the StudyID (person) level, where a cross-tab
 
 ## Caveats & Disclaimers
 
-All inferences, opinions, and conclusions drawn in this dataset and dashboard are those of the authors, and do not reflect the opinions or policies of the Data Innovation Program or the Province of British Columbia.
+All inferences, opinions, and conclusions in these materials are those of the authors. They do not reflect the opinions or policies of the provider(s) of the data upon which they are based.
 
 **This dashboard and data source serves as a guide only. Researchers are ultimately responsible for determining the feasibility and reliability of the variables themselves prior to using the BC Demographic Survey variable information for their project.**
 
