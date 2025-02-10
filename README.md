@@ -35,8 +35,8 @@ required for the app. Also contains the technical documentation support material
 
 The project is complete, no further changes are expected. 
 
+* Findings from this project are published in the [BC Demographic Survey: DIP Linkage Rates dashboard](https://bcstats.shinyapps.io/bc-demographic-survey-dip-data-linkage-rates/). 
 * Data powering this dashboard can be found on the [BC Data Catalogue](https://catalogue.data.gov.bc.ca/dataset/bc-demographic-survey-dip-data-linkage-rates)
-* The dashboard itself can be found [here](https://bcstats.shinyapps.io/bc-demographic-survey-dip-data-linkage-rates/). 
 
 ## Getting Help or Reporting an Issue
 
