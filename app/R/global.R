@@ -30,8 +30,8 @@ library(DT)         ## for tables
 ### e.g., reading in data
 ## read in rds versions
 combined_overview <- readRDS("data/combined_overview.rds")
-# combined_detailed <- readRDS("data/combined_detailed.rds")
-# combined_summary <- readRDS("data/combined_summary.rds")
+combined_detailed <- readRDS("data/combined_detailed.rds")
+combined_summary <- readRDS("data/combined_summary.rds")
 
 ## uncomment to just read into memory for de-bugging
 # combined_overview <- readRDS("app/data/combined_overview.rds")
@@ -86,7 +86,7 @@ header <- htmltools::tagList(
          ),
        # Github
        htmltools::tags$a(
-         href = 'http://github.com', 
+         href = 'https://github.com/bcgov-c/bcds-dip-compare', 
          target = "_blank",
          shiny::icon("github", "fa-lg"), 
          'Source Code',

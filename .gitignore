@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 scratch/
+*technical-documentation.docx
 
 # data files
 *.xlsx
