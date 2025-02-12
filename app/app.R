@@ -573,6 +573,10 @@ ui <- tagList(
                HTML(
                  "<ul>
                     <li>
+                      All inferences, opinions, and conclusions drawn in these materials are those of the authors. 
+                      They do not reflect the opinions or policies of the provider(s) of the data upon which they are based.
+                    </li>
+                    <li>
                       For more details on methodology and caveats, see the
                       <a href='bcds-dip-linkage-rates-technical-document.pdf' target='_blank'>technical documentation.</a>
                     </li>
