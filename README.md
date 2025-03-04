@@ -28,8 +28,8 @@ required for the app. Also contains the technical documentation support material
 
 * This project is built in R, and utilizes many standard R packages such as those found in the tidyverse and typical shiny products, as well as some BC specific packages:
 
-    * `bcsapps` to produce BC Stats specific themes and layouts.
-    * `safepaths` to provide safe methods of linking to data stored in secure locations.
+    * [bcsapps](https://github.com/bcgov/bcsapps) to produce BC Stats specific themes and layouts.
+    * [safepaths](https://github.com/bcgov/safepaths) to provide safe methods of linking to data stored in secure locations.
     
 ## Project Status
 
