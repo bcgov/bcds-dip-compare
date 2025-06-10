@@ -35,6 +35,7 @@ required for the app. Also contains the technical documentation support material
 
 The project is complete, no further changes are expected. 
 
+* This dashboard is the final product of the Data Innovation Program project `23-g06: An Evaluation of the Strengths and Limitations of BCDS Data Available in DIP.`
 * Findings from this project are published in the [BC Demographic Survey: DIP Linkage Rates dashboard](https://bcstats.shinyapps.io/bc-demographic-survey-dip-data-linkage-rates/). 
 * Data powering this dashboard can be found on the [BC Data Catalogue](https://catalogue.data.gov.bc.ca/dataset/bc-demographic-survey-dip-data-linkage-rates)
 
