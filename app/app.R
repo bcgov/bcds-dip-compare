@@ -510,24 +510,6 @@ ui <- tagList(
           placement = "bottom"
         )
       ),
-      # #### indigenous identity----
-      # column(
-      #   width=2,
-      #   hover_action_button(
-      #     "link_indigenous_db",
-      #     div(
-      #       style ="font-size:18px",
-      #       "Indigenous Identity"
-      #     ),
-      #     style = "background-color:#d4dfeb;border:none;margin-left:-12px;min-width:95%;max-width:95%;min-height:100px;vertical-align: middle",
-      #     button_animation = "grow"
-      #   ),
-      #   bsTooltip(
-      #     'link_indigenous_db',
-      #     "Identifies survey respondents who responded First Nations, Métis or Inuk (Inuit).",
-      #     placement = "bottom"
-      #   )
-      # ),
       #### race ----
       column(
         width=2,
@@ -601,8 +583,6 @@ ui <- tagList(
                ),
                br(), br(),
                "The Province recognizes the rights of Indigenous peoples to self-government and self-determination, which includes data sovereignty.",
-               ## FOR SIMPLIFIED: remove wording on working with Indigenous groups until ready ----
-               #"The BC Data Service (BCDS) in the Ministry of Citizens’ Services is working with Indigenous groups to develop decision-making models for data about Indigenous peoples.",
                "Under the ",
                a(
                  "Declaration Act Action Plan",
