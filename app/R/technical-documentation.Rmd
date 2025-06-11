@@ -136,7 +136,7 @@ All code is stored under the [git version control](https://git-scm.com/) system.
 
 While external code is hosted on GitHub:
 
-- Dashboard and data catalogue submissions: <https://github.com/bcgov-c/bcds-dip-compare>
+- Dashboard and data catalogue submissions: <https://github.com/bcgov/bcds-dip-compare>
 
 # Data Sources
 

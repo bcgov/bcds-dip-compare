@@ -86,7 +86,7 @@ header <- htmltools::tagList(
          ),
        # Github
        htmltools::tags$a(
-         href = 'https://github.com/bcgov-c/bcds-dip-compare', 
+         href = 'https://github.com/bcgov/bcds-dip-compare', 
          target = "_blank",
          shiny::icon("github", "fa-lg"), 
          'Source Code',

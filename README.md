@@ -41,7 +41,7 @@ The project is complete, no further changes are expected.
 
 ## Getting Help or Reporting an Issue
 
-To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov-c/bcds-dip-compare/issues/).
+To report bugs/issues/feature requests, please file an [issue](https://github.com/bcgov/bcds-dip-compare/issues/).
 
 ## How to Contribute
 
