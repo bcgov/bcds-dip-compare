@@ -4,6 +4,7 @@
 .Ruserdata
 scratch/
 *technical-documentation.docx
+google-analytics.html
 
 # data files
 *.xlsx

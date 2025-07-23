@@ -30,6 +30,9 @@ ui <- tagList(
   shinyjs::useShinyjs(),
   hover::use_hover(popback = TRUE),
   
+  ## google analytics tracking code
+  tags$head(includeHTML("www/google-analytics.html")),
+  
   # additional css to make certain things work
   tags$head(tags$link(rel = "shortcut icon", href = "favicon.png")), ## to add BCGov favicon
   tags$style(type='text/css', ".btn.dropdown-toggle.btn-default { background: white;}"), ## make filter drop-downs white
